@@ -6,14 +6,17 @@ TARGET = WeldWay
 TEMPLATE = app
 
 SOURCES += src\\main.cpp \
-        ui\\mainwindow.cpp #\
-#        $$(DEV_DEPS)\\boost_1_53_0\\libs\\chrono\\src\\chrono.cpp \
-#        $$(DEV_DEPS)\\boost_1_53_0\\libs\\system\\src\\error_code.cpp
+           src\\simple_motion_interface.cpp \
+           ui\\mainwindow.cpp
+#          $$(DEV_DEPS)\\boost_1_53_0\\libs\\chrono\\src\\chrono.cpp \
+#          $$(DEV_DEPS)\\boost_1_53_0\\libs\\system\\src\\error_code.cpp
 
-HEADERS  += ui\mainwindow.h
+HEADERS  += ui\mainwindow.h \
+            include\simplemotion.h \
+            include\simple_motion_interface.h
 
 FORMS    += ui\mainwindow.ui
 
-#LIBS += SimpleMotion.dll
+LIBS += SimpleMotion.dll
 
 INCLUDEPATH += $$(DEV_DEPS)\\boost_1_53_0 include ui C:\\Qt\\Qt5.0.2\\5.0.2\\mingw47_32\\include\\QtWidgets
