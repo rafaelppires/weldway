@@ -237,7 +237,10 @@
       <item>
        <layout class="QGridLayout" name="gridLayout_2">
         <item row="1" column="0">
-         <widget class="QSlider" name="horizontalSlider">
+         <widget class="QSlider" name="speedSlider">
+          <property name="maximum">
+           <number>300</number>
+          </property>
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -251,7 +254,7 @@
          </widget>
         </item>
         <item row="1" column="2">
-         <widget class="QComboBox" name="comboBox">
+         <widget class="QComboBox" name="speedUnitComboBox">
           <item>
            <property name="text">
             <string>m/min</string>
@@ -275,7 +278,7 @@
          </widget>
         </item>
         <item row="1" column="1">
-         <widget class="QDoubleSpinBox" name="doubleSpinBox"/>
+         <widget class="QDoubleSpinBox" name="speedSpinBox"/>
         </item>
        </layout>
       </item>
