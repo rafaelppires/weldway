@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 #include <simple_motion_interface.h>
+#include <slider_spin.h>
+#include <units.h>
 
 namespace Ui {
 class MainWindow;
@@ -19,20 +21,15 @@ public slots:
   void on_findZeroPushButton_clicked();
     
 private slots:
-  void on_speedUnitComboBox_currentTextChanged(const QString &arg1);
-  void changeSpinBox( int slider_value );
-  void changeSlider();
-  void onSpeedSpinBoxValueChanged();
 
 private:
-  double fromCurrentSpeed( double cur );
-  double toCurrentSpeed( double mm );
   double getSpeedConv( const QString &spd_unit );
 
   Ui::MainWindow *ui;
   SimpleMotion *smotion;
-  QString cur_spd_unit_;
-  bool spin_commanded_, slider_commanded_;
+  SliderSpin *speedSliderSpin, *positionSliderSpin;
+  SpeedConv spdconv_;
+  PositionConv posconv_;
 };
 
 #endif // MAINWINDOW_H
