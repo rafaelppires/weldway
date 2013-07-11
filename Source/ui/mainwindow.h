@@ -21,7 +21,8 @@ public slots:
 private slots:
   void on_speedUnitComboBox_currentTextChanged(const QString &arg1);
   void changeSpinBox( int slider_value );
-  void changeSlider( double spin_value );
+  void changeSlider();
+  void onSpeedSpinBoxValueChanged();
 
 private:
   double fromCurrentSpeed( double cur );
@@ -31,6 +32,7 @@ private:
   Ui::MainWindow *ui;
   SimpleMotion *smotion;
   QString cur_spd_unit_;
+  bool spin_commanded_, slider_commanded_;
 };
 
 #endif // MAINWINDOW_H
