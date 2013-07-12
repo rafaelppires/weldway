@@ -13,7 +13,7 @@
 // Default time unit is seconds
 #define STEP_LEN  (1000./(RT*PPR))
 #define TO_M      (1./1000)
-#define TO_CM     (1./100)
+#define TO_CM     (1./10)
 #define TO_IN     (1./25.4)
 #define TO_PULSES (1./STEP_LEN)
 #define TO_M_MIN  (60./1000)

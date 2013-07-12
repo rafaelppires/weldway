@@ -169,18 +169,110 @@
           </item>
           <item>
            <layout class="QGridLayout" name="gridLayout_3">
+            <item row="2" column="0">
+             <widget class="QLabel" name="label_3">
+              <property name="text">
+               <string>Eixo Y:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="2">
+             <widget class="QComboBox" name="yposUnitComboBox">
+              <item>
+               <property name="text">
+                <string>mm</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>cm</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>m</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>pulsos</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>&quot;</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="QDoubleSpinBox" name="ypositionSpinBox"/>
+            </item>
+            <item row="3" column="0">
+             <widget class="QSlider" name="ypositionSlider">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="1">
+             <widget class="QDoubleSpinBox" name="zpositionSpinBox"/>
+            </item>
+            <item row="5" column="0">
+             <widget class="QSlider" name="zpositionSlider">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="2">
+             <widget class="QComboBox" name="zposUnitComboBox">
+              <item>
+               <property name="text">
+                <string>mm</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>cm</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>m</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>pulsos</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>&quot;</string>
+               </property>
+              </item>
+             </widget>
+            </item>
             <item row="1" column="0">
-             <widget class="QSlider" name="positionSlider">
+             <widget class="QSlider" name="xpositionSlider">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
              </widget>
             </item>
             <item row="1" column="1">
-             <widget class="QDoubleSpinBox" name="positionSpinBox"/>
+             <widget class="QDoubleSpinBox" name="xpositionSpinBox">
+              <property name="minimumSize">
+               <size>
+                <width>70</width>
+                <height>0</height>
+               </size>
+              </property>
+             </widget>
             </item>
             <item row="1" column="2">
-             <widget class="QComboBox" name="posUnitComboBox">
+             <widget class="QComboBox" name="xposUnitComboBox">
               <item>
                <property name="text">
                 <string>mm</string>
@@ -211,7 +303,14 @@
             <item row="0" column="0">
              <widget class="QLabel" name="label_2">
               <property name="text">
-               <string>Posição:</string>
+               <string>Eixo X:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="0">
+             <widget class="QLabel" name="label_4">
+              <property name="text">
+               <string>Eixo Z:</string>
               </property>
              </widget>
             </item>
@@ -290,7 +389,7 @@
        </layout>
       </item>
       <item>
-       <widget class="QPushButton" name="markPositionPushButton_2">
+       <widget class="QPushButton" name="executeButton">
         <property name="minimumSize">
          <size>
           <width>0</width>

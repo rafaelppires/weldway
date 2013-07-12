@@ -4,9 +4,10 @@
 SliderSpin::SliderSpin( QObject *parent, QSlider *slider, QDoubleSpinBox *spinbox, QComboBox *unitcombo, UnitConv &unit ) :
       QObject(parent), slider_(slider), spinbox_(spinbox), unitcombo_(unitcombo),
       spin_commanded_(false), slider_commanded_(false), unit_(unit) {
-  connect( slider,  SIGNAL(valueChanged(int)),    SLOT(changeSpinBox(int)) );
-  connect( spinbox, SIGNAL(editingFinished()),    SLOT(changeSlider()) );
-  connect( spinbox, SIGNAL(valueChanged(double)), SLOT(onSpinValueChanged()) );
+  connect( slider,    SIGNAL(valueChanged(int)),    SLOT(changeSpinBox(int)) );
+  connect( spinbox,   SIGNAL(editingFinished()),    SLOT(changeSlider()) );
+  connect( spinbox,   SIGNAL(valueChanged(double)), SLOT(onSpinValueChanged()) );
+  connect( unitcombo, SIGNAL(currentTextChanged(QString)), SLOT(onUnitComboCurrentTextChanged(QString)) );
 
   cur_unit_ = unitcombo->currentText();
   onUnitComboCurrentTextChanged( cur_unit_ );
