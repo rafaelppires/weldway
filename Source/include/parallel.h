@@ -2,6 +2,8 @@
 #define _PARALLEL_COMM_H_
 
 #include <stdint.h>
+#include <vector>
+#include <string>
 
 // BASE (Data)
 #define PPIN02 0x01 // OUT
@@ -32,7 +34,7 @@ public:
 
   ParallelPort();
 
-  void list(); // Checks with windows the available parallel ports and their addresses
+  ParallelList list(); // Checks with windows the available parallel ports and their addresses
   void select( int32_t ); //
 private:
   ParallelList devlist_;

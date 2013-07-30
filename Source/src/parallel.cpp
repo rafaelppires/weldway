@@ -1,4 +1,7 @@
+#include <windows.h>
+#include <setupapi.h>
 #include <parallel.h>
+#include <cfgmgr32.h>
 
 //-----------------------------------------------------------------------------
 ParallelPort::ParallelPort() : index_(-1) {
@@ -8,13 +11,13 @@ ParallelPort::ParallelPort() : index_(-1) {
 //-----------------------------------------------------------------------------
 // Checks with windows the available parallel ports and their addresses
 //-----------------------------------------------------------------------------
-void ParallelPort::list() {
+ParallelPort::ParallelList ParallelPort::list() {
   ParallelList ret;
   
   HDEVINFO hdev_info = SetupDiGetClassDevs( 0L, 0L, 0L,
                            DIGCF_PRESENT | DIGCF_ALLCLASSES | DIGCF_PROFILE ) ;  
   if( hdev_info == (void*)-1 ) {
-    error_ = GetLastError();
+    //error_ = GetLastError();
     return ret;
   }
   
@@ -31,7 +34,7 @@ void ParallelPort::list() {
     if( !ok )
       continue;
 
-    SetupDiGetClassDescription(&spdev_info.ClassGuid, szBuf, 2048, 0);
+    SetupDiGetClassDescription(&spdev_info.ClassGuid, (PWSTR)szBuf, 2048, 0);
     SetupDiGetDeviceRegistryProperty( hdev_info, &spdev_info, SPDRP_FRIENDLYNAME, 0L, (PBYTE)szBuf, 2048, 0);
 
     std::string friendly_name = szBuf;
@@ -83,9 +86,10 @@ void ParallelPort::list() {
     CM_Free_Res_Des_Handle( nextLogConf );
     CM_Free_Res_Des_Handle( firstLogConf );
   }
+  return ret;
 }
 
 //-----------------------------------------------------------------------------
 void ParallelPort::select( int32_t idx ) {
-  index = idx >= 0 && idx < devlist_.size() ? idx : -1;
+  index_ = idx >= 0 && idx < int(devlist_.size()) ? idx : -1;
 }
