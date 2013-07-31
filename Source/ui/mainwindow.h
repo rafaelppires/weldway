@@ -23,6 +23,7 @@ public slots:
     
 private slots:
   void on_executeButton_clicked();
+  void openConnectionForm();
 
 private:
   double getMotorPosition( uint8_t axis );

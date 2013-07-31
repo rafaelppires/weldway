@@ -2,10 +2,22 @@
 #include <setupapi.h>
 #include <parallel.h>
 #include <cfgmgr32.h>
+#include <iostream>
+#include <boost/algorithm/string.hpp>
 
 //-----------------------------------------------------------------------------
 ParallelPort::ParallelPort() : index_(-1) {
-  devlist_ = list();
+  //devlist_ = list();
+}
+
+//-----------------------------------------------------------------------------
+std::string ParallelPort::toStdString( char *buf ) {
+  std::string ret( buf );
+  if( UNICODE ) {
+    std::wstring ws((wchar_t*)buf);
+    ret = std::string(ws.begin(),ws.end());
+  }
+  return ret;
 }
 
 //-----------------------------------------------------------------------------
@@ -13,36 +25,41 @@ ParallelPort::ParallelPort() : index_(-1) {
 //-----------------------------------------------------------------------------
 ParallelPort::ParallelList ParallelPort::list() {
   ParallelList ret;
-  
+  std::cout << "hey... listing\n";
   HDEVINFO hdev_info = SetupDiGetClassDevs( 0L, 0L, 0L,
                            DIGCF_PRESENT | DIGCF_ALLCLASSES | DIGCF_PROFILE ) ;  
   if( hdev_info == (void*)-1 ) {
     //error_ = GetLastError();
+    std::cout << "no hdev for you\n";
     return ret;
   }
   
   uint32_t idx = 0;
   SP_DEVINFO_DATA spdev_info = {0};  
   spdev_info.cbSize = sizeof(SP_DEVINFO_DATA);  
-  char szBuf[ 2048 ] = {0};
+  char szBuf[ 2048 ]; szBuf[0] = 0; DWORD rs;
   while( SetupDiEnumDeviceInfo( hdev_info, idx++, &spdev_info ) ) {
     bool ok = SetupDiGetDeviceRegistryProperty( hdev_info, &spdev_info, SPDRP_CLASS, 0L,
-                                                         (PBYTE)szBuf, 2048, 0);
-    if( strncmp( szBuf, "Ports", 2048 ) )
+                                                         (PBYTE)szBuf, 2048, &rs);
+    if( toStdString(szBuf) != "Ports" )
       continue;
+    else
+      std::cout << "no Port for u\n";
 
     if( !ok )
       continue;
+    else
+      std::cout << "noK for you\n";
 
     SetupDiGetClassDescription(&spdev_info.ClassGuid, (PWSTR)szBuf, 2048, 0);
     SetupDiGetDeviceRegistryProperty( hdev_info, &spdev_info, SPDRP_FRIENDLYNAME, 0L, (PBYTE)szBuf, 2048, 0);
 
-    std::string friendly_name = szBuf;
+    std::string friendly_name = toStdString( szBuf );
     SetupDiGetDeviceRegistryProperty( hdev_info, &spdev_info, SPDRP_SERVICE, 0L, (PBYTE)szBuf, 2048, 0);
     for( int i = 0; szBuf[i]; ++i )
       szBuf[i] = tolower(szBuf[i]);
 
-    if( strncmp( szBuf, "parport", 8 ) != 0 )
+    if( !boost::iequals(toStdString( szBuf ), "parport") )
       continue;
 
     LOG_CONF  firstLogConf, nextLogConf, rdPrevResDes;
@@ -86,6 +103,7 @@ ParallelPort::ParallelList ParallelPort::list() {
     CM_Free_Res_Des_Handle( nextLogConf );
     CM_Free_Res_Des_Handle( firstLogConf );
   }
+  std::cout << "done listing!\n";
   return ret;
 }
 

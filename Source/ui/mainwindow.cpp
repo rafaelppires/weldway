@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include <iostream>
 #include <QLineEdit>
+#include <formconnection.h>
 
 //-----------------------------------------------------------------------------
 MainWindow::MainWindow(QWidget *parent) :
@@ -11,6 +12,8 @@ MainWindow::MainWindow(QWidget *parent) :
   xsmotion = new SimpleMotion( "X_AXIS" );
   ysmotion = new SimpleMotion( "Y_AXIS" );
   zsmotion = new SimpleMotion( "Z_AXIS" );
+
+  connect( ui->actionConnection, SIGNAL(triggered()), SLOT(openConnectionForm()));
 
   speedSliderSpin    = new SliderSpin( this, ui->speedSlider, ui->speedSpinBox, ui->speedUnitComboBox, spdconv_ );
   xposSliderSpin = new SliderSpin( this, ui->xpositionSlider, ui->xpositionSpinBox, ui->xposUnitComboBox, xposconv_ );
@@ -63,5 +66,10 @@ void MainWindow::on_executeButton_clicked() {
   xsmotion->gotoAbsPosition( xpos );
   ysmotion->gotoAbsPosition( ypos );
   zsmotion->gotoAbsPosition( zpos );
-
 }
+//-----------------------------------------------------------------------------
+void MainWindow::openConnectionForm() {
+  FormConnection form;
+  form.exec();
+}
+//-----------------------------------------------------------------------------

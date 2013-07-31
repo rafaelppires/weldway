@@ -29,14 +29,16 @@
 #define PPIN17 0x08 // IN/OUT - INVERTED
 
 class ParallelPort {
-  typedef std::vector< std::pair< std::string, uint32_t > > ParallelList;
 public:
+  typedef std::vector< std::pair< std::string, uint32_t > > ParallelList;
 
   ParallelPort();
 
-  ParallelList list(); // Checks with windows the available parallel ports and their addresses
+  static ParallelList list(); // Checks with windows the available parallel ports and their addresses
   void select( int32_t ); //
+
 private:
+  static std::string toStdString( char * );
   ParallelList devlist_;
   int32_t index_;
 };

@@ -1,3 +1,6 @@
+#ifndef _SLIDER_SPIN_H_
+#define _SLIDER_SPIN_H_
+
 #include <QSlider>
 #include <QComboBox>
 #include <QDoubleSpinBox>
@@ -26,3 +29,5 @@ private:
   UnitConv &unit_;
   bool spin_commanded_, slider_commanded_;
 };
+
+#endif
