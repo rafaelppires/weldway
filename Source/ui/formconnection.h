@@ -2,7 +2,7 @@
 #define FORMCONNECTION_H
 
 #include <QDialog>
-#include <parallel.h>
+#include <parallel_port.h>
 
 namespace Ui {
 class FormConnection;
@@ -16,6 +16,9 @@ public:
     explicit FormConnection(QWidget *parent = 0);
     ~FormConnection();
     
+private slots:
+    void onAccept();
+
 private:
     ParallelPort::ParallelList devlist_;
     Ui::FormConnection *ui;

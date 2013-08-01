@@ -1,8 +1,7 @@
 #include <windows.h>
 #include <setupapi.h>
-#include <parallel.h>
+#include <parallel_port.h>
 #include <cfgmgr32.h>
-#include <iostream>
 #include <boost/algorithm/string.hpp>
 
 //-----------------------------------------------------------------------------
@@ -25,12 +24,10 @@ std::string ParallelPort::toStdString( char *buf ) {
 //-----------------------------------------------------------------------------
 ParallelPort::ParallelList ParallelPort::list() {
   ParallelList ret;
-  std::cout << "hey... listing\n";
+
   HDEVINFO hdev_info = SetupDiGetClassDevs( 0L, 0L, 0L,
                            DIGCF_PRESENT | DIGCF_ALLCLASSES | DIGCF_PROFILE ) ;  
   if( hdev_info == (void*)-1 ) {
-    //error_ = GetLastError();
-    std::cout << "no hdev for you\n";
     return ret;
   }
   
@@ -43,21 +40,15 @@ ParallelPort::ParallelList ParallelPort::list() {
                                                          (PBYTE)szBuf, 2048, &rs);
     if( toStdString(szBuf) != "Ports" )
       continue;
-    else
-      std::cout << "no Port for u\n";
 
     if( !ok )
       continue;
-    else
-      std::cout << "noK for you\n";
 
     SetupDiGetClassDescription(&spdev_info.ClassGuid, (PWSTR)szBuf, 2048, 0);
     SetupDiGetDeviceRegistryProperty( hdev_info, &spdev_info, SPDRP_FRIENDLYNAME, 0L, (PBYTE)szBuf, 2048, 0);
 
     std::string friendly_name = toStdString( szBuf );
     SetupDiGetDeviceRegistryProperty( hdev_info, &spdev_info, SPDRP_SERVICE, 0L, (PBYTE)szBuf, 2048, 0);
-    for( int i = 0; szBuf[i]; ++i )
-      szBuf[i] = tolower(szBuf[i]);
 
     if( !boost::iequals(toStdString( szBuf ), "parport") )
       continue;
@@ -88,8 +79,9 @@ ParallelPort::ParallelList ParallelPort::list() {
         break;
 
       IO_DES *io = (IO_DES*)szBuf;
+
       ret.push_back( std::make_pair( friendly_name, uint32_t(io->IOD_Alloc_Base) ) );
-      
+
       rdPrevResDes = 0;
       cmdRet = CM_Get_Next_Res_Des(&rdPrevResDes, nextLogConf, ResType_IO, 0L, 0L);
       
@@ -103,7 +95,7 @@ ParallelPort::ParallelList ParallelPort::list() {
     CM_Free_Res_Des_Handle( nextLogConf );
     CM_Free_Res_Des_Handle( firstLogConf );
   }
-  std::cout << "done listing!\n";
+
   return ret;
 }
 

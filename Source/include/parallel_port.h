@@ -34,7 +34,8 @@ public:
 
   ParallelPort();
 
-  static ParallelList list(); // Checks with windows the available parallel ports and their addresses
+  // Checks with windows the available parallel ports and their addresses
+  static ParallelList list();
   void select( int32_t ); //
 
 private:

@@ -10,22 +10,22 @@ SOURCES += src/main.cpp \
            ui/mainwindow.cpp \
            ui/slider_spin.cpp \
            src/units.cpp \
-           src/parallel.cpp \
-           ui/formconnection.cpp
-#          $$(DEV_DEPS)/boost_1_53_0/libs/chrono/src/chrono.cpp \
-#          $$(DEV_DEPS)/boost_1_53_0/libs/system/src/error_code.cpp
+           ui/formconnection.cpp \
+           src/master_communicator.cpp \
+           src/parallel_port.cpp
 
 HEADERS  += ui/mainwindow.h \
             include/simplemotion.h \
             include/simple_motion_interface.h \
             ui/slider_spin.h \
             include/units.h \
-            include/parallel.h \
-            ui/formconnection.h
+            ui/formconnection.h \
+            include/master_communicator.h \
+            include/parallel_port.h
 
 FORMS    += ui/mainwindow.ui \
             ui/formconnection.ui
 
 LIBS += SimpleMotion.dll -lsetupapi
 
-INCLUDEPATH += C:\Users\Rafael\Documents\Development\boost_1_53_0 include ui #$$(DEV_DEPS)/boost_1_53_0
+INCLUDEPATH += $$(DEV_DEPS)/boost_1_54_0 include ui

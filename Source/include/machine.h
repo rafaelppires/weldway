@@ -4,12 +4,14 @@
 #include <boost/shared_ptr.hpp>
 using boost::shared_ptr;
 
-#define X_AXIS   0x01
-#define Y_AXIS   0x02
-#define Z_AXIS   0x04
-#define A_AXIS   0x08
-#define B_AXIS   0x10
-#define ALL_AXIS 0x1F
+enum AxisType {
+  X_AXIS   = 0x01,
+  Y_AXIS   = 0x02,
+  Z_AXIS   = 0x04,
+  A_AXIS   = 0x08,
+  B_AXIS   = 0x10,
+  ALL_AXIS = 0x1F
+};
 
 class Machine {
 public:
