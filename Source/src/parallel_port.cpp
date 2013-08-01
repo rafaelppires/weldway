@@ -5,8 +5,7 @@
 #include <boost/algorithm/string.hpp>
 
 //-----------------------------------------------------------------------------
-ParallelPort::ParallelPort() : index_(-1) {
-  //devlist_ = list();
+ParallelPort::ParallelPort(uint16_t addr) : addr_(addr) {
 }
 
 //-----------------------------------------------------------------------------

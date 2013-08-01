@@ -27,6 +27,8 @@ private:
   MasterCommunicator() {}
   MasterCommunicator(MasterCommunicator const&);
   void operator=(MasterCommunicator const&);
+
+  boost::shared_ptr< AbstractCommunication > comm_;
 };
 
 #endif

@@ -32,16 +32,18 @@ class ParallelPort {
 public:
   typedef std::vector< std::pair< std::string, uint32_t > > ParallelList;
 
-  ParallelPort();
+  ParallelPort( uint16_t addr );
 
   // Checks with windows the available parallel ports and their addresses
   static ParallelList list();
-  void select( int32_t ); //
+
+  void sendBatch( std::vector<uint32_t> &, uint32_t mask );
+  void invertPin( uint8_t pin_idx );
 
 private:
   static std::string toStdString( char * );
   ParallelList devlist_;
-  int32_t index_;
+  uint16_t addr_;
 };
 
 #endif
