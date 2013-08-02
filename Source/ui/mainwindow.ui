@@ -427,6 +427,7 @@
     </property>
     <addaction name="actionConnection"/>
     <addaction name="actionStatus"/>
+    <addaction name="actionSair"/>
    </widget>
    <addaction name="menuFerramentas"/>
   </widget>
@@ -439,6 +440,11 @@
   <action name="actionStatus">
    <property name="text">
     <string>Painel</string>
+   </property>
+  </action>
+  <action name="actionSair">
+   <property name="text">
+    <string>Sair</string>
    </property>
   </action>
  </widget>

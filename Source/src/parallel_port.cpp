@@ -99,6 +99,7 @@ ParallelPort::ParallelList ParallelPort::list() {
   return ret;
 }
 //-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 class SquareSigGen {
 public:
   SquareSigGen( uint8_t pin_idx, double freq ) : pinmask_(1<<pin_idx), period_(1/freq) {
@@ -106,9 +107,13 @@ public:
   }
 
   void operator()() {
-    while( true ) {
+    while( !finished_ ) {
       boost::this_thread::yield();
     }
+  }
+
+  void finish() {
+    finished_ = true;
   }
 
 private:
@@ -118,5 +123,6 @@ private:
 
 //-----------------------------------------------------------------------------
 void ParallelPort::startSquareSignal( uint8_t pin_idx, double freq ) {
-
+  square_threads_.insert( pin_idx,
+                          new boost::thread( SquareSigGen( *this, pin_idx, freq ) ) );
 }
