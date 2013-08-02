@@ -3,9 +3,10 @@
 #include <parallel_port.h>
 #include <cfgmgr32.h>
 #include <boost/algorithm/string.hpp>
+#include <boost/thread/thread.hpp>
 
 //-----------------------------------------------------------------------------
-ParallelPort::ParallelPort(uint16_t addr) : addr_(addr) {
+ParallelPort::ParallelPort(uint16_t addr) : AbstractCommunication(PARALLEL), addr_(addr) {
 }
 
 //-----------------------------------------------------------------------------
@@ -97,8 +98,25 @@ ParallelPort::ParallelList ParallelPort::list() {
 
   return ret;
 }
+//-----------------------------------------------------------------------------
+class SquareSigGen {
+public:
+  SquareSigGen( uint8_t pin_idx, double freq ) : pinmask_(1<<pin_idx), period_(1/freq) {
+
+  }
+
+  void operator()() {
+    while( true ) {
+      boost::this_thread::yield();
+    }
+  }
+
+private:
+  double pinmask_, period_;
+};
+
 
 //-----------------------------------------------------------------------------
-void ParallelPort::select( int32_t idx ) {
-  index_ = idx >= 0 && idx < int(devlist_.size()) ? idx : -1;
+void ParallelPort::startSquareSignal( uint8_t pin_idx, double freq ) {
+
 }

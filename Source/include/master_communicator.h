@@ -2,6 +2,7 @@
 #define _MASTER_COMMUNICATOR_H_
 
 #include <stdint.h>
+#include <boost/shared_ptr.hpp>
 
 enum CommType {
   PARALLEL,
@@ -10,6 +11,10 @@ enum CommType {
 };
 
 class AbstractCommunication {
+public:
+  AbstractCommunication( CommType t ) : type_(t) {}
+  virtual void finish() {}
+private:
   CommType type_;
 };
 

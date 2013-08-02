@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <vector>
 #include <string>
+#include <master_communicator.h>
 
 // BASE (Data)
 #define PPIN02 0x01 // OUT
@@ -28,7 +29,7 @@
 #define PPIN16 0x04 // IN/OUT
 #define PPIN17 0x08 // IN/OUT - INVERTED
 
-class ParallelPort {
+class ParallelPort : public AbstractCommunication {
 public:
   typedef std::vector< std::pair< std::string, uint32_t > > ParallelList;
 
@@ -39,6 +40,7 @@ public:
 
   void sendBatch( std::vector<uint32_t> &, uint32_t mask );
   void invertPin( uint8_t pin_idx );
+  void startSquareSignal( uint8_t pin_idx, double freq );
 
 private:
   static std::string toStdString( char * );

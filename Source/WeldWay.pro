@@ -26,6 +26,7 @@ HEADERS  += ui/mainwindow.h \
 FORMS    += ui/mainwindow.ui \
             ui/formconnection.ui
 
-LIBS += SimpleMotion.dll -lsetupapi
+LIBS += -L$$(DEV_DEPS)/boost_1_54_0/stage/lib \
+        SimpleMotion.dll -lsetupapi -lboost_system-mgw48-mt-1_54
 
 INCLUDEPATH += $$(DEV_DEPS)/boost_1_54_0 include ui
