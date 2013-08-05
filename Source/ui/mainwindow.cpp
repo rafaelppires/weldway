@@ -15,10 +15,18 @@ MainWindow::MainWindow(QWidget *parent) :
 
   connect( ui->actionConnection, SIGNAL(triggered()), SLOT(openConnectionForm()));
 
-  speedSliderSpin    = new SliderSpin( this, ui->speedSlider, ui->speedSpinBox, ui->speedUnitComboBox, spdconv_ );
-  xposSliderSpin = new SliderSpin( this, ui->xpositionSlider, ui->xpositionSpinBox, ui->xposUnitComboBox, xposconv_ );
-  yposSliderSpin = new SliderSpin( this, ui->ypositionSlider, ui->ypositionSpinBox, ui->yposUnitComboBox, yposconv_ );
-  zposSliderSpin = new SliderSpin( this, ui->zpositionSlider, ui->zpositionSpinBox, ui->zposUnitComboBox, zposconv_ );
+  speedSliderSpin = new SliderSpin( this, ui->speedSlider, ui->speedSpinBox, ui->speedUnitComboBox, spdconv_ );
+  xposSliderSpin  = new SliderSpin( this, ui->xpositionSlider, ui->xpositionSpinBox, ui->xposUnitComboBox, xposconv_ );
+  yposSliderSpin  = new SliderSpin( this, ui->ypositionSlider, ui->ypositionSpinBox, ui->yposUnitComboBox, yposconv_ );
+  zposSliderSpin  = new SliderSpin( this, ui->zpositionSlider, ui->zpositionSpinBox, ui->zposUnitComboBox, zposconv_ );
+
+  //ok_label_  = new QLabel( ui->statusbar );
+  nok_label_ = new QLabel( statusBar() );
+  nok_label_->setObjectName(QStringLiteral("nok_label_"));
+  nok_label_->setMaximumSize( QSize(20,20) );
+  nok_label_->setPixmap(QPixmap(QString::fromUtf8(":/imgs/imgs/nok.png")));
+  statusBar()->addWidget( nok_label_ );
+  nok_label_->setScaledContents(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -28,15 +36,12 @@ MainWindow::~MainWindow() {
 
 //-----------------------------------------------------------------------------
 void MainWindow::on_findZeroPushButton_clicked() {
-  //ui->findZeroPushButton->setText( "Whazup!" );
-  xsmotion->startHoming();
-  ysmotion->startHoming();
-  zsmotion->startHoming();
-}
+  //xsmotion->startHoming();
+  //ysmotion->startHoming();
+  //zsmotion->startHoming();
 
-#define X_AXIS 0
-#define Y_AXIS 1
-#define Z_AXIS 2
+  MasterCommunicator::getInstance().startHoming( AXIS_ALL );
+}
 
 //-----------------------------------------------------------------------------
 double MainWindow::getMotorPosition( uint8_t axis ) {

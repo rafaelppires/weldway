@@ -14,3 +14,10 @@ void MasterCommunicator::setupParallelPort( uint16_t addr ) {
 }
 
 //-----------------------------------------------------------------------------
+bool MasterCommunicator::startHoming( uint8_t axis ) {
+  if( !comm_ ) return false;
+  comm_->startHoming( axis );
+  return true;
+}
+
+//-----------------------------------------------------------------------------

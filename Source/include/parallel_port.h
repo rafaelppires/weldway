@@ -33,11 +33,6 @@
 
 #define PINCOUNT 17
 
-/*extern "C" {
-  __declspec(dllimport) short _stdcall Inp32( short );
-  __declspec(dllimport) void  _stdcall Out32( short, short );
-}*/
-
 //-----------------------------------------------------------------------------
 class StoppableThread {
 public:

@@ -4,12 +4,21 @@
 #include <stdint.h>
 #include <boost/shared_ptr.hpp>
 
+#define X_AXIS   0x01
+#define Y_AXIS   0x02
+#define Z_AXIS   0x04
+#define A_AXIS   0x08
+#define B_AXIS   0x10
+#define AXIS_ALL 0x1F
+
+//-----------------------------------------------------------------------------
 enum CommType {
   PARALLEL,
   USB_HUB,
   USB_PROXY
 };
 
+//-----------------------------------------------------------------------------
 class AbstractCommunication {
 public:
   AbstractCommunication( CommType t ) : type_(t) {}
@@ -18,6 +27,7 @@ private:
   CommType type_;
 };
 
+//-----------------------------------------------------------------------------
 class MasterCommunicator {
 public:
   // Singleton
@@ -27,6 +37,7 @@ public:
   }
 
   void setupParallelPort( uint16_t addr );
+  bool startHoming( uint8_t axis );
   
 private:
   MasterCommunicator() {}

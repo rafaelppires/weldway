@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QLabel>
 #include <simple_motion_interface.h>
 #include <slider_spin.h>
 #include <units.h>
@@ -29,6 +30,7 @@ private:
   double getMotorPosition( uint8_t axis );
 
   Ui::MainWindow *ui;
+  QLabel *ok_label_, *nok_label_;
   SimpleMotion *xsmotion, *ysmotion, *zsmotion;
   SliderSpin *speedSliderSpin, *xposSliderSpin, *yposSliderSpin, *zposSliderSpin;
   SpeedConv spdconv_;

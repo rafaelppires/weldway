@@ -33,3 +33,6 @@ LIBS += -L$$(DEV_DEPS)/boost_1_54_0/stage/lib \
         -lboost_chrono-mgw48-mt-1_54
 
 INCLUDEPATH += $$(DEV_DEPS)/boost_1_54_0 include ui
+
+RESOURCES += \
+    resources.qrc
