@@ -27,6 +27,9 @@ FORMS    += ui/mainwindow.ui \
             ui/formconnection.ui
 
 LIBS += -L$$(DEV_DEPS)/boost_1_54_0/stage/lib \
-        SimpleMotion.dll -lsetupapi -lboost_system-mgw48-mt-1_54
+        SimpleMotion.dll inpout32.dll -lsetupapi \
+        -lboost_system-mgw48-mt-1_54 \
+        -lboost_thread-mgw48-mt-1_54 \
+        -lboost_chrono-mgw48-mt-1_54
 
 INCLUDEPATH += $$(DEV_DEPS)/boost_1_54_0 include ui
