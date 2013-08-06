@@ -24,7 +24,7 @@ MainWindow::MainWindow(QWidget *parent) :
   nok_label_ = new QLabel( statusBar() );
   nok_label_->setObjectName(QStringLiteral("nok_label_"));
   nok_label_->setMaximumSize( QSize(20,20) );
-  nok_label_->setPixmap(QPixmap(QString::fromUtf8(":/imgs/imgs/nok.png")));
+  nok_label_->setPixmap(QPixmap(QString::fromUtf8(":/imgs/imgs/red.png")));
   statusBar()->addWidget( nok_label_ );
   nok_label_->setScaledContents(true);
 }
