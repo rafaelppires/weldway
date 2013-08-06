@@ -114,8 +114,7 @@ void SquareSigGen::iteration() {
 }
 
 //=============================================================================
-ParallelPort::ParallelPort(uint16_t addr) : AbstractCommunication(PARALLEL),
-                                            master_parallel_(addr){
+ParallelPort::ParallelPort(uint16_t addr) : master_parallel_(addr){
   master_thread_ = new boost::thread( boost::ref(master_parallel_) );
 }
 
@@ -128,9 +127,15 @@ std::string ParallelPort::toStdString( char *buf ) {
   }
   return ret;
 }
+
 //-----------------------------------------------------------------------------
 void ParallelPort::invertPin( uint8_t pin_idx ) {
   master_parallel_.invertPin( pin_idx );
+}
+
+//-----------------------------------------------------------------------------
+void ParallelPort::writePins( uint32_t value, uint32_t mask ) {
+  master_parallel_.writePins( value, mask );
 }
 
 //-----------------------------------------------------------------------------

@@ -1,5 +1,5 @@
 #include <master_communicator.h>
-#include <parallel_port.h>
+#include <parallel_protocol.h>
 
 //-----------------------------------------------------------------------------
 void MasterCommunicator::setupParallelPort( uint16_t addr ) {
@@ -8,9 +8,7 @@ void MasterCommunicator::setupParallelPort( uint16_t addr ) {
     delete comm_.get();
   }
 
-  ParallelPort *pp;
-  comm_.reset( pp = new ParallelPort( addr ) );
-  pp->startSquareSignal( 16, 1000. ); // Pin 16 - 1kHz
+  comm_.reset( new ParallelProtocol( addr ) );
 }
 
 //-----------------------------------------------------------------------------

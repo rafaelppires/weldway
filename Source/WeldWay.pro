@@ -12,7 +12,8 @@ SOURCES += src/main.cpp \
            src/units.cpp \
            ui/formconnection.cpp \
            src/master_communicator.cpp \
-           src/parallel_port.cpp
+           src/parallel_port.cpp \
+           src/parallel_protocol.cpp
 
 HEADERS  += ui/mainwindow.h \
             include/simplemotion.h \
@@ -21,7 +22,8 @@ HEADERS  += ui/mainwindow.h \
             include/units.h \
             ui/formconnection.h \
             include/master_communicator.h \
-            include/parallel_port.h
+            include/parallel_port.h \
+            include/parallel_protocol.h
 
 FORMS    += ui/mainwindow.ui \
             ui/formconnection.ui

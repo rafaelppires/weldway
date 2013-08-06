@@ -19,9 +19,12 @@ enum CommType {
 };
 
 //-----------------------------------------------------------------------------
-class AbstractCommunication {
+class AbstractProtocol {
 public:
-  AbstractCommunication( CommType t ) : type_(t) {}
+  AbstractProtocol( CommType t ) : type_(t) {}
+  virtual void startHoming( uint8_t ) {}
+  virtual void moveTo() {}
+  virtual void executeTrajectory() {}
   virtual void finish() {}
 private:
   CommType type_;
@@ -44,7 +47,7 @@ private:
   MasterCommunicator(MasterCommunicator const&);
   void operator=(MasterCommunicator const&);
 
-  boost::shared_ptr< AbstractCommunication > comm_;
+  boost::shared_ptr< AbstractProtocol > comm_;
 };
 
 #endif

@@ -89,7 +89,7 @@ private:
 };
 
 //-----------------------------------------------------------------------------
-class ParallelPort : public AbstractCommunication {
+class ParallelPort {
 public:
   typedef std::vector< std::pair< std::string, uint32_t > > ParallelList;
 
@@ -100,6 +100,7 @@ public:
 
   void sendBatch( std::vector<uint32_t> &, uint32_t mask );
   void invertPin( uint8_t pin_idx );
+  void writePins( uint32_t value, uint32_t mask );
   void startSquareSignal( uint8_t pin_idx, double freq );
 
 private:
