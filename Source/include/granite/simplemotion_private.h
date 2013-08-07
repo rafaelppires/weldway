@@ -17,15 +17,14 @@
 
 #include "simplemotion.h"
 #include <windows.h>
-#include "ftdilib/ftd2xx.h"
+#include <ftdi/ftd2xx.h>
 
 #define SM_VERSION 0x000201
 #define SM_MAX_DEVICES 100
 #define SM_AXISNAMELEN 128
 #define SM_PARAMNAMELEN 128
 
-typedef struct SM_DEVICE_
-{
+typedef struct SM_DEVICE_ {
     FT_HANDLE ftHandle;
     FT_STATUS ftStatus;
 
@@ -36,13 +35,11 @@ typedef struct SM_DEVICE_
     smuint16 currentReturnDataType;//one of CAPTURE_ numbers in vsd_drive_bits.h
 } SM_DEVICE;
 
-typedef struct SM_PARAM_
-{
+typedef struct SM_PARAM_ {
     char paramName[SM_PARAMNAMELEN];
     smuint16 paramNum;
     smbool specialHandling;
     smint32 scalerMultiplier, scalerDivider;//parameter scaling. 1/1 if not scaled
-
 } SM_PARAM;
 
 //placed in sm_consts.cpp

@@ -102,7 +102,11 @@ public:
   void invertPin( uint8_t pin_idx );
   void writePins( uint32_t value, uint32_t mask );
   void startSquareSignal( uint8_t pin_idx, double freq );
+  uint32_t readPins( uint32_t mask );
 
+  void setHighPinSync( uint8_t pinidx );
+  void setLowPinSync( uint8_t pinidx );
+  void writePinsSync( uint32_t value, uint32_t mask );
 private:
   static std::string toStdString( char * );
   std::map< uint8_t, boost::thread* > square_threads_;

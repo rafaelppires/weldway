@@ -56,18 +56,26 @@ void MasterParallel::writePins(uint32_t value, uint32_t mask ) {
 //-----------------------------------------------------------------------------
 uint32_t MasterParallel::readPins( uint32_t mask ) {
   uint32_t ret = 0;
-  uint16_t input = in( addr_ + 1 );
-  ret |= input & PPIN10 ? 1<<10 : 0;
-  ret |= input & PPIN11 ? 1<<11 : 0;
-  ret |= input & PPIN12 ? 1<<12 : 0;
-  ret |= input & PPIN13 ? 1<<13 : 0;
-  ret |= input & PPIN15 ? 1<<15 : 0;
-  input = in( addr_ + 2 );
-  ret |= input & PPIN01 ? 1<<1  : 0;
-  ret |= input & PPIN14 ? 1<<14 : 0;
-  ret |= input & PPIN16 ? 1<<16 : 0;
-  ret |= input & PPIN17 ? 1<<17 : 0;
-  return ret & rmask & mask;
+  uint16_t input;
+  mask &= rmask;
+  if( mask & romsk ) {
+    input = in( addr_ + 1 );
+    ret |= input & PPIN10 ? 1<<10 : 0;
+    ret |= input & PPIN11 ? 1<<11 : 0;
+    ret |= input & PPIN12 ? 1<<12 : 0;
+    ret |= input & PPIN13 ? 1<<13 : 0;
+    ret |= input & PPIN15 ? 1<<15 : 0;
+  }
+
+  if( mask & ~romsk ) {
+    input = in( addr_ + 2 );
+    ret |= input & PPIN01 ? 1<<1  : 0;
+    ret |= input & PPIN14 ? 1<<14 : 0;
+    ret |= input & PPIN16 ? 1<<16 : 0;
+    ret |= input & PPIN17 ? 1<<17 : 0;
+  }
+
+  return ret & mask;
 }
 
 //-----------------------------------------------------------------------------
@@ -136,6 +144,11 @@ void ParallelPort::invertPin( uint8_t pin_idx ) {
 //-----------------------------------------------------------------------------
 void ParallelPort::writePins( uint32_t value, uint32_t mask ) {
   master_parallel_.writePins( value, mask );
+}
+
+//-----------------------------------------------------------------------------
+uint32_t ParallelPort::readPins( uint32_t mask ) {
+  return master_parallel_.readPins( mask );
 }
 
 //-----------------------------------------------------------------------------

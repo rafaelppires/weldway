@@ -1,5 +1,5 @@
-#include "simplemotion_private.h"
-#include "vsd_cmd.h"
+#include <granite/simplemotion_private.h>
+#include <granite/vsd_cmd.h>
 
 const SM_PARAM smParams[]={
     /*name, VSD param number, special handling needed, signed value, scaling multiplier, scaling divider*/
