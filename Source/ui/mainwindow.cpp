@@ -64,13 +64,23 @@ void MainWindow::on_executeButton_clicked() {
 
   std::cout << "Speed: " << speed_rpm << " xpos: " << xpos << " ypos: " << ypos << " zpos: " << zpos << "\n";
 
-  xsmotion->setMaxSpeed( speed_rpm );
+  /*xsmotion->setMaxSpeed( speed_rpm );
   ysmotion->setMaxSpeed( speed_rpm );
   zsmotion->setMaxSpeed( speed_rpm );
 
   xsmotion->gotoAbsPosition( xpos );
   ysmotion->gotoAbsPosition( ypos );
-  zsmotion->gotoAbsPosition( zpos );
+  zsmotion->gotoAbsPosition( zpos );*/
+
+  MasterCommunicator &mc = MasterCommunicator::getInstance();
+  mc.setMaxSpeed( speed_rpm, AXIS_ALL );
+
+  MasterCommunicator::ConcurrentPosCmmd cmd;
+  cmd[ X_AXIS ] = xpos;
+  cmd[ Y_AXIS ] = ypos;
+  cmd[ Z_AXIS ] = zpos;
+
+  mc.sendPosCmmds( cmd );
 }
 //-----------------------------------------------------------------------------
 void MainWindow::openConnectionForm() {

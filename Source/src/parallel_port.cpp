@@ -135,7 +135,8 @@ void SquareSigGen::iteration() {
 
 //=============================================================================
 ParallelPort::ParallelPort(uint16_t addr) : master_parallel_(addr){
-  master_thread_ = new boost::thread( boost::ref(master_parallel_) );
+  master_thread_  = new boost::thread( boost::ref(master_parallel_) );
+  reading_thread_ = new boost::thread( ReadingThread(master_parallel_) );
 }
 
 //-----------------------------------------------------------------------------

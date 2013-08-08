@@ -19,3 +19,13 @@ bool MasterCommunicator::startHoming( uint8_t axis ) {
 }
 
 //-----------------------------------------------------------------------------
+void MasterCommunicator::setMaxSpeed( uint16_t, uint8_t ) {
+
+}
+
+//-----------------------------------------------------------------------------
+void MasterCommunicator::sendPosCmmds( ConcurrentPosCmmd & ) {
+
+}
+
+//-----------------------------------------------------------------------------

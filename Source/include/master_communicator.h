@@ -2,6 +2,7 @@
 #define _MASTER_COMMUNICATOR_H_
 
 #include <stdint.h>
+#include <map>
 #include <boost/shared_ptr.hpp>
 
 #define X_AXIS   0x01
@@ -33,6 +34,8 @@ private:
 //-----------------------------------------------------------------------------
 class MasterCommunicator {
 public:
+  typedef std::map<uint8_t,uint16_t> ConcurrentPosCmmd;
+
   // Singleton
   static MasterCommunicator& getInstance() {
     static MasterCommunicator instance;
@@ -41,6 +44,8 @@ public:
 
   void setupParallelPort( uint16_t addr );
   bool startHoming( uint8_t axis );
+  void setMaxSpeed(uint16_t , uint8_t);
+  void sendPosCmmds( ConcurrentPosCmmd & );
   
 private:
   MasterCommunicator() {}
