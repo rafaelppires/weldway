@@ -1,4 +1,20 @@
 #include <parallel_protocol.h>
+#include <boost/chrono.hpp>
+#include <boost/thread.hpp>
+using boost::chrono::high_resolution_clock;
+using boost::chrono::nanoseconds;
+
+//-----------------------------------------------------------------------------
+void ParallelProtocol::delay( uint16_t ns ) {
+  high_resolution_clock::time_point now, start;
+  nanoseconds diff;
+  start = high_resolution_clock::now();
+  do {
+    boost::this_thread::yield();
+    now = high_resolution_clock::now();
+    diff = now - start;
+  } while( diff.count() < ns );
+}
 
 //-----------------------------------------------------------------------------
 bool ParallelProtocol::findReadHome() {
@@ -18,10 +34,10 @@ uint16_t ParallelProtocol::sendWord( uint16_t w, uint32_t pins ) {
   for( int i = 0; i < 16; ++i ) {
     port_.setHighPinSync( SPIWRITE_CLK_PIN );
     port_.writePinsSync( ((w>>i) & 1) ? pins : 0, pins );
-    delay(6);
+    delay( 6000 );
     port_.setLowPinSync( SPIWRITE_CLK_PIN );
     // Read reply here
-    delay(6);
+    delay( 6000 );
   }
   return 0;
 }

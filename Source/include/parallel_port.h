@@ -72,6 +72,7 @@ public:
   void invertPin(uint8_t pinidx);
   void writePins( uint32_t value, uint32_t mask );
   uint32_t readPins( uint32_t mask );
+  void writePinsSync( uint32_t value, uint32_t mask );
 private:
   inline bool validPinIdx( uint8_t i ) { return i && i <= PINCOUNT; }
   uint16_t decodeBase( uint32_t encoded );

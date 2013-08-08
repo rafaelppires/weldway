@@ -52,6 +52,18 @@ void MasterParallel::writePins(uint32_t value, uint32_t mask ) {
   }
   condition_.notify_all();
 }
+//-----------------------------------------------------------------------------
+void MasterParallel::writePinsSync( uint32_t value, uint32_t mask ) {
+  writePins( value, mask );
+  bool done = false;
+  do {
+    boost::this_thread::yield();
+
+    mutex_.lock();
+    done = !data_ready_;
+    mutex_.unlock();
+  } while( !done );
+}
 
 //-----------------------------------------------------------------------------
 uint32_t MasterParallel::readPins( uint32_t mask ) {
@@ -149,6 +161,22 @@ void ParallelPort::writePins( uint32_t value, uint32_t mask ) {
 //-----------------------------------------------------------------------------
 uint32_t ParallelPort::readPins( uint32_t mask ) {
   return master_parallel_.readPins( mask );
+}
+
+//-----------------------------------------------------------------------------
+void ParallelPort::setHighPinSync( uint8_t pinidx ) {
+  uint32_t v = 1 << pinidx;
+  master_parallel_.writePinsSync( v, v );
+}
+
+//-----------------------------------------------------------------------------
+void ParallelPort::setLowPinSync( uint8_t pinidx ) {
+  master_parallel_.writePinsSync( 0, 1 << pinidx );
+}
+
+//-----------------------------------------------------------------------------
+void ParallelPort::writePinsSync( uint32_t value, uint32_t mask ) {
+ master_parallel_.writePinsSync( value, mask );
 }
 
 //-----------------------------------------------------------------------------
