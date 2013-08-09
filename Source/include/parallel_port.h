@@ -90,6 +90,8 @@ private:
 };
 
 //-----------------------------------------------------------------------------
+typedef boost::function< void(bool) > ReadCallbackType;
+//-----------------------------------------------------------------------------
 class ParallelPort {
 public:
   typedef std::vector< std::pair< std::string, uint32_t > > ParallelList;
@@ -103,6 +105,7 @@ public:
   void invertPin( uint8_t pin_idx );
   void writePins( uint32_t value, uint32_t mask );
   void startSquareSignal( uint8_t pin_idx, double freq );
+  void startReadingPin( uint8_t pin_idx, double period , ReadCallbackType f );
   uint32_t readPins( uint32_t mask );
 
   void setHighPinSync( uint8_t pinidx );
@@ -111,6 +114,7 @@ public:
 private:
   static std::string toStdString( char * );
   std::map< uint8_t, boost::thread* > square_threads_;
+  std::map< uint8_t, boost::thread* > reading_threads_;
   MasterParallel master_parallel_;
   boost::thread *master_thread_;
 };
@@ -125,6 +129,21 @@ public:
 private:
   uint8_t pin_;
   double period_;
+  ParallelPort &port_;
+};
+
+//-----------------------------------------------------------------------------
+class ReadingThread : public StoppableThread {
+public:
+  ReadingThread( const ReadingThread &r ) : port_(r.port_), pin_(r.pin_),
+                 period_(r.period_), callback_(r.callback_), value_(r.value_) {}
+  ReadingThread( ParallelPort &p, uint8_t pin_idx, double ms, ReadCallbackType f );
+  void iteration();
+private:
+  bool value_;
+  uint8_t pin_;
+  double period_;
+  ReadCallbackType callback_;
   ParallelPort &port_;
 };
 

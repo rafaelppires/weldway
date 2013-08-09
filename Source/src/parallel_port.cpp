@@ -117,7 +117,7 @@ uint16_t MasterParallel::decodeBase2( uint32_t encoded ) {
 //=============================================================================
 SquareSigGen::SquareSigGen( ParallelPort &p, uint8_t pin_idx, double freq ) :
     port_(p), pin_(pin_idx),
-    period_(1e+6f/(2*freq)) {}
+    period_(1e+6f/(2*freq)) {} // microseconds
 
 //-----------------------------------------------------------------------------
 void SquareSigGen::iteration() {
@@ -134,9 +134,25 @@ void SquareSigGen::iteration() {
 }
 
 //=============================================================================
+ReadingThread::ReadingThread( ParallelPort &p, uint8_t pin_idx, double s, ReadCallbackType f ) :
+    pin_(pin_idx), period_(s*1e+6f), callback_(f), port_(p), value_(false) {
+  callback_( false );
+}
+
+//-----------------------------------------------------------------------------
+void ReadingThread::iteration() {
+  uint32_t mask = 1 << pin_;
+  bool now = bool(mask & port_.readPins( mask ));
+  if( now != value_ ) {
+    callback_( now );
+    value_ = now;
+  }
+  boost::this_thread::sleep_for( boost::chrono::microseconds(uint32_t(period_)) );
+}
+
+//=============================================================================
 ParallelPort::ParallelPort(uint16_t addr) : master_parallel_(addr){
   master_thread_  = new boost::thread( boost::ref(master_parallel_) );
-  reading_thread_ = new boost::thread( ReadingThread(master_parallel_) );
 }
 
 //-----------------------------------------------------------------------------
@@ -178,6 +194,19 @@ void ParallelPort::setLowPinSync( uint8_t pinidx ) {
 //-----------------------------------------------------------------------------
 void ParallelPort::writePinsSync( uint32_t value, uint32_t mask ) {
  master_parallel_.writePinsSync( value, mask );
+}
+
+//-----------------------------------------------------------------------------
+void ParallelPort::startSquareSignal( uint8_t pin_idx, double freq ) {
+  square_threads_[ pin_idx ] =
+            new boost::thread( SquareSigGen( *this, pin_idx, freq ) );
+}
+
+//-----------------------------------------------------------------------------
+void ParallelPort::startReadingPin( uint8_t pin_idx, double period ,
+                                    ReadCallbackType f ) {
+  reading_threads_[ pin_idx ] =
+          new boost::thread( ReadingThread( *this, pin_idx, period, f ) );
 }
 
 //-----------------------------------------------------------------------------
@@ -258,12 +287,6 @@ ParallelPort::ParallelList ParallelPort::list() {
   }
 
   return ret;
-}
-
-//-----------------------------------------------------------------------------
-void ParallelPort::startSquareSignal( uint8_t pin_idx, double freq ) {
-  square_threads_[ pin_idx ] =
-            new boost::thread( SquareSigGen( *this, pin_idx, freq ) );
 }
 
 //-----------------------------------------------------------------------------

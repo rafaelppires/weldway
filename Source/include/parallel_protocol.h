@@ -5,6 +5,8 @@
 #include <parallel_port.h>
 #include <granite_spi_interface.h>
 
+#define MANIP_EMERG_PIN   12
+#define MANIP_ENABL_PIN   16
 #define SPIWRITE_CLK_PIN  2       // SPI Write/Read clock pin
 
 #define SPIREAD_CLK_PIN   17      // SPI Read clock pin
@@ -21,6 +23,7 @@ public:
 
 private:
   bool findReadHome();
+  void emergencyCallback( bool );
   uint16_t sendWord( uint16_t w, uint32_t pins );
   uint32_t axisToPins( uint8_t axis );
   void delay( uint16_t ns );

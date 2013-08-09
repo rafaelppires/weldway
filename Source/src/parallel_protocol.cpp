@@ -45,7 +45,14 @@ uint16_t ParallelProtocol::sendWord( uint16_t w, uint32_t pins ) {
 //-----------------------------------------------------------------------------
 ParallelProtocol::ParallelProtocol( uint16_t addr ) :
     AbstractProtocol( PARALLEL ), port_(addr) {
-  port_.startSquareSignal( 16, 1000. ); // Pin 16 - 1kHz
+  port_.startSquareSignal( MANIP_ENABL_PIN, 1000. ); // Pin 16 - 1kHz
+  port_.startReadingPin( MANIP_EMERG_PIN, 1./3 /*s*/,
+                         std::bind1st( std::mem_fun(&ParallelProtocol::emergencyCallback), this ) );
+}
+
+//-----------------------------------------------------------------------------
+void ParallelProtocol::emergencyCallback( bool st ) {
+  std::cout << "emerg now " << int(st) << "\n";
 }
 
 //-----------------------------------------------------------------------------
