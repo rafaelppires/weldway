@@ -10,11 +10,11 @@ public:
   uint64_t graniteAbsTarget( uint32_t param );
   uint32_t startHoming();
   uint32_t clearFaults();
+  static uint8_t  calcCrc8( uint8_t cmd, uint16_t data );
+  static uint32_t graniteDriveCmd( uint16_t cmd, uint16_t data );
 
 private:
   int parameterIndex( std::string paramname );
-  uint32_t graniteDriveCmd( uint16_t cmd, uint16_t data );
-  uint8_t  calcCrc8( uint8_t cmd, uint16_t data );
 };
 
 #endif

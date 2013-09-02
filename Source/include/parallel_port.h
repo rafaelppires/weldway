@@ -73,6 +73,8 @@ public:
   void writePins( uint32_t value, uint32_t mask );
   uint32_t readPins( uint32_t mask );
   void writePinsSync( uint32_t value, uint32_t mask );
+  void setLogging( bool v ) { log_ = v; }
+
 private:
   inline bool validPinIdx( uint8_t i ) { return i && i <= PINCOUNT; }
   uint16_t decodeBase( uint32_t encoded );
@@ -82,6 +84,7 @@ private:
   boost::mutex mutex_;
   uint32_t current_;
   uint16_t addr_;
+  bool log_;
 
   typedef short _stdcall (*Inp32t)(short);
   typedef void _stdcall (*Out32t)(short, short);
@@ -111,6 +114,8 @@ public:
   void setHighPinSync( uint8_t pinidx );
   void setLowPinSync( uint8_t pinidx );
   void writePinsSync( uint32_t value, uint32_t mask );
+  void startLogging();
+  void stopLogging();
 private:
   static std::string toStdString( char * );
   std::map< uint8_t, boost::thread* > square_threads_;

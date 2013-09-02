@@ -23,6 +23,8 @@ MasterParallel::MasterParallel( uint16_t addr ) : addr_(addr),
   }
 }
 
+#include <fstream>
+std::ofstream logfile("siglog.dat");
 //-----------------------------------------------------------------------------
 void MasterParallel::iteration() {
   boost::unique_lock<boost::mutex> lock(mutex_);
@@ -31,6 +33,13 @@ void MasterParallel::iteration() {
 
   out( addr_, decodeBase(current_) ); // base addres (write only pins)
   out( addr_ + 2, decodeBase2(current_) ); // base address + 2 (read/write pins)
+
+  if( log_ ) {
+    char out[1024];
+    sprintf( out, "%d %d %d\n", (current_&0x10000)>>16, (current_&4) >> 2, (current_&8) >> 3  );
+    logfile << out;
+  }
+
   data_ready_ = false;
 }
 //-----------------------------------------------------------------------------
@@ -47,8 +56,8 @@ void MasterParallel::writePins(uint32_t value, uint32_t mask ) {
     uint32_t prev = current_;
     current_ &= ~mask;
     current_ |= value & mask;
-    if( prev != current_ )
-      data_ready_ = true;
+    //if( prev != current_ )
+    data_ready_ = true;
   }
   condition_.notify_all();
 }
@@ -193,7 +202,7 @@ void ParallelPort::setLowPinSync( uint8_t pinidx ) {
 
 //-----------------------------------------------------------------------------
 void ParallelPort::writePinsSync( uint32_t value, uint32_t mask ) {
- master_parallel_.writePinsSync( value, mask );
+  master_parallel_.writePinsSync( value, mask );
 }
 
 //-----------------------------------------------------------------------------
@@ -207,6 +216,16 @@ void ParallelPort::startReadingPin( uint8_t pin_idx, double period ,
                                     ReadCallbackType f ) {
   reading_threads_[ pin_idx ] =
           new boost::thread( ReadingThread( *this, pin_idx, period, f ) );
+}
+
+//-----------------------------------------------------------------------------
+void ParallelPort::startLogging() {
+  master_parallel_.setLogging( true );
+}
+
+//-----------------------------------------------------------------------------
+void ParallelPort::stopLogging() {
+  master_parallel_.setLogging( false );
 }
 
 //-----------------------------------------------------------------------------

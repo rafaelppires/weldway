@@ -31,15 +31,26 @@ bool ParallelProtocol::findReadHome() {
 // Sends 16 bits concurrently to all the commanded pins (bitmask)
 //-----------------------------------------------------------------------------
 uint16_t ParallelProtocol::sendWord( uint16_t w, uint32_t pins ) {
+  printf("Sent: %X on pins %X ", w, pins);
+  //port_.startLogging();
+  uint16_t ret = 0, ret2 = 0;
+  port_.setLowPinSync( SPIWRITE_CLK_PIN );
   for( int i = 0; i < 16; ++i ) {
-    port_.setHighPinSync( SPIWRITE_CLK_PIN );
-    port_.writePinsSync( ((w>>i) & 1) ? pins : 0, pins );
-    delay( 6000 );
+    // data is set on CLK rising edge
+    port_.writePinsSync( (((w>>i) & 1) ? pins : 0) | SPIWRITE_CLK_MSK, pins | SPIWRITE_CLK_MSK );
+    delay( 5000 ); // should be 6us, but when added to other delays it reaches about 20 us
+    // the two samples (read/write) on the CLK falling edge
     port_.setLowPinSync( SPIWRITE_CLK_PIN );
     // Read reply here
-    delay( 6000 );
+    uint8_t bit = ~(port_.readPins( SPIREAD_DATA_MSK ) >> SPIREAD_DATA_PIN) & 1;
+    ret  |= bit << i;
+    ret2 |= bit << (15-i);
+    delay( 5000 ); // should be 6us, but when added to other delays it reaches about 20 us
   }
-  return 0;
+  port_.writePinsSync( 0, pins );
+  //port_.stopLogging();
+  printf( "returned %X or %X\n", ret, ret2 );
+  return ret;
 }
 
 //-----------------------------------------------------------------------------
@@ -70,10 +81,19 @@ uint32_t ParallelProtocol::axisToPins( uint8_t axis ) {
 void ParallelProtocol::startHoming( uint8_t axis ) {
   uint32_t cmd = spi_.startHoming(),
            pins = axisToPins( axis );
-  uint16_t ret1, ret2;
+  uint32_t ret1, ret2, ret;
 
+  cmd = GraniteSPI::graniteDriveCmd( 2, 0 );
   ret1 = sendWord( cmd >> 16,    pins );
   ret2 = sendWord( cmd & 0xFFFF, pins );
+
+  uint8_t  rstat,rcrc, cksum;
+  uint16_t rdata;
+  ret =   ret2 << 16 | ret1;
+  rstat = ret >> 24;
+  rdata =  ((ret>>8)&0xFFFF);
+  rcrc  = ret & 0xFF;
+  printf("Calc CRC: %X Msg CRC: %X\n", GraniteSPI::calcCrc8(rstat,rdata), rcrc );
 }
 
 //-----------------------------------------------------------------------------
