@@ -87,13 +87,16 @@ void ParallelProtocol::startHoming( uint8_t axis ) {
   ret1 = sendWord( cmd >> 16,    pins );
   ret2 = sendWord( cmd & 0xFFFF, pins );
 
+  //ret1 = sendWord( cmd >> 16,    pins );
+  //ret2 = sendWord( cmd & 0xFFFF, pins );
+
   uint8_t  rstat,rcrc, cksum;
   uint16_t rdata;
   ret =   ret2 << 16 | ret1;
   rstat = ret >> 24;
   rdata =  ((ret>>8)&0xFFFF);
   rcrc  = ret & 0xFF;
-  printf("Calc CRC: %X Msg CRC: %X\n", GraniteSPI::calcCrc8(rstat,rdata), rcrc );
+  printf("Ret: %X Calc CRC: %X Msg CRC: %X\n", ret, GraniteSPI::calcCrc8(rstat,rdata), rcrc );
 }
 
 //-----------------------------------------------------------------------------
