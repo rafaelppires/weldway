@@ -75,7 +75,7 @@ void MainWindow::on_executeButton_clicked() {
   MasterCommunicator &mc = MasterCommunicator::getInstance();
   mc.setMaxSpeed( speed_rpm, AXIS_ALL );
 
-  MasterCommunicator::ConcurrentPosCmmd cmd;
+  AbstractProtocol::ConcurrentCmmd cmd;
   cmd[ X_AXIS ] = xpos;
   cmd[ Y_AXIS ] = ypos;
   cmd[ Z_AXIS ] = zpos;

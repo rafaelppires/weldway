@@ -69,10 +69,14 @@ class MasterParallel : public StoppableThread {
 public:
   MasterParallel( uint16_t addr );
   void iteration();
+
   void invertPin(uint8_t pinidx);
+  void invertPinSync(uint8_t pinidx);
+
   void writePins( uint32_t value, uint32_t mask );
-  uint32_t readPins( uint32_t mask );
   void writePinsSync( uint32_t value, uint32_t mask );
+
+  uint32_t readPins( uint32_t mask );
   void setLogging( bool v ) { log_ = v; }
 
 private:
@@ -106,6 +110,7 @@ public:
 
   void sendBatch( std::vector<uint32_t> &, uint32_t mask );
   void invertPin( uint8_t pin_idx );
+  void invertPinSync( uint8_t pin_idx );
   void writePins( uint32_t value, uint32_t mask );
   void startSquareSignal( uint8_t pin_idx, double freq );
   void startReadingPin( uint8_t pin_idx, double period , ReadCallbackType f );

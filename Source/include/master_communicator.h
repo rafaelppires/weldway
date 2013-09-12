@@ -11,6 +11,7 @@
 #define A_AXIS   0x08
 #define B_AXIS   0x10
 #define AXIS_ALL 0x1F
+#define AXIS_CNT 5
 
 //-----------------------------------------------------------------------------
 enum CommType {
@@ -22,11 +23,17 @@ enum CommType {
 //-----------------------------------------------------------------------------
 class AbstractProtocol {
 public:
+  typedef std::map<uint8_t,uint16_t> ConcurrentCmmd; // Tuples <Axis,Cmmd> which are sent to be executed concurrently (usually position and speed)
+
   AbstractProtocol( CommType t ) : type_(t) {}
   virtual void startHoming( uint8_t ) {}
   virtual void moveTo() {}
   virtual void executeTrajectory() {}
-  virtual void finish() {}
+  virtual void finish() {}  
+  virtual void setMaxSpeed( uint16_t, uint8_t ) {}
+  virtual void sendPosCmmds( ConcurrentCmmd & ) {}
+  virtual void sendSpdCmmds( ConcurrentCmmd & ) {}
+
 private:
   CommType type_;
 };
@@ -34,8 +41,6 @@ private:
 //-----------------------------------------------------------------------------
 class MasterCommunicator {
 public:
-  typedef std::map<uint8_t,uint16_t> ConcurrentPosCmmd;
-
   // Singleton
   static MasterCommunicator& getInstance() {
     static MasterCommunicator instance;
@@ -44,8 +49,8 @@ public:
 
   void setupParallelPort( uint16_t addr );
   bool startHoming( uint8_t axis );
-  void setMaxSpeed(uint16_t , uint8_t);
-  void sendPosCmmds( ConcurrentPosCmmd & );
+  bool setMaxSpeed(uint16_t speed_rpm, uint8_t axis);
+  bool sendPosCmmds(AbstractProtocol::ConcurrentCmmd & cmmds);
   
 private:
   MasterCommunicator() {}

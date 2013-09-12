@@ -49,6 +49,12 @@ void MasterParallel::invertPin( uint8_t pinidx ) {
 }
 
 //-----------------------------------------------------------------------------
+void MasterParallel::invertPinSync( uint8_t pinidx ) {
+  if( !validPinIdx(pinidx) ) return;
+  writePinsSync( ~current_, 1 << pinidx );
+}
+
+//-----------------------------------------------------------------------------
 void MasterParallel::writePins(uint32_t value, uint32_t mask ) {
   mask &= wmask;
   {
@@ -177,6 +183,11 @@ std::string ParallelPort::toStdString( char *buf ) {
 //-----------------------------------------------------------------------------
 void ParallelPort::invertPin( uint8_t pin_idx ) {
   master_parallel_.invertPin( pin_idx );
+}
+
+//-----------------------------------------------------------------------------
+void ParallelPort::invertPinSync( uint8_t pin_idx ) {
+  master_parallel_.invertPinSync( pin_idx );
 }
 
 //-----------------------------------------------------------------------------

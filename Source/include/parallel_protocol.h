@@ -11,7 +11,7 @@
 #define SPIWRITE_CLK_MSK  0x4     // SPI clock mask
 
 #define SPIREAD_CLK_PIN   17      // SPI Read clock pin
-#define SPIREAD_HOME_MSK  (1<<13) // SPI Read home pin mask
+#define SPIREAD_HOME_MSK  0x2000  // SPI Read home pin mask
 
 #define SPIREAD_DATA_PIN  15      // SPI Read data pin
 #define SPIREAD_DATA_MSK  0x8000  // SPI Read data pin mask
@@ -23,11 +23,15 @@ public:
   virtual void moveTo();
   virtual void executeTrajectory();
   virtual void finish();
+  virtual void setMaxSpeed(uint16_t spd, uint8_t axis);
+  virtual void sendPosCmmds( ConcurrentCmmd & );
+  virtual void sendSpdCmmds( ConcurrentCmmd & );
 
 private:
+  uint32_t sendRawCommand( uint32_t cmd, uint32_t pins );
   bool findReadHome();
   void emergencyCallback( bool );
-  uint16_t sendWord( uint16_t w, uint32_t pins );
+  uint16_t sendWord(uint16_t w[], uint32_t pins );
   uint32_t axisToPins( uint8_t axis );
   void delay( uint16_t ns );
 

@@ -19,13 +19,17 @@ bool MasterCommunicator::startHoming( uint8_t axis ) {
 }
 
 //-----------------------------------------------------------------------------
-void MasterCommunicator::setMaxSpeed( uint16_t, uint8_t ) {
-
+bool MasterCommunicator::setMaxSpeed( uint16_t speed_rpm, uint8_t axis ) {
+  if( !comm_ ) return false;
+  comm_->setMaxSpeed( speed_rpm, axis );
+  return true;
 }
 
 //-----------------------------------------------------------------------------
-void MasterCommunicator::sendPosCmmds( ConcurrentPosCmmd & ) {
-
+bool MasterCommunicator::sendPosCmmds( AbstractProtocol::ConcurrentCmmd &cmmds ) {
+  if( !comm_ ) return false;
+  comm_->sendPosCmmds( cmmds );
+  return true;
 }
 
 //-----------------------------------------------------------------------------
