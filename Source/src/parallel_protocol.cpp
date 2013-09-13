@@ -33,6 +33,16 @@ bool ParallelProtocol::findReadHome() {
 //-----------------------------------------------------------------------------
 // Sends 16 bits concurrently to all the commanded pins (bitmask)
 //-----------------------------------------------------------------------------
+uint16_t ParallelProtocol::sendWord( uint16_t w, uint32_t pins ) {
+  uint16_t cmmds[ AXIS_CNT ];
+  for( int i = 0; i < AXIS_CNT; ++i )
+    cmmds[i] = w;
+  return sendWord( cmmds, pins );
+}
+
+//-----------------------------------------------------------------------------
+// Sends concurrently 16bit commands whithin "w" vector
+//-----------------------------------------------------------------------------
 uint16_t ParallelProtocol::sendWord( uint16_t w[AXIS_CNT], uint32_t pins ) {
   printf("Sent: %X on pins %X ", w, pins);
   //port_.startLogging();
@@ -92,8 +102,8 @@ uint32_t ParallelProtocol::axisToPins( uint8_t axis ) {
 //-----------------------------------------------------------------------------
 uint32_t ParallelProtocol::sendRawCommand( uint32_t cmd, uint32_t pins ) {
   uint32_t ret1, ret2;
-  ret1 = sendWord( (uint16_t) cmd >> 16,    pins );
-  ret2 = sendWord( (uint16_t) cmd & 0xFFFF, pins );
+  ret1 = sendWord( cmd >> 16,    pins );
+  ret2 = sendWord( cmd & 0xFFFF, pins );
   return ret2 << 16 | ret1;
 }
 

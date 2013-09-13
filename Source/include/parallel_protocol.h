@@ -32,6 +32,7 @@ private:
   bool findReadHome();
   void emergencyCallback( bool );
   uint16_t sendWord(uint16_t w[], uint32_t pins );
+  uint16_t sendWord(uint16_t w, uint32_t pins );
   uint32_t axisToPins( uint8_t axis );
   void delay( uint16_t ns );
 
