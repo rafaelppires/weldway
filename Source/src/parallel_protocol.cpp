@@ -33,7 +33,7 @@ bool ParallelProtocol::findReadHome() {
 //-----------------------------------------------------------------------------
 // Sends 16 bits concurrently to all the commanded pins (bitmask)
 //-----------------------------------------------------------------------------
-uint16_t ParallelProtocol::sendWord( uint16_t w, uint32_t pins ) {
+AbstractProtocol::ConcurrentCmmd ParallelProtocol::sendWord( uint16_t w, uint32_t pins ) {
   uint16_t cmmds[ AXIS_CNT ];
   for( int i = 0; i < AXIS_CNT; ++i )
     cmmds[i] = w;
@@ -43,11 +43,11 @@ uint16_t ParallelProtocol::sendWord( uint16_t w, uint32_t pins ) {
 //-----------------------------------------------------------------------------
 // Sends concurrently 16bit commands whithin "w" vector
 //-----------------------------------------------------------------------------
-uint16_t ParallelProtocol::sendWord( uint16_t w[AXIS_CNT], uint32_t pins ) {
+AbstractProtocol::ConcurrentCmmd ParallelProtocol::sendWord( uint16_t w[AXIS_CNT], uint32_t pins ) {
+  ConcurrentCmmd ret;
   printf("Sent: %X on pins %X ", w, pins);
   //port_.startLogging();
   uint32_t word = 0;
-  uint16_t ret = 0;
   port_.setLowPinSync( SPIWRITE_CLK_PIN );
   for( int i = 0; i < 16; ++i ) {
 
@@ -65,13 +65,16 @@ uint16_t ParallelProtocol::sendWord( uint16_t w[AXIS_CNT], uint32_t pins ) {
     // the two samples (read/write) on the CLK falling edge
     port_.setLowPinSync( SPIWRITE_CLK_PIN );
     // Read reply here
+#if SINGLEDRIVE_CONNECT
     uint8_t bit = ~(port_.readPins( SPIREAD_DATA_MSK ) >> SPIREAD_DATA_PIN) & 1;
-    ret  |= bit << i;
+    if( ret.find(X_AXIS) == ret.end() ) ret[X_AXIS] = 0;
+    ret[X_AXIS]  |= bit << i;
+#else // Control Board
+#endif
     delay( 5000 ); // should be 6us, but when added to other delays it reaches about 20 us
   }
   port_.writePinsSync( 0, pins );
   //port_.stopLogging();
-  printf( "returned %X\n", ret );
   return ret;
 }
 
@@ -100,23 +103,36 @@ uint32_t ParallelProtocol::axisToPins( uint8_t axis ) {
 }
 
 //-----------------------------------------------------------------------------
-uint32_t ParallelProtocol::sendRawCommand( uint32_t cmd, uint32_t pins ) {
-  uint32_t ret1, ret2;
+uint8_t ParallelProtocol::axisMask( const ConcurrentCmmd &cmmds ) {
+  uint8_t ret;
+  ConcurrentCmmd::const_iterator it = cmmds.begin(), end = cmmds.end();
+  for(; it != end; ++it )
+    ret |= it->first;
+  return ret;
+}
+
+//-----------------------------------------------------------------------------
+RetAxis ParallelProtocol::sendRawCommand( uint32_t cmd, uint32_t pins ) {
+  RetAxis ret;
+  ConcurrentCmmd ret1, ret2;
   ret1 = sendWord( cmd >> 16,    pins );
   ret2 = sendWord( cmd & 0xFFFF, pins );
-  return ret2 << 16 | ret1;
+
+  ConcurrentCmmd::iterator it = ret1.begin(), end = ret1.end();
+  for(; it != end; ++it) {
+    uint8_t axis = it->first;
+    uint32_t r = ret2[axis] << 16 | ret1[axis];
+    ret[ axis ].stat = r >> 24;
+    ret[ axis ].data = (r >> 8) & 0xFFFF;
+    ret[ axis ].crc_match  = GraniteSPI::calcCrc8(ret[axis].stat,ret[axis].data) == (r & 0xFF);
+  }
+
+  return ret;
 }
 
 //-----------------------------------------------------------------------------
 void ParallelProtocol::startHoming( uint8_t axis ) {
-  uint32_t ret = sendRawCommand( spi_.startHoming(), axisToPins( axis ) );
-
-  uint8_t  rstat,rcrc, cksum;
-  uint16_t rdata;
-  rstat = ret >> 24;
-  rdata =  ((ret>>8)&0xFFFF);
-  rcrc  = ret & 0xFF;
-  printf("Ret: %X Calc CRC: %X Msg CRC: %X\n", ret, GraniteSPI::calcCrc8(rstat,rdata), rcrc );
+  sendRawCommand( spi_.startHoming(), axisToPins( axis ) );
 }
 
 //-----------------------------------------------------------------------------
@@ -129,7 +145,26 @@ void ParallelProtocol::setMaxSpeed( uint16_t spd, uint8_t axis ) {
 
 //-----------------------------------------------------------------------------
 void ParallelProtocol::sendPosCmmds( ConcurrentCmmd &cmmds ) {
+  uint32_t pins = axisToPins( axisMask( cmmds ) );
+  ConcurrentCmmd ret = getParam( ControlMode, pins );
+}
 
+//-----------------------------------------------------------------------------
+AbstractProtocol::ConcurrentCmmd ParallelProtocol::getParam( GraniteParams gp, uint32_t pins ) {
+  ConcurrentCmmd ret;
+  uint8_t i = (uint8_t)gp;
+  sendRawCommand( spi_.getParam(i), pins );
+  sendRawCommand( spi_.nope(), pins );
+
+  RetAxis rraw = sendRawCommand( spi_.nope(), pins ); // this acttually returns the value
+  RetAxis::iterator it = rraw.begin(), end = rraw.end();
+  for(; it != end; ++it )
+    if( it->second.crc_match )
+      ret[ it->first ] = it->second.data;
+    else
+      std::cerr << "CRC on axis " << int(it->first) << " did not match\n";
+
+  return ret;
 }
 
 //-----------------------------------------------------------------------------

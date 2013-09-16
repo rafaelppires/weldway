@@ -83,6 +83,13 @@ uint64_t GraniteSPI::graniteAbsTarget( uint32_t param ) {
 }
 
 //-----------------------------------------------------------------------------
+uint32_t GraniteSPI::getParam( uint8_t i ) {
+  if( !smParams[i].specialHandling )
+    return graniteDriveCmd( CMD_GET_PARAM, smParams[i].paramNum );
+  return 0;
+}
+
+//-----------------------------------------------------------------------------
 uint32_t GraniteSPI::startHoming() {
   return graniteDriveCmd( CMD_HOMING, 1 ); // 1 = start homing
 }
@@ -90,6 +97,11 @@ uint32_t GraniteSPI::startHoming() {
 //-----------------------------------------------------------------------------
 uint32_t GraniteSPI::clearFaults() {
   return graniteDriveCmd( CMD_CLR_FAULTBITS, 0xffff );
+}
+
+//-----------------------------------------------------------------------------
+uint32_t GraniteSPI::nope() {
+  return graniteDriveCmd( CMD_NOP, 0 );
 }
 
 //-----------------------------------------------------------------------------

@@ -16,6 +16,30 @@
 #define SPIREAD_DATA_PIN  15      // SPI Read data pin
 #define SPIREAD_DATA_MSK  0x8000  // SPI Read data pin mask
 
+enum GraniteParams {
+  VelocityLimit,
+  AccelerationLimit,
+  ControlMode,
+  CurrentLimitCont,
+  CurrentLimitPeak,
+  WatchdogTimeout,
+  FaultBits,
+  StatusBits,
+  ReturnDataPayloadType,
+  SimpleStatus,
+  FollowingError,
+  ActualTorque,
+  ReturnDataPayload
+};
+
+struct RetRawCmmd {
+  uint8_t  stat;
+  uint16_t data;
+  uint8_t  crc_match;
+};
+
+typedef std::map< uint8_t, RetRawCmmd > RetAxis;
+
 class ParallelProtocol : public AbstractProtocol {
 public:
   ParallelProtocol( uint16_t addr );
@@ -28,11 +52,13 @@ public:
   virtual void sendSpdCmmds( ConcurrentCmmd & );
 
 private:
-  uint32_t sendRawCommand( uint32_t cmd, uint32_t pins );
+  uint8_t axisMask( const ConcurrentCmmd &cmmds );
+  RetAxis sendRawCommand( uint32_t cmd, uint32_t pins );
+  ConcurrentCmmd getParam(GraniteParams , uint32_t pins);
   bool findReadHome();
   void emergencyCallback( bool );
-  uint16_t sendWord(uint16_t w[], uint32_t pins );
-  uint16_t sendWord(uint16_t w, uint32_t pins );
+  ConcurrentCmmd sendWord(uint16_t w[], uint32_t pins );
+  ConcurrentCmmd sendWord(uint16_t w, uint32_t pins );
   uint32_t axisToPins( uint8_t axis );
   void delay( uint16_t ns );
 
