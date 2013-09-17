@@ -20,16 +20,10 @@ int GraniteSPI::parameterIndex( std::string paramname ) {
 }
 
 //-----------------------------------------------------------------------------
-uint64_t GraniteSPI::graniteSetParam( const char *paramname, uint32_t value ) {
-  uint32_t cmd1, cmd2;
+uint64_t GraniteSPI::setParamCmmd( uint8_t i, uint32_t value ) {
   uint16_t paramnum = 0;
-
-  int i = 0;
   uint32_t scaledvalue;
-
-  //look in param table
-  i = parameterIndex(paramname);
-  if( i<0 ) return SM_ERR_PARAMETER; //not found
+  uint64_t cmd1, cmd2;
 
   paramnum = smParams[i].paramNum;
   scaledvalue = value * smParams[i].scalerMultiplier / smParams[i].scalerDivider; //scale
@@ -38,6 +32,28 @@ uint64_t GraniteSPI::graniteSetParam( const char *paramname, uint32_t value ) {
   cmd2 = graniteDriveCmd( CMD_SET_PARAM, paramnum );
 
   return (cmd1 << 32) | cmd2;
+}
+
+//-----------------------------------------------------------------------------
+uint64_t GraniteSPI::graniteSetParam( const char *paramname, uint32_t value ) {
+  uint32_t cmd1, cmd2;
+
+  int i = 0;
+  uint32_t scaledvalue;
+
+  //look in param table
+  i = parameterIndex(paramname);
+  if( i<0 ) return SM_ERR_PARAMETER; //not found
+  return setParamCmmd( i, value );
+}
+
+//-----------------------------------------------------------------------------
+uint64_t GraniteSPI::graniteSetParam( GraniteParams p, uint32_t value ) {
+  uint32_t cmd1, cmd2;
+  uint16_t paramnum = 0;
+
+  int i = (int)p;
+  return setParamCmmd( i, value );
 }
 
 //-----------------------------------------------------------------------------
@@ -83,10 +99,11 @@ uint64_t GraniteSPI::graniteAbsTarget( uint32_t param ) {
 }
 
 //-----------------------------------------------------------------------------
-uint32_t GraniteSPI::getParam( uint8_t i ) {
+uint32_t GraniteSPI::getParam( GraniteParams p ) {
+  int i = (int)p;
   if( !smParams[i].specialHandling )
     return graniteDriveCmd( CMD_GET_PARAM, smParams[i].paramNum );
-  return 0;
+  return nope();
 }
 
 //-----------------------------------------------------------------------------

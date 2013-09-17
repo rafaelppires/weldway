@@ -99,7 +99,7 @@ uint32_t ParallelProtocol::axisToPins( uint8_t axis ) {
   if( axis & Z_AXIS ) ret |= 1 << 5;
   if( axis & A_AXIS ) ret |= 1 << 6;
   if( axis & B_AXIS ) ret |= 1 << 7;
-  return ret;
+  return ret & 0x3F8; // Pins 3 to 9
 }
 
 //-----------------------------------------------------------------------------
@@ -147,13 +147,37 @@ void ParallelProtocol::setMaxSpeed( uint16_t spd, uint8_t axis ) {
 void ParallelProtocol::sendPosCmmds( ConcurrentCmmd &cmmds ) {
   uint32_t pins = axisToPins( axisMask( cmmds ) );
   ConcurrentCmmd ret = getParam( ControlMode, pins );
+  setParam( ControlMode, CONTROLMODE_POSITON, pins ); // position mode
+}
+
+//-----------------------------------------------------------------------------
+RetAxis ParallelProtocol::sendRawCommand64(uint64_t cmmd, uint32_t pins ) {
+  sendRawCommand( cmmd >> 32, pins );
+  return sendRawCommand( cmmd & 0xFFFFFFFF, pins );
+}
+
+//-----------------------------------------------------------------------------
+AbstractProtocol::ConcurrentCmmd ParallelProtocol::setParam( GraniteParams gp, uint32_t value, uint32_t pins ) {
+  ConcurrentCmmd ret;
+  sendRawCommand( spi_.getParam(gp), pins );
+  sendRawCommand( spi_.nope(), pins );
+
+  RetAxis rraw = sendRawCommand64( spi_.graniteSetParam(gp, value), pins ); // this acttually returns the value
+  RetAxis::iterator it = rraw.begin(), end = rraw.end();
+  for(; it != end; ++it )
+    if( it->second.crc_match )
+      ret[ it->first ] = it->second.data;
+    else
+      std::cerr << "CRC on axis " << int(it->first) << " did not match\n";
+
+  return ret;
 }
 
 //-----------------------------------------------------------------------------
 AbstractProtocol::ConcurrentCmmd ParallelProtocol::getParam( GraniteParams gp, uint32_t pins ) {
   ConcurrentCmmd ret;
-  uint8_t i = (uint8_t)gp;
-  sendRawCommand( spi_.getParam(i), pins );
+
+  sendRawCommand( spi_.getParam(gp), pins );
   sendRawCommand( spi_.nope(), pins );
 
   RetAxis rraw = sendRawCommand( spi_.nope(), pins ); // this acttually returns the value

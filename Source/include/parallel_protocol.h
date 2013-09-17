@@ -16,22 +16,6 @@
 #define SPIREAD_DATA_PIN  15      // SPI Read data pin
 #define SPIREAD_DATA_MSK  0x8000  // SPI Read data pin mask
 
-enum GraniteParams {
-  VelocityLimit,
-  AccelerationLimit,
-  ControlMode,
-  CurrentLimitCont,
-  CurrentLimitPeak,
-  WatchdogTimeout,
-  FaultBits,
-  StatusBits,
-  ReturnDataPayloadType,
-  SimpleStatus,
-  FollowingError,
-  ActualTorque,
-  ReturnDataPayload
-};
-
 struct RetRawCmmd {
   uint8_t  stat;
   uint16_t data;
@@ -52,6 +36,8 @@ public:
   virtual void sendSpdCmmds( ConcurrentCmmd & );
 
 private:
+  RetAxis sendRawCommand64( uint64_t cmmd, uint32_t pins );
+  ConcurrentCmmd setParam( GraniteParams gp, uint32_t value, uint32_t pins );
   uint8_t axisMask( const ConcurrentCmmd &cmmds );
   RetAxis sendRawCommand( uint32_t cmd, uint32_t pins );
   ConcurrentCmmd getParam(GraniteParams , uint32_t pins);
