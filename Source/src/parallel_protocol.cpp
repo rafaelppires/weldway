@@ -112,11 +112,32 @@ uint8_t ParallelProtocol::axisMask( const ConcurrentCmmd &cmmds ) {
 }
 
 //-----------------------------------------------------------------------------
-RetAxis ParallelProtocol::sendRawCommand( uint32_t cmd, uint32_t pins ) {
+RetAxis ParallelProtocol::sendRawCommand32( uint32_t cmd, uint32_t pins ) {
+  ConcurrentCmmd32 cmmds;
+  for( int i = 0; i < AXIS_CNT; ++i )
+    if( pins & (1<<(3+i)) )
+      cmmds[1<<i] = cmd;
+  return sendRawCommand32(cmmds);
+}
+
+//-----------------------------------------------------------------------------
+RetAxis ParallelProtocol::sendRawCommand32( ConcurrentCmmd32 &cmmds ) {
   RetAxis ret;
+  uint16_t w1[AXIS_CNT], w2[AXIS_CNT];
+  uint32_t pins = 0;
+  for( int i = 0; i < AXIS_CNT; ++i ) {
+    uint8_t axis = 1<<i;
+    if( cmmds.find( axis ) != cmmds.end() ) {
+      w1[i] = cmmds[axis] >> 16;
+      w2[i] = cmmds[axis] & 0xFFFF;
+      pins |= 1<<(3+i);
+    } else
+      w1[i] = w2[i] = 0;
+  }
+
   ConcurrentCmmd ret1, ret2;
-  ret1 = sendWord( cmd >> 16,    pins );
-  ret2 = sendWord( cmd & 0xFFFF, pins );
+  ret1 = sendWord( w1, pins );
+  ret2 = sendWord( w2, pins );
 
   ConcurrentCmmd::iterator it = ret1.begin(), end = ret1.end();
   for(; it != end; ++it) {
@@ -148,12 +169,35 @@ void ParallelProtocol::sendPosCmmds( ConcurrentCmmd &cmmds ) {
   uint32_t pins = axisToPins( axisMask( cmmds ) );
   ConcurrentCmmd ret = getParam( ControlMode, pins );
   setParam( ControlMode, CONTROLMODE_POSITON, pins ); // position mode
+
+  ConcurrentCmmd64 pos_cmmds;
+  ConcurrentCmmd::iterator it = cmmds.begin(), end = cmmds.end();
+  for(; it != end; ++it)
+    pos_cmmds[ it->first ] = spi_.graniteAbsTarget( it->second );
+  sendRawCommand64( pos_cmmds );
 }
 
 //-----------------------------------------------------------------------------
-RetAxis ParallelProtocol::sendRawCommand64(uint64_t cmmd, uint32_t pins ) {
-  sendRawCommand( cmmd >> 32, pins );
-  return sendRawCommand( cmmd & 0xFFFFFFFF, pins );
+// Sends 64 bit commands to a number of drivers concurrently
+//-----------------------------------------------------------------------------
+RetAxis ParallelProtocol::sendRawCommand64( ConcurrentCmmd64 cmmds ) {
+  ConcurrentCmmd32 cmmds1, cmmds2;
+  ConcurrentCmmd64::iterator it = cmmds.begin(), end = cmmds.end();
+  for(; it != end; ++it) {
+    cmmds1[ it->first ] = it->second >> 32;
+    cmmds2[ it->first ] = it->second & 0xFFFFFFFF;
+  }
+
+  sendRawCommand32( cmmds1 );
+  return sendRawCommand32( cmmds2 );
+}
+
+//-----------------------------------------------------------------------------
+// Sends one single 64 bit command to a number of drivers concurrently
+//-----------------------------------------------------------------------------
+RetAxis ParallelProtocol::sendRawCommand64( uint64_t cmmd, uint32_t pins ) {
+  sendRawCommand32( cmmd >> 32, pins );
+  return sendRawCommand32( cmmd & 0xFFFFFFFF, pins );
 }
 
 //-----------------------------------------------------------------------------

@@ -31,11 +31,12 @@ public:
   virtual void moveTo();
   virtual void executeTrajectory();
   virtual void finish();
-  virtual void setMaxSpeed(uint16_t spd, uint8_t axis);
+  virtual void setMaxSpeed( uint16_t spd, uint8_t axis );
   virtual void sendPosCmmds( ConcurrentCmmd & );
   virtual void sendSpdCmmds( ConcurrentCmmd & );
 
 private:
+  RetAxis sendRawCommand64( ConcurrentCmmd64 cmmds );
   RetAxis sendRawCommand64( uint64_t cmmd, uint32_t pins );
   ConcurrentCmmd setParam( GraniteParams gp, uint32_t value, uint32_t pins );
   uint8_t axisMask( const ConcurrentCmmd &cmmds );
