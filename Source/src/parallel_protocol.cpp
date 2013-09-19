@@ -43,9 +43,10 @@ AbstractProtocol::ConcurrentCmmd ParallelProtocol::sendWord( uint16_t w, uint32_
 //-----------------------------------------------------------------------------
 // Sends concurrently 16bit commands whithin "w" vector
 //-----------------------------------------------------------------------------
+#define SINGLEDRIVE_CONNECT 1
 AbstractProtocol::ConcurrentCmmd ParallelProtocol::sendWord( uint16_t w[AXIS_CNT], uint32_t pins ) {
   ConcurrentCmmd ret;
-  printf("Sent: %X on pins %X ", w, pins);
+  printf("Sent: %X on pins %X ", w[0], pins);
   //port_.startLogging();
   uint32_t word = 0;
   port_.setLowPinSync( SPIWRITE_CLK_PIN );
@@ -73,6 +74,7 @@ AbstractProtocol::ConcurrentCmmd ParallelProtocol::sendWord( uint16_t w[AXIS_CNT
 #endif
     delay( 5000 ); // should be 6us, but when added to other delays it reaches about 20 us
   }
+  printf("ret %X\n", ret[X_AXIS]);
   port_.writePinsSync( 0, pins );
   //port_.stopLogging();
   return ret;
@@ -112,6 +114,32 @@ uint8_t ParallelProtocol::axisMask( const ConcurrentCmmd &cmmds ) {
 }
 
 //-----------------------------------------------------------------------------
+// Sends one single 64 bit command to a number of drivers concurrently
+//-----------------------------------------------------------------------------
+RetAxis ParallelProtocol::sendRawCommand64( uint64_t cmmd, uint32_t pins ) {
+  sendRawCommand32( cmmd >> 32, pins );
+  return sendRawCommand32( cmmd & 0xFFFFFFFF, pins );
+}
+
+//-----------------------------------------------------------------------------
+// Sends 64 bit commands to a number of drivers concurrently
+//-----------------------------------------------------------------------------
+RetAxis ParallelProtocol::sendRawCommand64( ConcurrentCmmd64 cmmds ) {
+  ConcurrentCmmd32 cmmds1, cmmds2;
+  ConcurrentCmmd64::iterator it = cmmds.begin(), end = cmmds.end();
+  for(; it != end; ++it) {
+    printf("<%X,%llX> ", it->first, it->second );
+    cmmds1[ it->first ] = it->second >> 32;
+    cmmds2[ it->first ] = it->second & 0xFFFFFFFF;
+  }
+  printf("\n");
+  fflush( stdout );
+
+  sendRawCommand32( cmmds1 );
+  return sendRawCommand32( cmmds2 );
+}
+
+//-----------------------------------------------------------------------------
 RetAxis ParallelProtocol::sendRawCommand32( uint32_t cmd, uint32_t pins ) {
   ConcurrentCmmd32 cmmds;
   for( int i = 0; i < AXIS_CNT; ++i )
@@ -146,6 +174,7 @@ RetAxis ParallelProtocol::sendRawCommand32( ConcurrentCmmd32 &cmmds ) {
     ret[ axis ].stat = r >> 24;
     ret[ axis ].data = (r >> 8) & 0xFFFF;
     ret[ axis ].crc_match  = GraniteSPI::calcCrc8(ret[axis].stat,ret[axis].data) == (r & 0xFF);
+    if( !ret[ axis ].crc_match ) { fprintf( stderr, "axis %X CRC not match\n", axis ); fflush(stderr); }
   }
 
   return ret;
@@ -153,7 +182,7 @@ RetAxis ParallelProtocol::sendRawCommand32( ConcurrentCmmd32 &cmmds ) {
 
 //-----------------------------------------------------------------------------
 void ParallelProtocol::startHoming( uint8_t axis ) {
-  sendRawCommand( spi_.startHoming(), axisToPins( axis ) );
+  sendRawCommand32( spi_.startHoming(), axisToPins( axis ) );
 }
 
 //-----------------------------------------------------------------------------
@@ -167,44 +196,28 @@ void ParallelProtocol::setMaxSpeed( uint16_t spd, uint8_t axis ) {
 //-----------------------------------------------------------------------------
 void ParallelProtocol::sendPosCmmds( ConcurrentCmmd &cmmds ) {
   uint32_t pins = axisToPins( axisMask( cmmds ) );
-  ConcurrentCmmd ret = getParam( ControlMode, pins );
+  ConcurrentCmmd ret = getParam( VelocityLimit, pins );
+  ConcurrentCmmd::iterator kt = ret.begin(), kend = ret.end();
+  for(; kt != kend; ++kt )
+    printf("[%X] = [%X]\n", kt->first, kt->second );
+
   setParam( ControlMode, CONTROLMODE_POSITON, pins ); // position mode
 
   ConcurrentCmmd64 pos_cmmds;
   ConcurrentCmmd::iterator it = cmmds.begin(), end = cmmds.end();
-  for(; it != end; ++it)
-    pos_cmmds[ it->first ] = spi_.graniteAbsTarget( it->second );
-  sendRawCommand64( pos_cmmds );
-}
-
-//-----------------------------------------------------------------------------
-// Sends 64 bit commands to a number of drivers concurrently
-//-----------------------------------------------------------------------------
-RetAxis ParallelProtocol::sendRawCommand64( ConcurrentCmmd64 cmmds ) {
-  ConcurrentCmmd32 cmmds1, cmmds2;
-  ConcurrentCmmd64::iterator it = cmmds.begin(), end = cmmds.end();
   for(; it != end; ++it) {
-    cmmds1[ it->first ] = it->second >> 32;
-    cmmds2[ it->first ] = it->second & 0xFFFFFFFF;
+    pos_cmmds[ it->first ] = spi_.graniteAbsTarget( it->second );
   }
 
-  sendRawCommand32( cmmds1 );
-  return sendRawCommand32( cmmds2 );
-}
-
-//-----------------------------------------------------------------------------
-// Sends one single 64 bit command to a number of drivers concurrently
-//-----------------------------------------------------------------------------
-RetAxis ParallelProtocol::sendRawCommand64( uint64_t cmmd, uint32_t pins ) {
-  sendRawCommand32( cmmd >> 32, pins );
-  return sendRawCommand32( cmmd & 0xFFFFFFFF, pins );
+  RetAxis rret = sendRawCommand64( pos_cmmds );
+  RetAxis::iterator jt = rret.begin(), jend = rret.end();
+  for(; jt != jend; ++jt)
+    printf("axis %X returned %X CRC match %X\n", jt->first, jt->second.data, jt->second.crc_match );
 }
 
 //-----------------------------------------------------------------------------
 AbstractProtocol::ConcurrentCmmd ParallelProtocol::setParam( GraniteParams gp, uint32_t value, uint32_t pins ) {
   ConcurrentCmmd ret;
-  sendRawCommand( spi_.getParam(gp), pins );
-  sendRawCommand( spi_.nope(), pins );
 
   RetAxis rraw = sendRawCommand64( spi_.graniteSetParam(gp, value), pins ); // this acttually returns the value
   RetAxis::iterator it = rraw.begin(), end = rraw.end();
@@ -212,25 +225,25 @@ AbstractProtocol::ConcurrentCmmd ParallelProtocol::setParam( GraniteParams gp, u
     if( it->second.crc_match )
       ret[ it->first ] = it->second.data;
     else
-      std::cerr << "CRC on axis " << int(it->first) << " did not match\n";
+      std::cerr << "[set] CRC on axis " << int(it->first) << " did not match\n";
 
   return ret;
 }
+
 
 //-----------------------------------------------------------------------------
 AbstractProtocol::ConcurrentCmmd ParallelProtocol::getParam( GraniteParams gp, uint32_t pins ) {
   ConcurrentCmmd ret;
 
-  sendRawCommand( spi_.getParam(gp), pins );
-  sendRawCommand( spi_.nope(), pins );
-
-  RetAxis rraw = sendRawCommand( spi_.nope(), pins ); // this acttually returns the value
+  sendRawCommand32( spi_.getParam(gp), pins );
+  sendRawCommand32( spi_.nope(), pins );
+  RetAxis rraw = sendRawCommand32( spi_.nope(), pins ); // this acttually returns the value
   RetAxis::iterator it = rraw.begin(), end = rraw.end();
   for(; it != end; ++it )
     if( it->second.crc_match )
       ret[ it->first ] = it->second.data;
     else
-      std::cerr << "CRC on axis " << int(it->first) << " did not match\n";
+      std::cerr << "[get] CRC on axis " << int(it->first) << " did not match\n";
 
   return ret;
 }

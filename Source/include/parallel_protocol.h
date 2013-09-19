@@ -36,11 +36,14 @@ public:
   virtual void sendSpdCmmds( ConcurrentCmmd & );
 
 private:
-  RetAxis sendRawCommand64( ConcurrentCmmd64 cmmds );
+  RetAxis sendRawCommand32( uint32_t cmd, uint32_t pins ); // same command to pins in the mask "pins"
+  RetAxis sendRawCommand32( ConcurrentCmmd32 &cmmds );     // different commands
+
   RetAxis sendRawCommand64( uint64_t cmmd, uint32_t pins );
+  RetAxis sendRawCommand64( ConcurrentCmmd64 cmmds );
+
   ConcurrentCmmd setParam( GraniteParams gp, uint32_t value, uint32_t pins );
-  uint8_t axisMask( const ConcurrentCmmd &cmmds );
-  RetAxis sendRawCommand( uint32_t cmd, uint32_t pins );
+  uint8_t axisMask( const ConcurrentCmmd &cmmds ); 
   ConcurrentCmmd getParam(GraniteParams , uint32_t pins);
   bool findReadHome();
   void emergencyCallback( bool );

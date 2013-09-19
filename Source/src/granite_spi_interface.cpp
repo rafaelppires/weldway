@@ -92,7 +92,7 @@ uint32_t GraniteSPI::graniteDriveCmd( uint16_t cmd, uint16_t data ) {
 
 //-----------------------------------------------------------------------------
 uint64_t GraniteSPI::graniteAbsTarget( uint32_t param ) {
-  uint32_t cmd1, cmd2;
+  uint64_t cmd1, cmd2;
   cmd1 = graniteDriveCmd( CMD_UPLOAD_PARAM, param&0xffff );
   cmd2 = graniteDriveCmd( CMD_ABS32_TARGET_VALUE, param>>16 );
   return (cmd1 << 32) | cmd2;
