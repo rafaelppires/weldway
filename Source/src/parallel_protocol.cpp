@@ -250,7 +250,13 @@ AbstractProtocol::ConcurrentCmmd ParallelProtocol::getParam( GraniteParams gp, u
 
 //-----------------------------------------------------------------------------
 void ParallelProtocol::sendSpdCmmds( ConcurrentCmmd &cmmds ) {
+  ConcurrentCmmd64 cmmd;
 
+  ConcurrentCmmd::iterator it = cmmds.begin(), end = cmmds.end();
+  for(; it != end; ++it )
+    cmmd[ it->first ] = spi_.graniteSetParam( VelocityLimit, it->second );
+
+  sendRawCommand64( cmmd );
 }
 
 //-----------------------------------------------------------------------------
