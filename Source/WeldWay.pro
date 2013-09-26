@@ -29,7 +29,9 @@ HEADERS += ui/mainwindow.h \
            include/granite/vsd_cmd.h \
            include/granite/simplemotion_private.h \
            include/ftdi/ftd2xx.h \
-           include/granite_spi_interface.h
+           include/granite_spi_interface.h \
+           include/trajectory.h \
+           include/switch_back.h
 
 FORMS    += ui/mainwindow.ui \
             ui/formconnection.ui

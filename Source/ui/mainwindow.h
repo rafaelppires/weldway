@@ -32,7 +32,8 @@ private:
   Ui::MainWindow *ui;
   QLabel *ok_label_, *nok_label_;
   SimpleMotion *xsmotion, *ysmotion, *zsmotion;
-  SliderSpin *speedSliderSpin, *xposSliderSpin, *yposSliderSpin, *zposSliderSpin;
+  SliderSpin *speedSliderSpin, *xposSliderSpin, *yposSliderSpin, *zposSliderSpin,
+             *fwSpeedSliderSpin, *fwLengthSliderSpin, *bwSpeedSliderSpin, *bwLengthSliderSpin;
   SpeedConv spdconv_;
   PositionConv xposconv_, yposconv_, zposconv_;
 };

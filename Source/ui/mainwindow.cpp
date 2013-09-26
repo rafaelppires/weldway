@@ -3,6 +3,7 @@
 #include <iostream>
 #include <QLineEdit>
 #include <formconnection.h>
+#include <switch_back.h>
 
 //-----------------------------------------------------------------------------
 MainWindow::MainWindow(QWidget *parent) :
@@ -20,6 +21,11 @@ MainWindow::MainWindow(QWidget *parent) :
   yposSliderSpin  = new SliderSpin( this, ui->ypositionSlider, ui->ypositionSpinBox, ui->yposUnitComboBox, yposconv_ );
   zposSliderSpin  = new SliderSpin( this, ui->zpositionSlider, ui->zpositionSpinBox, ui->zposUnitComboBox, zposconv_ );
 
+  fwSpeedSliderSpin  = new SliderSpin( this, ui->fwSpeedSlider, ui->fwSpeedSpinBox, ui->fwSpeedUnitComboBox, spdconv_ );
+  fwLengthSliderSpin = new SliderSpin( this, ui->fwLengthSlider, ui->fwLengthSpinBox, ui->fwLengthUnitComboBox, xposconv_ );
+  bwSpeedSliderSpin  = new SliderSpin( this, ui->bwSpeedSlider, ui->bwSpeedSpinBox, ui->bwSpeedUnitComboBox, spdconv_ );
+  bwLengthSliderSpin = new SliderSpin( this, ui->bwLengthSlider, ui->bwLengthSpinBox, ui->bwLengthUnitComboBox, xposconv_ );
+
   //ok_label_  = new QLabel( ui->statusbar );
   nok_label_ = new QLabel( statusBar() );
   nok_label_->setObjectName(QStringLiteral("nok_label_"));
@@ -32,6 +38,20 @@ MainWindow::MainWindow(QWidget *parent) :
 //-----------------------------------------------------------------------------
 MainWindow::~MainWindow() {
   delete ui;
+
+  delete xsmotion;
+  delete ysmotion;
+  delete zsmotion;
+
+  delete speedSliderSpin;
+  delete xposSliderSpin;
+  delete yposSliderSpin;
+  delete zposSliderSpin;
+
+  delete fwSpeedSliderSpin;
+  delete fwLengthSliderSpin;
+  delete bwSpeedSliderSpin;
+  delete bwLengthSliderSpin;
 }
 
 //-----------------------------------------------------------------------------
@@ -55,32 +75,32 @@ double MainWindow::getMotorPosition( uint8_t axis ) {
 
 //-----------------------------------------------------------------------------
 void MainWindow::on_executeButton_clicked() {
-  double conv_cur = spdconv_.getConv( ui->speedUnitComboBox->currentText().toStdString() ),
-         conv_rpm = spdconv_.getConv("rpm"),
-         speed_rpm = ui->speedSpinBox->value() * conv_rpm / conv_cur,
-         xpos =  getMotorPosition( X_AXIS ),
-         ypos = -getMotorPosition( Y_AXIS ),
-         zpos =  getMotorPosition( Z_AXIS );
-
-  std::cout << "Speed: " << speed_rpm << " xpos: " << xpos << " ypos: " << ypos << " zpos: " << zpos << "\n";
-
-  /*xsmotion->setMaxSpeed( speed_rpm );
-  ysmotion->setMaxSpeed( speed_rpm );
-  zsmotion->setMaxSpeed( speed_rpm );
-
-  xsmotion->gotoAbsPosition( xpos );
-  ysmotion->gotoAbsPosition( ypos );
-  zsmotion->gotoAbsPosition( zpos );*/
-
+  //std::cout << "Speed: " << speed_rpm << " xpos: " << xpos << " ypos: " << ypos << " zpos: " << zpos << "\n";
   MasterCommunicator &mc = MasterCommunicator::getInstance();
-  mc.setMaxSpeed( speed_rpm, AXIS_ALL );
+  int idx = ui->tabWidget->currentIndex();
+  if( idx == 1 ) {
+    double conv_cur = spdconv_.getConv( ui->speedUnitComboBox->currentText().toStdString() ),
+           conv_rpm = spdconv_.getConv("rpm"),
+           speed_rpm = ui->speedSpinBox->value() * conv_rpm / conv_cur,
+           xpos =  getMotorPosition( X_AXIS ),
+           ypos = -getMotorPosition( Y_AXIS ),
+           zpos =  getMotorPosition( Z_AXIS );
+    mc.setMaxSpeed( speed_rpm, AXIS_ALL );
 
-  AbstractProtocol::ConcurrentCmmd cmd;
-  cmd[ X_AXIS ] = xpos;
-  cmd[ Y_AXIS ] = ypos;
-  cmd[ Z_AXIS ] = zpos;
+    AbstractProtocol::ConcurrentCmmd cmd;
+    cmd[ X_AXIS ] = xpos;
+    cmd[ Y_AXIS ] = ypos;
+    cmd[ Z_AXIS ] = zpos;
 
-  mc.sendPosCmmds( cmd );
+    mc.sendPosCmmds( cmd );
+  } else if( idx == 2 ) {
+    int32_t fwlen = 0,
+            fwspd = 0,
+            bwlen = 0,
+            bwspd = 0;
+    SwitchBackTrajectory sb( fwlen, fwspd, bwlen, bwspd );
+    mc.executeTrajectory( sb );
+  }
 }
 //-----------------------------------------------------------------------------
 void MainWindow::openConnectionForm() {

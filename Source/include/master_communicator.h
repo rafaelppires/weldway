@@ -1,6 +1,7 @@
 #ifndef _MASTER_COMMUNICATOR_H_
 #define _MASTER_COMMUNICATOR_H_
 
+#include <trajectory.h>
 #include <stdint.h>
 #include <map>
 #include <boost/shared_ptr.hpp>
@@ -53,6 +54,7 @@ public:
   bool startHoming( uint8_t axis );
   bool setMaxSpeed(uint16_t speed_rpm, uint8_t axis);
   bool sendPosCmmds(AbstractProtocol::ConcurrentCmmd & cmmds);
+  void executeTrajectory( AbstractTrajectory ) {}
   
 private:
   MasterCommunicator() {}
