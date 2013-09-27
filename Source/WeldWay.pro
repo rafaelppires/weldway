@@ -31,7 +31,8 @@ HEADERS += ui/mainwindow.h \
            include/ftdi/ftd2xx.h \
            include/granite_spi_interface.h \
            include/trajectory.h \
-           include/switch_back.h
+           include/switch_back.h \
+    include/protocol.h
 
 FORMS    += ui/mainwindow.ui \
             ui/formconnection.ui

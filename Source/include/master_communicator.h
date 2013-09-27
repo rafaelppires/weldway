@@ -2,9 +2,8 @@
 #define _MASTER_COMMUNICATOR_H_
 
 #include <trajectory.h>
-#include <stdint.h>
-#include <map>
 #include <boost/shared_ptr.hpp>
+#include <boost/thread.hpp>
 
 #define X_AXIS   0x01
 #define Y_AXIS   0x02
@@ -15,30 +14,19 @@
 #define AXIS_CNT 5
 
 //-----------------------------------------------------------------------------
-enum CommType {
-  PARALLEL,
-  USB_HUB,
-  USB_PROXY
-};
-
-//-----------------------------------------------------------------------------
-class AbstractProtocol {
+class TrajectoryExecuter {
 public:
-  typedef std::map<uint8_t,uint16_t> ConcurrentCmmd;   // Tuples <Axis,Cmmd> which are sent to be executed concurrently (usually position and speed)
-  typedef std::map<uint8_t,uint32_t> ConcurrentCmmd32; // Same as above, with a 32bit word
-  typedef std::map<uint8_t,uint64_t> ConcurrentCmmd64; // Same as above, with a 64bit word
+  TrajectoryExecuter( AbstractTrajectory t, boost::shared_ptr< AbstractProtocol > comm )
+      : trajectory_(t), comm_(comm), finished_(false) {}
 
-  AbstractProtocol( CommType t ) : type_(t) {}
-  virtual void startHoming( uint8_t ) {}
-  virtual void moveTo() {}
-  virtual void executeTrajectory() {}
-  virtual void finish() {}  
-  virtual void setMaxSpeed( uint16_t, uint8_t ) {}
-  virtual void sendPosCmmds( ConcurrentCmmd & ) {}
-  virtual void sendSpdCmmds( ConcurrentCmmd & ) {}
+  void operator()();
+  bool finished();
 
 private:
-  CommType type_;
+  AbstractTrajectory trajectory_;
+  boost::shared_ptr< AbstractProtocol > comm_;
+  boost::mutex finish_mutex_;
+  bool finished_;
 };
 
 //-----------------------------------------------------------------------------
@@ -54,7 +42,7 @@ public:
   bool startHoming( uint8_t axis );
   bool setMaxSpeed(uint16_t speed_rpm, uint8_t axis);
   bool sendPosCmmds(AbstractProtocol::ConcurrentCmmd & cmmds);
-  void executeTrajectory( AbstractTrajectory ) {}
+  bool executeTrajectory(AbstractTrajectory & );
   
 private:
   MasterCommunicator() {}
@@ -62,6 +50,7 @@ private:
   void operator=(MasterCommunicator const&);
 
   boost::shared_ptr< AbstractProtocol > comm_;
+  TrajectoryExecuter *trajectory_executer_;
 };
 
 #endif

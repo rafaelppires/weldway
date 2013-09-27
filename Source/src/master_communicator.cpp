@@ -2,6 +2,37 @@
 #include <parallel_protocol.h>
 
 //-----------------------------------------------------------------------------
+void TrajectoryExecuter::operator()() {
+  bool spd = trajectory_.controlMode() & VELOCITY,
+       pos = trajectory_.controlMode() & POSITION;
+
+  uint32_t interval;
+  while( !trajectory_.finished() ) {
+    if( spd ) comm_->setMaxSpeed( trajectory_.speed(), X_AXIS );
+    if( pos ) {
+      AbstractProtocol::ConcurrentCmmd cmmds = trajectory_.position();
+      comm_->sendPosCmmds( cmmds );
+    }
+    boost::this_thread::sleep_for( trajectory_.interval() );
+  }
+
+  {
+  boost::lock_guard<boost::mutex> lock(finish_mutex_);
+  finished_ = true;
+  }
+}
+
+//-----------------------------------------------------------------------------
+bool TrajectoryExecuter::finished() {
+   bool ret;
+   {
+     boost::lock_guard<boost::mutex> lock(finish_mutex_);
+     ret = finished_;
+   }
+   return ret;
+ }
+
+//-----------------------------------------------------------------------------
 void MasterCommunicator::setupParallelPort( uint16_t addr ) {
   if( comm_ ) {
     comm_->finish();
@@ -33,3 +64,10 @@ bool MasterCommunicator::sendPosCmmds( AbstractProtocol::ConcurrentCmmd &cmmds )
 }
 
 //-----------------------------------------------------------------------------
+bool MasterCommunicator::executeTrajectory( AbstractTrajectory &at ) {
+  if( !comm_ ) return false;
+  if( trajectory_executer_ && !trajectory_executer_->finished() ) return false;
+  delete trajectory_executer_;
+  trajectory_executer_ = new TrajectoryExecuter( at, comm_ );
+  return true;
+}
