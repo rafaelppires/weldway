@@ -5,25 +5,17 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
 
-#define X_AXIS   0x01
-#define Y_AXIS   0x02
-#define Z_AXIS   0x04
-#define A_AXIS   0x08
-#define B_AXIS   0x10
-#define AXIS_ALL 0x1F
-#define AXIS_CNT 5
-
 //-----------------------------------------------------------------------------
 class TrajectoryExecuter {
 public:
-  TrajectoryExecuter( AbstractTrajectory t, boost::shared_ptr< AbstractProtocol > comm )
+  TrajectoryExecuter( AbsTrajectoryPtr t, boost::shared_ptr< AbstractProtocol > comm )
       : trajectory_(t), comm_(comm), finished_(false) {}
 
   void operator()();
   bool finished();
 
 private:
-  AbstractTrajectory trajectory_;
+  AbsTrajectoryPtr trajectory_;
   boost::shared_ptr< AbstractProtocol > comm_;
   boost::mutex finish_mutex_;
   bool finished_;
@@ -42,7 +34,7 @@ public:
   bool startHoming( uint8_t axis );
   bool setMaxSpeed(uint16_t speed_rpm, uint8_t axis);
   bool sendPosCmmds(AbstractProtocol::ConcurrentCmmd & cmmds);
-  bool executeTrajectory(AbstractTrajectory & );
+  bool executeTrajectory( AbsTrajectoryPtr );
   
 private:
   MasterCommunicator() {}
@@ -51,6 +43,7 @@ private:
 
   boost::shared_ptr< AbstractProtocol > comm_;
   TrajectoryExecuter *trajectory_executer_;
+  boost::shared_ptr<boost::thread> thread_executer_;
 };
 
 #endif

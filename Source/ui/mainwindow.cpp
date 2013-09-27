@@ -98,7 +98,7 @@ void MainWindow::on_executeButton_clicked() {
             fwspd = 0,
             bwlen = 0,
             bwspd = 0;
-    SwitchBackTrajectory sb( fwlen, fwspd, bwlen, bwspd );
+    boost::shared_ptr<AbstractTrajectory> sb( new SwitchBackTrajectory(fwlen, fwspd, bwlen, bwspd, xposconv_, spdconv_) );
     mc.executeTrajectory( sb );
   }
 }

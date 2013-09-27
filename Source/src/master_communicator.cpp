@@ -3,17 +3,17 @@
 
 //-----------------------------------------------------------------------------
 void TrajectoryExecuter::operator()() {
-  bool spd = trajectory_.controlMode() & VELOCITY,
-       pos = trajectory_.controlMode() & POSITION;
+  bool spd = trajectory_->controlMode() & VELOCITY,
+       pos = trajectory_->controlMode() & POSITION;
 
   uint32_t interval;
-  while( !trajectory_.finished() ) {
-    if( spd ) comm_->setMaxSpeed( trajectory_.speed(), X_AXIS );
+  while( !trajectory_->finished() ) {
+    if( spd ) comm_->setMaxSpeed( trajectory_->speed(), X_AXIS );
     if( pos ) {
-      AbstractProtocol::ConcurrentCmmd cmmds = trajectory_.position();
+      AbstractProtocol::ConcurrentCmmd cmmds = trajectory_->position();
       comm_->sendPosCmmds( cmmds );
     }
-    boost::this_thread::sleep_for( trajectory_.interval() );
+    boost::this_thread::sleep_for( trajectory_->interval() );
   }
 
   {
@@ -64,10 +64,11 @@ bool MasterCommunicator::sendPosCmmds( AbstractProtocol::ConcurrentCmmd &cmmds )
 }
 
 //-----------------------------------------------------------------------------
-bool MasterCommunicator::executeTrajectory( AbstractTrajectory &at ) {
+bool MasterCommunicator::executeTrajectory( AbsTrajectoryPtr at ) {
   if( !comm_ ) return false;
   if( trajectory_executer_ && !trajectory_executer_->finished() ) return false;
   delete trajectory_executer_;
   trajectory_executer_ = new TrajectoryExecuter( at, comm_ );
+  thread_executer_.reset( new boost::thread( boost::ref(*trajectory_executer_) ) );
   return true;
 }

@@ -32,7 +32,7 @@ class GraniteSPI {
 public:
   uint64_t graniteSetParam( const char *paramname, uint32_t value );
   uint64_t graniteSetParam( GraniteParams p, uint32_t value );
-  uint64_t graniteAbsTarget( uint32_t param );
+  uint64_t graniteAbsTarget(int32_t param );
   uint32_t startHoming();
   uint32_t clearFaults();
   uint32_t nope();

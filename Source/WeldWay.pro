@@ -15,7 +15,8 @@ SOURCES += src/main.cpp \
            src/parallel_port.cpp \
            src/parallel_protocol.cpp \
            src/granite/sm_consts.cpp \
-           src/granite_spi_interface.cpp
+           src/granite_spi_interface.cpp \
+    src/switch_back.cpp
 
 HEADERS += ui/mainwindow.h \
            include/simplemotion.h \
