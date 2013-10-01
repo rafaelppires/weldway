@@ -46,7 +46,7 @@ AbstractProtocol::ConcurrentCmmd ParallelProtocol::sendWord( uint16_t w, uint32_
 #define SINGLEDRIVE_CONNECT 1
 AbstractProtocol::ConcurrentCmmd ParallelProtocol::sendWord( uint16_t w[AXIS_CNT], uint32_t pins ) {
   ConcurrentCmmd ret;
-  printf("Sent: %X on pins %X ", w[0], pins);
+  //printf("Sent: %X on pins %X ", w[0], pins);
   //port_.startLogging();
   uint32_t word = 0;
   port_.setLowPinSync( SPIWRITE_CLK_PIN );
@@ -74,7 +74,7 @@ AbstractProtocol::ConcurrentCmmd ParallelProtocol::sendWord( uint16_t w[AXIS_CNT
 #endif
     delay( 5000 ); // should be 6us, but when added to other delays it reaches about 20 us
   }
-  printf("ret %X\n", ret[X_AXIS]);
+  //printf("ret %X\n", ret[X_AXIS]);
   port_.writePinsSync( 0, pins );
   //port_.stopLogging();
   return ret;
@@ -128,7 +128,7 @@ RetAxis ParallelProtocol::sendRawCommand64( ConcurrentCmmd64 cmmds ) {
   ConcurrentCmmd32 cmmds1, cmmds2;
   ConcurrentCmmd64::iterator it = cmmds.begin(), end = cmmds.end();
   for(; it != end; ++it) {
-    printf("<%X,%llX> ", it->first, it->second );
+    //printf("<%X,%llX> ", it->first, it->second );
     cmmds1[ it->first ] = it->second >> 32;
     cmmds2[ it->first ] = it->second & 0xFFFFFFFF;
   }
@@ -196,16 +196,18 @@ void ParallelProtocol::setMaxSpeed( uint16_t spd, uint8_t axis ) {
 //-----------------------------------------------------------------------------
 void ParallelProtocol::sendPosCmmds( ConcurrentCmmd &cmmds ) {
   uint32_t pins = axisToPins( axisMask( cmmds ) );
+  /*
   ConcurrentCmmd ret = getParam( VelocityLimit, pins );
   ConcurrentCmmd::iterator kt = ret.begin(), kend = ret.end();
   for(; kt != kend; ++kt )
-    printf("[%X] = [%X]\n", kt->first, kt->second );
+    printf("[%X] = [%d]\n", kt->first, kt->second );*/
 
-  setParam( ControlMode, CONTROLMODE_POSITON, pins ); // position mode
+  //setParam( ControlMode, CONTROLMODE_POSITON, pins ); // position mode
 
   ConcurrentCmmd64 pos_cmmds;
   ConcurrentCmmd::iterator it = cmmds.begin(), end = cmmds.end();
   for(; it != end; ++it) {
+    printf("p[%X] = [%d]\n", it->first, it->second );
     pos_cmmds[ it->first ] = spi_.graniteAbsTarget( it->second );
   }
 
@@ -253,8 +255,10 @@ void ParallelProtocol::sendSpdCmmds( ConcurrentCmmd &cmmds ) {
   ConcurrentCmmd64 cmmd;
 
   ConcurrentCmmd::iterator it = cmmds.begin(), end = cmmds.end();
-  for(; it != end; ++it )
+  for(; it != end; ++it ) {
+    printf("v[%X] = [%d]\n", it->first, it->second );
     cmmd[ it->first ] = spi_.graniteSetParam( VelocityLimit, it->second );
+  }
 
   sendRawCommand64( cmmd );
 }

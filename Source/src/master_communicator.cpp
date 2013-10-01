@@ -1,25 +1,41 @@
 #include <master_communicator.h>
 #include <parallel_protocol.h>
+#include <boost/chrono.hpp>
+using boost::chrono::high_resolution_clock;
+using boost::chrono::nanoseconds;
+using boost::chrono::milliseconds;
 
 //-----------------------------------------------------------------------------
 void TrajectoryExecuter::operator()() {
   bool spd = trajectory_->controlMode() & VELOCITY,
        pos = trajectory_->controlMode() & POSITION;
+  high_resolution_clock::time_point now, start;
+
+  FILE *log = fopen("log.txt", "w");
 
   uint32_t interval;
+  start = high_resolution_clock::now();
   while( !trajectory_->finished() ) {
-    if( spd ) comm_->setMaxSpeed( trajectory_->speed(), X_AXIS );
+    now = high_resolution_clock::now();
+    fprintf(log, "int %f ", (now - start).count() / 1e+6f );
+    if( spd ) comm_->setMaxSpeed( trajectory_->speed(), AXIS_ALL );
     if( pos ) {
       AbstractProtocol::ConcurrentCmmd cmmds = trajectory_->position();
       comm_->sendPosCmmds( cmmds );
     }
-    boost::this_thread::sleep_for( trajectory_->interval() );
+    //goto finish_traj;
+    start = high_resolution_clock::now();
+    milliseconds interv = trajectory_->interval() - boost::chrono::duration_cast<milliseconds>(start - now);
+    fprintf(log, "cmd %f %d ms\n", (start - now).count() / 1e+6f, interv.count() );
+    boost::this_thread::sleep_for( interv );
   }
-
+finish_traj:
   {
   boost::lock_guard<boost::mutex> lock(finish_mutex_);
   finished_ = true;
   }
+
+  fclose(log);
 }
 
 //-----------------------------------------------------------------------------
