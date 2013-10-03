@@ -2,6 +2,7 @@
 #define _UNITS_H_
 
 #include <string>
+#include <boost/shared_ptr.hpp>
 
 #define RT  100 // revolutions per meter
 #define PPR 400 // pulses per revolution
@@ -23,9 +24,11 @@
 class UnitConv {
 public:
   UnitConv( double f, double t );
-  virtual double getConv( std::string unit ) = 0;
+  virtual double getConv( std::string unit ) { return 1; }
   double from, to, range;
 };
+
+typedef boost::shared_ptr<UnitConv> UnitConvPtr;
 
 class SpeedConv : public UnitConv {
 public:

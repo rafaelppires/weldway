@@ -33,7 +33,7 @@ public:
   void setupParallelPort( uint16_t addr );
   bool startHoming( uint8_t axis );
   bool setMaxSpeed(uint16_t speed_rpm, uint8_t axis);
-  bool sendPosCmmds(AbstractProtocol::ConcurrentCmmd & cmmds);
+  bool sendPosCmmds(AbstractProtocol::ConcurrentCmmd32 &cmmds);
   bool executeTrajectory( AbsTrajectoryPtr );
   
 private:

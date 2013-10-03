@@ -32,9 +32,7 @@ private:
   SimpleMotion *xsmotion, *ysmotion, *zsmotion;
   SliderSpin *speedSliderSpin, *xposSliderSpin, *yposSliderSpin, *zposSliderSpin,
              *fwSpeedSliderSpin, *fwLengthSliderSpin, *bwSpeedSliderSpin, *bwLengthSliderSpin,
-             *sbWeldSpeedSliderSpin;
-  SpeedConv spdconv_, sbweldspdconv_, fwspdconv_, bwspdconv_;
-  PositionConv xposconv_, yposconv_, zposconv_, fwlenconv_, bwlenconv_;
+             *sbWeldSpeedSliderSpin, *trSpeedSliderSpin, *trAmplSliderSpin, *trFreqSliderSpin;
 };
 
 #endif // MAINWINDOW_H

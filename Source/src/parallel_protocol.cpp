@@ -105,9 +105,9 @@ uint32_t ParallelProtocol::axisToPins( uint8_t axis ) {
 }
 
 //-----------------------------------------------------------------------------
-uint8_t ParallelProtocol::axisMask( const ConcurrentCmmd &cmmds ) {
+uint8_t ParallelProtocol::axisMask( const ConcurrentCmmd32 &cmmds ) {
   uint8_t ret;
-  ConcurrentCmmd::const_iterator it = cmmds.begin(), end = cmmds.end();
+  ConcurrentCmmd32::const_iterator it = cmmds.begin(), end = cmmds.end();
   for(; it != end; ++it )
     ret |= it->first;
   return ret;
@@ -187,14 +187,14 @@ void ParallelProtocol::startHoming( uint8_t axis ) {
 
 //-----------------------------------------------------------------------------
 void ParallelProtocol::setMaxSpeed( uint16_t spd, uint8_t axis ) {
-  ConcurrentCmmd cmmds;
+  ConcurrentCmmd32 cmmds;
   for( uint32_t i = 1; i < AXIS_ALL; i <<= 1 )
     if( axis & i ) cmmds[i] = spd;
   sendSpdCmmds( cmmds );
 }
 
 //-----------------------------------------------------------------------------
-void ParallelProtocol::sendPosCmmds( ConcurrentCmmd &cmmds ) {
+void ParallelProtocol::sendPosCmmds( ConcurrentCmmd32 &cmmds ) {
   uint32_t pins = axisToPins( axisMask( cmmds ) );
   /*
   ConcurrentCmmd ret = getParam( VelocityLimit, pins );
@@ -205,7 +205,7 @@ void ParallelProtocol::sendPosCmmds( ConcurrentCmmd &cmmds ) {
   //setParam( ControlMode, CONTROLMODE_POSITON, pins ); // position mode
 
   ConcurrentCmmd64 pos_cmmds;
-  ConcurrentCmmd::iterator it = cmmds.begin(), end = cmmds.end();
+  ConcurrentCmmd32::iterator it = cmmds.begin(), end = cmmds.end();
   for(; it != end; ++it) {
     printf("p[%X] = [%d]\n", it->first, it->second );
     pos_cmmds[ it->first ] = spi_.graniteAbsTarget( it->second );
@@ -257,13 +257,20 @@ AbstractProtocol::ConcurrentCmmd ParallelProtocol::getParam( GraniteParams gp, u
 }
 
 //-----------------------------------------------------------------------------
-void ParallelProtocol::sendSpdCmmds( ConcurrentCmmd &cmmds ) {
-  ConcurrentCmmd64 cmmd;
+void ParallelProtocol::sendSpdCmmds( ConcurrentCmmd32 &cmmds ) {
+  if( cmmds.empty() ) return;
 
-  ConcurrentCmmd::iterator it = cmmds.begin(), end = cmmds.end();
+  ConcurrentCmmd64 cmmd;
+  ConcurrentCmmd32::iterator it = cmmds.begin(), end = cmmds.end();
   for(; it != end; ++it ) {
     printf("v[%X] = [%d]\n", it->first, it->second );
     cmmd[ it->first ] = spi_.graniteSetParam( VelocityLimit, it->second );
+  }
+
+  uint64_t nope = spi_.nope();
+  for( int i = 1; i < AXIS_ALL; i <<= 1 ) {
+    if( cmmd.find(i) == cmmd.end() )
+      cmmd[i] = (nope << 32) | nope;
   }
 
   sendRawCommand64( cmmd );

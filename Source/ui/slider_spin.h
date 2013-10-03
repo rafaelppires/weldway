@@ -10,8 +10,10 @@ class SliderSpin : public QObject {
     Q_OBJECT
 
 public:
-  SliderSpin( QObject *parent, QSlider *slider, QDoubleSpinBox *spinbox, QComboBox *unitcombo, UnitConv &unit );
-  double value( std::string );
+  SliderSpin( QObject *parent, QSlider *slider, QDoubleSpinBox *spinbox, QComboBox *unitcombo, UnitConvPtr unit );
+  double value( std::string unit = "" );
+  void setValue( double );
+  void addMultiplier(SliderSpin*, double , bool goon = true );
 
 private slots:
   void changeSpinBox(int);
@@ -20,6 +22,7 @@ private slots:
   void onUnitComboCurrentTextChanged(const QString&);
 
 private:
+  typedef std::map<SliderSpin*,double> MultiplierMap;
   double toCurrent( double value );
   double fromCurrent( double value );
 
@@ -27,8 +30,9 @@ private:
   QDoubleSpinBox *spinbox_;
   QComboBox *unitcombo_;
   QString cur_unit_;
-  UnitConv &unit_;
+  UnitConvPtr unit_;
   bool spin_commanded_, slider_commanded_;
+  MultiplierMap multipliers_;
 };
 
 #endif

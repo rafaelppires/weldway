@@ -16,7 +16,8 @@ SOURCES += src/main.cpp \
            src/parallel_protocol.cpp \
            src/granite/sm_consts.cpp \
            src/granite_spi_interface.cpp \
-    src/switch_back.cpp
+           src/switch_back.cpp \
+           src/triangular.cpp
 
 HEADERS += ui/mainwindow.h \
            include/simplemotion.h \
@@ -33,7 +34,8 @@ HEADERS += ui/mainwindow.h \
            include/granite_spi_interface.h \
            include/trajectory.h \
            include/switch_back.h \
-    include/protocol.h
+           include/protocol.h \
+           include/triangular.h
 
 FORMS    += ui/mainwindow.ui \
             ui/formconnection.ui

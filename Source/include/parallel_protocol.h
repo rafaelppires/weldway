@@ -32,8 +32,8 @@ public:
   virtual void executeTrajectory();
   virtual void finish();
   virtual void setMaxSpeed( uint16_t spd, uint8_t axis );
-  virtual void sendPosCmmds( ConcurrentCmmd & );
-  virtual void sendSpdCmmds( ConcurrentCmmd & );
+  virtual void sendPosCmmds(ConcurrentCmmd32 & );
+  virtual void sendSpdCmmds(ConcurrentCmmd32 & );
 
 private:
   RetAxis sendRawCommand32( uint32_t cmd, uint32_t pins ); // same command to pins in the mask "pins"
@@ -43,7 +43,7 @@ private:
   RetAxis sendRawCommand64( ConcurrentCmmd64 cmmds );
 
   ConcurrentCmmd setParam( GraniteParams gp, uint32_t value, uint32_t pins );
-  uint8_t axisMask( const ConcurrentCmmd &cmmds ); 
+  uint8_t axisMask(const ConcurrentCmmd32 &cmmds );
   ConcurrentCmmd getParam(GraniteParams , uint32_t pins);
   bool findReadHome();
   void emergencyCallback( bool );

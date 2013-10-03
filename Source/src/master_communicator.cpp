@@ -18,9 +18,13 @@ void TrajectoryExecuter::operator()() {
   while( !trajectory_->finished() ) {
     now = high_resolution_clock::now();
     fprintf(log, "int %f ", (now - start).count() / 1e+6f );
-    if( spd ) comm_->setMaxSpeed( trajectory_->speed(), AXIS_ALL );
+    if( spd ) {
+      AbstractProtocol::ConcurrentCmmd32 cmmds = trajectory_->speed();
+      comm_->sendSpdCmmds( cmmds );
+    }
+
     if( pos ) {
-      AbstractProtocol::ConcurrentCmmd cmmds = trajectory_->position();
+      AbstractProtocol::ConcurrentCmmd32 cmmds = trajectory_->position();
       comm_->sendPosCmmds( cmmds );
     }
     //goto finish_traj;
@@ -73,7 +77,7 @@ bool MasterCommunicator::setMaxSpeed( uint16_t speed_rpm, uint8_t axis ) {
 }
 
 //-----------------------------------------------------------------------------
-bool MasterCommunicator::sendPosCmmds( AbstractProtocol::ConcurrentCmmd &cmmds ) {
+bool MasterCommunicator::sendPosCmmds( AbstractProtocol::ConcurrentCmmd32 &cmmds ) {
   if( !comm_ ) return false;
   comm_->sendPosCmmds( cmmds );
   return true;

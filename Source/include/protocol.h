@@ -23,8 +23,8 @@ enum CommType {
 class AbstractProtocol {
 public:
   typedef std::map<uint8_t, int16_t> ConcurrentCmmd;   // Tuples <Axis,Cmmd> which are sent to be executed concurrently (usually position and speed)
-  typedef std::map<uint8_t,uint32_t> ConcurrentCmmd32; // Same as above, with a 32bit word
-  typedef std::map<uint8_t,uint64_t> ConcurrentCmmd64; // Same as above, with a 64bit word
+  typedef std::map<uint8_t, int32_t> ConcurrentCmmd32; // Same as above, with a 32bit word
+  typedef std::map<uint8_t, int64_t> ConcurrentCmmd64; // Same as above, with a 64bit word
 
   AbstractProtocol( CommType t ) : type_(t) {}
   virtual void startHoming( uint8_t ) {}
@@ -32,8 +32,8 @@ public:
   virtual void executeTrajectory() {}
   virtual void finish() {}  
   virtual void setMaxSpeed( uint16_t, uint8_t ) {}
-  virtual void sendPosCmmds( ConcurrentCmmd & ) {}
-  virtual void sendSpdCmmds( ConcurrentCmmd & ) {}
+  virtual void sendPosCmmds( ConcurrentCmmd32 & ) {}
+  virtual void sendSpdCmmds( ConcurrentCmmd32 & ) {}
 
 private:
   CommType type_;

@@ -19,8 +19,8 @@ public:
   AbstractTrajectory() : mode_( SPDPOS ) {}
   TrajectoryControl controlMode() { return mode_; }
   virtual bool finished() = 0;
-  virtual uint16_t speed() = 0;
-  virtual AbstractProtocol::ConcurrentCmmd position() = 0;
+  virtual AbstractProtocol::ConcurrentCmmd32 speed() = 0;
+  virtual AbstractProtocol::ConcurrentCmmd32 position() = 0;
   virtual boost::chrono::milliseconds interval() = 0;
 private:
   TrajectoryControl mode_;

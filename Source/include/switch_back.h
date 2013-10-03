@@ -6,11 +6,11 @@
 
 class SwitchBackTrajectory : public AbstractTrajectory {
 public:
-  SwitchBackTrajectory(int32_t fwl, int32_t fws, int32_t bwl, int32_t bws);
+  SwitchBackTrajectory(int32_t, int32_t);
 
   virtual bool finished();
-  virtual uint16_t speed();
-  virtual AbstractProtocol::ConcurrentCmmd position();
+  virtual AbstractProtocol::ConcurrentCmmd32 speed();
+  virtual AbstractProtocol::ConcurrentCmmd32 position();
   virtual boost::chrono::milliseconds interval();
 
 private:
@@ -18,7 +18,7 @@ private:
   bool finished_;
   uint32_t step_;
   double fwinterval_, bwinterval_;
-  int16_t last_;
+  int16_t last_pos_, last_spd_;
 };
 
 #endif
