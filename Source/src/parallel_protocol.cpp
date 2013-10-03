@@ -211,6 +211,12 @@ void ParallelProtocol::sendPosCmmds( ConcurrentCmmd &cmmds ) {
     pos_cmmds[ it->first ] = spi_.graniteAbsTarget( it->second );
   }
 
+  uint64_t nope = spi_.nope();
+  for( int i = 1; i < AXIS_ALL; i <<= 1) {
+    if( pos_cmmds.find(i) == pos_cmmds.end() )
+      pos_cmmds[i] = (nope << 32) | nope;
+  }
+
   RetAxis rret = sendRawCommand64( pos_cmmds );
   RetAxis::iterator jt = rret.begin(), jend = rret.end();
   for(; jt != jend; ++jt)

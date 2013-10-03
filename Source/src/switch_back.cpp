@@ -30,7 +30,6 @@ uint16_t SwitchBackTrajectory::speed() {
 //-----------------------------------------------------------------------------
 AbstractProtocol::ConcurrentCmmd SwitchBackTrajectory::position() {
   AbstractProtocol::ConcurrentCmmd ret;
-  ret[Y_AXIS] = ret[Z_AXIS] = 0;
   if( !step_ ) {
     ret[ X_AXIS ] = 4000;
   } else if( step_ % 2 == 0 ) { // even
