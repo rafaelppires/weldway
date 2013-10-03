@@ -8,7 +8,8 @@
 //-----------------------------------------------------------------------------
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent), ui(new Ui::MainWindow),
-    spdconv_(1,100), xposconv_(0,875), yposconv_(0,175), zposconv_(0,100)  {
+    spdconv_(1,100), xposconv_(0,875), yposconv_(0,175), zposconv_(0,100),
+    fwlenconv_(4,20), bwlenconv_(2,10), sbweldspdconv_(1,50), fwspdconv_(4,200), bwspdconv_(2,100) {
   ui->setupUi(this);
   xsmotion = new SimpleMotion( "X_AXIS" );
   ysmotion = new SimpleMotion( "Y_AXIS" );
@@ -16,15 +17,18 @@ MainWindow::MainWindow(QWidget *parent) :
 
   connect( ui->actionConnection, SIGNAL(triggered()), SLOT(openConnectionForm()));
 
+  // Fixed Position
   speedSliderSpin = new SliderSpin( this, ui->speedSlider, ui->speedSpinBox, ui->speedUnitComboBox, spdconv_ );
   xposSliderSpin  = new SliderSpin( this, ui->xpositionSlider, ui->xpositionSpinBox, ui->xposUnitComboBox, xposconv_ );
   yposSliderSpin  = new SliderSpin( this, ui->ypositionSlider, ui->ypositionSpinBox, ui->yposUnitComboBox, yposconv_ );
   zposSliderSpin  = new SliderSpin( this, ui->zpositionSlider, ui->zpositionSpinBox, ui->zposUnitComboBox, zposconv_ );
 
-  fwSpeedSliderSpin  = new SliderSpin( this, ui->fwSpeedSlider, ui->fwSpeedSpinBox, ui->fwSpeedUnitComboBox, spdconv_ );
-  fwLengthSliderSpin = new SliderSpin( this, ui->fwLengthSlider, ui->fwLengthSpinBox, ui->fwLengthUnitComboBox, xposconv_ );
-  bwSpeedSliderSpin  = new SliderSpin( this, ui->bwSpeedSlider, ui->bwSpeedSpinBox, ui->bwSpeedUnitComboBox, spdconv_ );
-  bwLengthSliderSpin = new SliderSpin( this, ui->bwLengthSlider, ui->bwLengthSpinBox, ui->bwLengthUnitComboBox, xposconv_ );
+  // Switch Back
+  sbWeldSpeedSliderSpin = new SliderSpin( this, ui->sbWeldSpeedSlider, ui->sbWeldSpeedSpinBox, ui->sbWeldSpeedUnitComboBox, sbweldspdconv_);
+  fwSpeedSliderSpin  = new SliderSpin( this, ui->fwSpeedSlider, ui->fwSpeedSpinBox, ui->fwSpeedUnitComboBox, fwspdconv_ );
+  fwLengthSliderSpin = new SliderSpin( this, ui->fwLengthSlider, ui->fwLengthSpinBox, ui->fwLengthUnitComboBox, fwlenconv_ );
+  bwSpeedSliderSpin  = new SliderSpin( this, ui->bwSpeedSlider, ui->bwSpeedSpinBox, ui->bwSpeedUnitComboBox, bwspdconv_ );
+  bwLengthSliderSpin = new SliderSpin( this, ui->bwLengthSlider, ui->bwLengthSpinBox, ui->bwLengthUnitComboBox, bwlenconv_ );
 
   //ok_label_  = new QLabel( ui->statusbar );
   nok_label_ = new QLabel( statusBar() );
@@ -48,6 +52,7 @@ MainWindow::~MainWindow() {
   delete yposSliderSpin;
   delete zposSliderSpin;
 
+  delete sbWeldSpeedSliderSpin;
   delete fwSpeedSliderSpin;
   delete fwLengthSliderSpin;
   delete bwSpeedSliderSpin;
@@ -64,27 +69,15 @@ void MainWindow::on_findZeroPushButton_clicked() {
 }
 
 //-----------------------------------------------------------------------------
-double MainWindow::getMotorPosition( uint8_t axis ) {
-  PositionConv &conv = axis == X_AXIS ? xposconv_ : (axis == Y_AXIS ? yposconv_ : zposconv_ );
-  QComboBox *unit = axis == X_AXIS ? ui->xposUnitComboBox : ( axis == Y_AXIS ? ui->yposUnitComboBox : ui->zposUnitComboBox);
-  QDoubleSpinBox *value = axis == X_AXIS ? ui->xpositionSpinBox : ( axis == Y_AXIS ? ui->ypositionSpinBox : ui->zpositionSpinBox);
-  double conv_cur = conv.getConv( unit->currentText().toStdString() ),
-         conv_pul = conv.getConv( "pulsos" );
-  return value->value() * conv_pul / conv_cur;
-}
-
-//-----------------------------------------------------------------------------
 void MainWindow::on_executeButton_clicked() {
-  //std::cout << "Speed: " << speed_rpm << " xpos: " << xpos << " ypos: " << ypos << " zpos: " << zpos << "\n";
+  std::string pos_unit("pulsos"), spd_unit("rpm");
   MasterCommunicator &mc = MasterCommunicator::getInstance();
   int idx = ui->tabWidget->currentIndex();
   if( idx == 1 ) {
-    double conv_cur = spdconv_.getConv( ui->speedUnitComboBox->currentText().toStdString() ),
-           conv_rpm = spdconv_.getConv("rpm"),
-           speed_rpm = ui->speedSpinBox->value() * conv_rpm / conv_cur,
-           xpos =  getMotorPosition( X_AXIS ),
-           ypos = -getMotorPosition( Y_AXIS ),
-           zpos =  getMotorPosition( Z_AXIS );
+    double speed_rpm = speedSliderSpin->value( spd_unit ),
+           xpos =  xposSliderSpin->value( pos_unit ),
+           ypos = -yposSliderSpin->value( pos_unit ),
+           zpos =  zposSliderSpin->value( pos_unit );
     mc.setMaxSpeed( speed_rpm, AXIS_ALL );
 
     AbstractProtocol::ConcurrentCmmd cmd;
@@ -94,12 +87,11 @@ void MainWindow::on_executeButton_clicked() {
 
     mc.sendPosCmmds( cmd );
   } else if( idx == 2 ) {
-    int32_t fwlen = 0,
-            fwspd = 0,
-            bwlen = 0,
-            bwspd = 0;
-    //boost::shared_ptr<AbstractTrajectory> sb( new SwitchBackTrajectory(fwlen, fwspd, bwlen, bwspd, xposconv_, spdconv_) );
-    boost::shared_ptr<AbstractTrajectory> sb( new SwitchBackTrajectory(400, 600, 200, 300, xposconv_, spdconv_) );
+    int32_t fwlen = fwLengthSliderSpin->value( pos_unit ),
+            fwspd = fwSpeedSliderSpin->value( spd_unit ),
+            bwlen = bwLengthSliderSpin->value( pos_unit ),
+            bwspd = bwSpeedSliderSpin->value( spd_unit );
+    boost::shared_ptr<AbstractTrajectory> sb( new SwitchBackTrajectory(fwlen, fwspd, bwlen, bwspd) );
     mc.executeTrajectory( sb );
   }
 }

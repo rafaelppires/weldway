@@ -62,3 +62,9 @@ double SliderSpin::toCurrent( double value ) {
 double SliderSpin::fromCurrent( double value ) {
   return value / unit_.getConv( unitcombo_->currentText().toStdString() );
 }
+
+//-----------------------------------------------------------------------------
+double SliderSpin::value( std::string unit ) {
+  return spinbox_->value() * unit_.getConv( unit ) /
+          unit_.getConv( unitcombo_->currentText().toStdString() );
+}

@@ -2,13 +2,10 @@
 
 //-----------------------------------------------------------------------------
 SwitchBackTrajectory::SwitchBackTrajectory( int32_t fwl, int32_t fws,
-                                            int32_t bwl, int32_t bws,
-                                            PositionConv pc, SpeedConv sc  ) :
+                                            int32_t bwl, int32_t bws ) :
     fwlen_(fwl), fwspd_(fws), bwlen_(bwl), bwspd_(bws), finished_(false), step_(0) {
-  double spdconv = sc.getConv("rpm"),
-         posconv = pc.getConv("pulsos");
-  fwinterval_ = 1000. * (fwlen_/posconv) / (fwspd_/spdconv);
-  bwinterval_ = 1000. * (bwlen_/posconv) / (bwspd_/spdconv);
+  fwinterval_ = 1000. * (fwlen_/TO_PULSES) / (fwspd_/TO_RPM);
+  bwinterval_ = 1000. * (bwlen_/TO_PULSES) / (bwspd_/TO_RPM);
   printf("Initiated switch back with fwlen %d bwlen %d intv fw %f intv bw %f\n", fwlen_, bwlen_, fwinterval_, bwinterval_ );
 }
 

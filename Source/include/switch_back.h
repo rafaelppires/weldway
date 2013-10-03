@@ -6,7 +6,7 @@
 
 class SwitchBackTrajectory : public AbstractTrajectory {
 public:
-  SwitchBackTrajectory( int32_t fwl, int32_t fws, int32_t bwl, int32_t bws, PositionConv pc, SpeedConv sc );
+  SwitchBackTrajectory(int32_t fwl, int32_t fws, int32_t bwl, int32_t bws);
 
   virtual bool finished();
   virtual uint16_t speed();

@@ -27,15 +27,14 @@ private slots:
   void openConnectionForm();
 
 private:
-  double getMotorPosition( uint8_t axis );
-
   Ui::MainWindow *ui;
   QLabel *ok_label_, *nok_label_;
   SimpleMotion *xsmotion, *ysmotion, *zsmotion;
   SliderSpin *speedSliderSpin, *xposSliderSpin, *yposSliderSpin, *zposSliderSpin,
-             *fwSpeedSliderSpin, *fwLengthSliderSpin, *bwSpeedSliderSpin, *bwLengthSliderSpin;
-  SpeedConv spdconv_;
-  PositionConv xposconv_, yposconv_, zposconv_;
+             *fwSpeedSliderSpin, *fwLengthSliderSpin, *bwSpeedSliderSpin, *bwLengthSliderSpin,
+             *sbWeldSpeedSliderSpin;
+  SpeedConv spdconv_, sbweldspdconv_, fwspdconv_, bwspdconv_;
+  PositionConv xposconv_, yposconv_, zposconv_, fwlenconv_, bwlenconv_;
 };
 
 #endif // MAINWINDOW_H

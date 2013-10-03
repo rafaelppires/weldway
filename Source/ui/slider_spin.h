@@ -11,6 +11,7 @@ class SliderSpin : public QObject {
 
 public:
   SliderSpin( QObject *parent, QSlider *slider, QDoubleSpinBox *spinbox, QComboBox *unitcombo, UnitConv &unit );
+  double value( std::string );
 
 private slots:
   void changeSpinBox(int);
