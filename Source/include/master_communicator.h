@@ -4,6 +4,7 @@
 #include <trajectory.h>
 #include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
+#include <granite_spi_interface.h>
 
 //-----------------------------------------------------------------------------
 class TrajectoryExecuter {
@@ -35,6 +36,7 @@ public:
   bool setMaxSpeed(uint16_t speed_rpm, uint8_t axis);
   bool sendPosCmmds(AbstractProtocol::ConcurrentCmmd32 &cmmds);
   bool executeTrajectory( AbsTrajectoryPtr );
+  int32_t getStatus( GraniteParams, uint8_t );
   
 private:
   MasterCommunicator() {}

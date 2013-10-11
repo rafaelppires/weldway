@@ -84,7 +84,7 @@ void MainWindow::on_executeButton_clicked() {
   std::string pos_unit("pulsos"), spd_unit("rpm");
   MasterCommunicator &mc = MasterCommunicator::getInstance();
   int idx = ui->tabWidget->currentIndex();
-  if( idx == 1 ) {
+  if( idx == 2 ) {
     mc.setMaxSpeed( speedSliderSpin->value( spd_unit ), AXIS_ALL );
 
     AbstractProtocol::ConcurrentCmmd32 cmd;
@@ -93,21 +93,42 @@ void MainWindow::on_executeButton_clicked() {
     cmd[ Z_AXIS ] =  zposSliderSpin->value( pos_unit );
 
     mc.sendPosCmmds( cmd );
-  } else if( idx == 2 ) { // Switch back
+  } else if( idx == 3 ) { // Switch back
     int32_t fwlen = fwLengthSliderSpin->value( pos_unit ),
             weldspd = sbWeldSpeedSliderSpin->value( spd_unit );
     boost::shared_ptr<AbstractTrajectory> sb( new SwitchBackTrajectory(fwlen, weldspd) );
     mc.executeTrajectory( sb );
-  } else if( idx == 3 ) { // Triangular
+  } else if( idx == 4 ) { // Triangular
     int32_t spd  = trSpeedSliderSpin->value( spd_unit ),
             ampl = trAmplSliderSpin->value( pos_unit );
     boost::shared_ptr<AbstractTrajectory> tr( new TriangularTrajectory( spd, trFreqSliderSpin->value(), ampl ) );
     mc.executeTrajectory( tr );
   }
+  fflush( stdout );
 }
 //-----------------------------------------------------------------------------
 void MainWindow::openConnectionForm() {
   FormConnection form;
   form.exec();
 }
+
+//-----------------------------------------------------------------------------
+QString MainWindow::stringAxis( uint32_t value ) {
+  if( value == uint16_t(~0) )
+    return "sem resposta";
+  else
+    return QString::number( value );
+}
+
+#include <granite_spi_interface.h>
+//-----------------------------------------------------------------------------
+void MainWindow::on_getValuesButton_clicked() {
+  MasterCommunicator &mc = MasterCommunicator::getInstance();
+  ui->xvalueLabel->setText( stringAxis(mc.getStatus( VelocityLimit, X_AXIS )) );
+  ui->yvalueLabel->setText( stringAxis(mc.getStatus( VelocityLimit, Y_AXIS )) );
+  ui->zvalueLabel->setText( stringAxis(mc.getStatus( VelocityLimit, Z_AXIS )) );
+  ui->avalueLabel->setText( stringAxis(mc.getStatus( VelocityLimit, A_AXIS )) );
+  ui->bvalueLabel->setText( stringAxis(mc.getStatus( VelocityLimit, B_AXIS )) );
+}
+
 //-----------------------------------------------------------------------------

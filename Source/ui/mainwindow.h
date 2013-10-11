@@ -7,6 +7,7 @@
 #include <slider_spin.h>
 #include <units.h>
 #include <stdint.h>
+#include <protocol.h>
 
 namespace Ui {
 class MainWindow;
@@ -24,9 +25,11 @@ public slots:
     
 private slots:
   void on_executeButton_clicked();
+  void on_getValuesButton_clicked();
   void openConnectionForm();
 
 private:
+  QString stringAxis(uint32_t value);
   Ui::MainWindow *ui;
   QLabel *ok_label_, *nok_label_;
   SimpleMotion *xsmotion, *ysmotion, *zsmotion;

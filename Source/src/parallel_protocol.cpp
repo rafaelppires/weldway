@@ -17,16 +17,17 @@ void ParallelProtocol::delay( uint16_t ns ) {
 }
 
 //-----------------------------------------------------------------------------
-bool ParallelProtocol::findReadHome() {
-  for( int i = 0; i < 5; ++i ) {
+bool ParallelProtocol::findReadHome( uint8_t axis ) { // 0 to 7
+  for( int i = 0; i < 8; ++i ) {
     port_.invertPinSync( SPIREAD_CLK_PIN );
+    delay( 50000 ); // 50 us
     if( !port_.readPins( SPIREAD_HOME_MSK ) )
-      return true;
-
-    port_.invertPinSync( SPIREAD_CLK_PIN );
-    if( !port_.readPins( SPIREAD_HOME_MSK ) )
-      return true;
+      break;
   }
+
+  for( uint8_t i = 0; i < axis+1; ++i )
+    port_.invertPinSync( SPIREAD_CLK_PIN );
+
   return false;
 }
 
@@ -43,12 +44,19 @@ AbstractProtocol::ConcurrentCmmd ParallelProtocol::sendWord( uint16_t w, uint32_
 //-----------------------------------------------------------------------------
 // Sends concurrently 16bit commands whithin "w" vector
 //-----------------------------------------------------------------------------
-#define SINGLEDRIVE_CONNECT 1
 AbstractProtocol::ConcurrentCmmd ParallelProtocol::sendWord( uint16_t w[AXIS_CNT], uint32_t pins ) {
   ConcurrentCmmd ret;
-  //printf("Sent: %X on pins %X ", w[0], pins);
-  //port_.startLogging();
   uint32_t word = 0;
+  uint8_t axis = 0;
+  for( uint8_t i = 0; i < 8; ++i ) {
+	axis = 1 << i;
+    if( axis == reply_axis_ ) {
+      findReadHome( i );
+      break;
+    }
+  }
+  ret[axis] = 0;
+
   port_.setLowPinSync( SPIWRITE_CLK_PIN );
   for( int i = 0; i < 16; ++i ) {
 
@@ -65,14 +73,10 @@ AbstractProtocol::ConcurrentCmmd ParallelProtocol::sendWord( uint16_t w[AXIS_CNT
     delay( 5000 ); // should be 6us, but when added to other delays it reaches about 20 us
     // the two samples (read/write) on the CLK falling edge
     port_.setLowPinSync( SPIWRITE_CLK_PIN );
-    // Read reply here
-#if SINGLEDRIVE_CONNECT
-    uint8_t bit = ~(port_.readPins( SPIREAD_DATA_MSK ) >> SPIREAD_DATA_PIN) & 1;
-    if( ret.find(X_AXIS) == ret.end() ) ret[X_AXIS] = 0;
-    ret[X_AXIS]  |= bit << i;
-#else // Control Board
-#endif
     delay( 5000 ); // should be 6us, but when added to other delays it reaches about 20 us
+    // Read reply here
+    uint8_t bit = ~(port_.readPins( SPIREAD_DATA_MSK ) >> SPIREAD_DATA_PIN) & 1;
+    ret[axis] |= bit << i;
   }
   //printf("ret %X\n", ret[X_AXIS]);
   port_.writePinsSync( 0, pins );
@@ -274,6 +278,13 @@ void ParallelProtocol::sendSpdCmmds( ConcurrentCmmd32 &cmmds ) {
   }
 
   sendRawCommand64( cmmd );
+}
+
+//-----------------------------------------------------------------------------
+int32_t ParallelProtocol::getStatus( GraniteParams param, uint8_t axis ) {
+  reply_axis_ = axis;
+  AbstractProtocol::ConcurrentCmmd ret = getParam( param, axisToPins(AXIS_ALL) );
+  return ret[axis];
 }
 
 //-----------------------------------------------------------------------------

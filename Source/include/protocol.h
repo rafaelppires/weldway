@@ -3,6 +3,7 @@
 
 #include <map>
 #include <stdint.h>
+#include <granite_spi_interface.h>
 
 #define X_AXIS   0x01
 #define Y_AXIS   0x02
@@ -34,6 +35,7 @@ public:
   virtual void setMaxSpeed( uint16_t, uint8_t ) {}
   virtual void sendPosCmmds( ConcurrentCmmd32 & ) {}
   virtual void sendSpdCmmds( ConcurrentCmmd32 & ) {}
+  virtual int32_t getStatus( GraniteParams, uint8_t axis ) { return ~0; }
 
 private:
   CommType type_;

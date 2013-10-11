@@ -84,6 +84,12 @@ bool MasterCommunicator::sendPosCmmds( AbstractProtocol::ConcurrentCmmd32 &cmmds
 }
 
 //-----------------------------------------------------------------------------
+int32_t MasterCommunicator::getStatus( GraniteParams p, uint8_t axis ) {
+  if( !comm_ ) return ~0;
+  return comm_->getStatus(p, axis);
+}
+
+//-----------------------------------------------------------------------------
 bool MasterCommunicator::executeTrajectory( AbsTrajectoryPtr at ) {
   if( !comm_ ) return false;
   if( trajectory_executer_ && !trajectory_executer_->finished() ) return false;

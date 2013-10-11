@@ -34,6 +34,7 @@ public:
   virtual void setMaxSpeed( uint16_t spd, uint8_t axis );
   virtual void sendPosCmmds(ConcurrentCmmd32 & );
   virtual void sendSpdCmmds(ConcurrentCmmd32 & );
+  virtual int32_t getStatus( GraniteParams param, uint8_t axis );
 
 private:
   RetAxis sendRawCommand32( uint32_t cmd, uint32_t pins ); // same command to pins in the mask "pins"
@@ -45,13 +46,14 @@ private:
   ConcurrentCmmd setParam( GraniteParams gp, uint32_t value, uint32_t pins );
   uint8_t axisMask(const ConcurrentCmmd32 &cmmds );
   ConcurrentCmmd getParam(GraniteParams , uint32_t pins);
-  bool findReadHome();
+  bool findReadHome(uint8_t);
   void emergencyCallback( bool );
   ConcurrentCmmd sendWord(uint16_t w[], uint32_t pins );
   ConcurrentCmmd sendWord(uint16_t w, uint32_t pins );
   uint32_t axisToPins( uint8_t axis );
   void delay( uint16_t ns );
 
+  uint8_t reply_axis_;
   ParallelPort port_;
   GraniteSPI spi_;
 };
