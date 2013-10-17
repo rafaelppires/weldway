@@ -33,7 +33,7 @@
       <item>
        <widget class="QTabWidget" name="tabWidget">
         <property name="currentIndex">
-         <number>0</number>
+         <number>4</number>
         </property>
         <widget class="QWidget" name="tab_5">
          <attribute name="title">
@@ -810,10 +810,10 @@
         </widget>
         <widget class="QWidget" name="tab_4">
          <attribute name="title">
-          <string>Triangular</string>
+          <string>Transversal</string>
          </attribute>
          <layout class="QGridLayout" name="gridLayout_14">
-          <item row="0" column="0">
+          <item row="1" column="0">
            <layout class="QGridLayout" name="gridLayout_12">
             <item row="1" column="0">
              <widget class="QSlider" name="trWeldSpeedSlider">
@@ -849,6 +849,13 @@
               </item>
              </widget>
             </item>
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_14">
+              <property name="text">
+               <string>Velocidade de Soldagem</string>
+              </property>
+             </widget>
+            </item>
             <item row="1" column="1">
              <widget class="QDoubleSpinBox" name="trWeldSpeedSpinBox">
               <property name="minimumSize">
@@ -859,16 +866,9 @@
               </property>
              </widget>
             </item>
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_14">
-              <property name="text">
-               <string>Velocidade de Soldagem</string>
-              </property>
-             </widget>
-            </item>
            </layout>
           </item>
-          <item row="1" column="0">
+          <item row="2" column="0">
            <layout class="QGridLayout" name="gridLayout_6">
             <item row="1" column="0">
              <widget class="QSlider" name="trAmplitudeSlider">
@@ -934,7 +934,7 @@
             </item>
            </layout>
           </item>
-          <item row="2" column="0">
+          <item row="3" column="0">
            <layout class="QGridLayout" name="gridLayout_13">
             <item row="1" column="2">
              <widget class="QLabel" name="label_15">
@@ -968,6 +968,29 @@
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="0" column="0">
+           <layout class="QHBoxLayout" name="horizontalLayout_4">
+            <item>
+             <widget class="QComboBox" name="comboBox">
+              <item>
+               <property name="text">
+                <string>Triangular</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>E</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Duplo E</string>
+               </property>
+              </item>
              </widget>
             </item>
            </layout>
