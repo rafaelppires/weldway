@@ -975,7 +975,7 @@
           <item row="0" column="0">
            <layout class="QHBoxLayout" name="horizontalLayout_4">
             <item>
-             <widget class="QComboBox" name="comboBox">
+             <widget class="QComboBox" name="transvTrajectoryComboBox">
               <item>
                <property name="text">
                 <string>Triangular</string>

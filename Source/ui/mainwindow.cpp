@@ -5,6 +5,8 @@
 #include <formconnection.h>
 #include <switch_back.h>
 #include <triangular.h>
+#include <double_e.h>
+#include <e_trajectory.h>
 
 //-----------------------------------------------------------------------------
 MainWindow::MainWindow(QWidget *parent) :
@@ -99,9 +101,18 @@ void MainWindow::on_executeButton_clicked() {
     boost::shared_ptr<AbstractTrajectory> sb( new SwitchBackTrajectory(fwlen, weldspd) );
     mc.executeTrajectory( sb );
   } else if( idx == 4 ) { // Triangular
+    boost::shared_ptr<AbstractTrajectory> tr;
+    double freq  = trFreqSliderSpin->value();
     int32_t spd  = trSpeedSliderSpin->value( spd_unit ),
-            ampl = trAmplSliderSpin->value( pos_unit );
-    boost::shared_ptr<AbstractTrajectory> tr( new TriangularTrajectory( spd, trFreqSliderSpin->value(), ampl ) );
+            ampl = trAmplSliderSpin->value( pos_unit ),
+            tidx = ui->transvTrajectoryComboBox->currentIndex();
+    if( tidx == 1 ) {
+      tr.reset( new ETrajectory( spd, freq, ampl ) );
+    } else if( tidx == 2 ) {
+      tr.reset( new DoubleETrajectory( spd, freq, ampl ) );
+    } else {
+      tr.reset( new TriangularTrajectory( spd, freq, ampl ) );
+    }
     mc.executeTrajectory( tr );
   }
   fflush( stdout );
