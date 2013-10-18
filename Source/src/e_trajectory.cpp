@@ -22,6 +22,7 @@ ETrajectory::ETrajectory(int32_t spd, double freq, int32_t ampl) :
 
   torch_speed_ = (4. * d + l) / t; // pulses / s
   torch_speed_ *= TO_RPM / TO_PULSES;
+  printf("T: %f l: %f d: %f k: %f Ts: %f\n", t, l, d, k, torch_speed_ );
 }
 
 //-----------------------------------------------------------------------------

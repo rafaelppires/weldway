@@ -1,6 +1,8 @@
 #include <parallel_protocol.h>
 #include <boost/chrono.hpp>
 #include <boost/thread.hpp>
+#include <fstream>
+#include <units.h>
 using boost::chrono::high_resolution_clock;
 using boost::chrono::nanoseconds;
 
@@ -178,7 +180,7 @@ RetAxis ParallelProtocol::sendRawCommand32( ConcurrentCmmd32 &cmmds ) {
     ret[ axis ].stat = r >> 24;
     ret[ axis ].data = (r >> 8) & 0xFFFF;
     ret[ axis ].crc_match  = GraniteSPI::calcCrc8(ret[axis].stat,ret[axis].data) == (r & 0xFF);
-    if( !ret[ axis ].crc_match ) { fprintf( stderr, "axis %X CRC not match\n", axis ); fflush(stderr); }
+    //if( !ret[ axis ].crc_match ) { fprintf( stderr, "axis %X CRC not match\n", axis ); fflush(stderr); }
   }
 
   return ret;
@@ -198,6 +200,12 @@ void ParallelProtocol::setMaxSpeed( uint16_t spd, uint8_t axis ) {
 }
 
 //-----------------------------------------------------------------------------
+#define LOGPOS 1
+#ifdef LOGPOS
+std::ofstream lgfile("plot.txt");
+std::map<uint8_t, double> last_pos, last_speed, last_cmd;
+high_resolution_clock::time_point last_tstamp;
+#endif
 void ParallelProtocol::sendPosCmmds( ConcurrentCmmd32 &cmmds ) {
   uint32_t pins = axisToPins( axisMask( cmmds ) );
   /*
@@ -210,6 +218,27 @@ void ParallelProtocol::sendPosCmmds( ConcurrentCmmd32 &cmmds ) {
 
   ConcurrentCmmd64 pos_cmmds;
   ConcurrentCmmd32::iterator it = cmmds.begin(), end = cmmds.end();
+#ifdef LOGPOS
+  high_resolution_clock::time_point now = high_resolution_clock::now();
+  double interval = boost::chrono::nanoseconds(now - last_tstamp).count() / 1e+9f;
+  if( interval > 10 ) interval = 0;
+  printf("Int: %f\n", interval);
+  for( int i = 1; i < AXIS_ALL; i <<=1 ) {
+    double offset = last_speed[i] * interval;
+    if( last_pos[i] + offset > last_cmd[i] && last_speed[i] > 0 ) last_pos[i] = last_cmd[i];
+    else if( last_pos[i] + offset < last_cmd[i] && last_speed[i] < 0 ) last_pos[i] = last_cmd[i];
+    else last_pos[i] += offset;
+    lgfile << last_pos[i] << " ";
+    if( cmmds.find(i) != end ) {
+      if( cmmds[i] > last_pos[i] )      last_speed[i] =  fabs(last_speed[i]);
+      else if( cmmds[i] < last_pos[i] ) last_speed[i] = -fabs(last_speed[i]);
+      else                              last_speed[i] = 0;
+      last_cmd[i] = cmmds[i];
+    }
+  }
+  lgfile << "\n";
+  last_tstamp = now;
+#endif
   for(; it != end; ++it) {
     printf("p[%X] = [%d]\n", it->first, it->second );
     pos_cmmds[ it->first ] = spi_.graniteAbsTarget( it->second );
@@ -222,9 +251,9 @@ void ParallelProtocol::sendPosCmmds( ConcurrentCmmd32 &cmmds ) {
   }
 
   RetAxis rret = sendRawCommand64( pos_cmmds );
-  RetAxis::iterator jt = rret.begin(), jend = rret.end();
+  /*RetAxis::iterator jt = rret.begin(), jend = rret.end();
   for(; jt != jend; ++jt)
-    printf("axis %X returned %X CRC match %X\n", jt->first, jt->second.data, jt->second.crc_match );
+    printf("axis %X returned %X CRC match %X\n", jt->first, jt->second.data, jt->second.crc_match );*/
 }
 
 //-----------------------------------------------------------------------------
@@ -266,6 +295,12 @@ void ParallelProtocol::sendSpdCmmds( ConcurrentCmmd32 &cmmds ) {
 
   ConcurrentCmmd64 cmmd;
   ConcurrentCmmd32::iterator it = cmmds.begin(), end = cmmds.end();
+#ifdef LOGPOS
+  for( int i = 1; i < AXIS_ALL; i <<= 1 ) {
+    if( cmmds.find(i) != cmmds.end() )
+      last_speed[i] = cmmds[i] / TO_RPM;
+  }
+#endif
   for(; it != end; ++it ) {
     printf("v[%X] = [%d]\n", it->first, it->second );
     cmmd[ it->first ] = spi_.graniteSetParam( VelocityLimit, it->second );

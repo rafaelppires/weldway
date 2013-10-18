@@ -9,7 +9,7 @@ public:
 
   template <typename T2>
   long double distance( const Vector<N,T2> &v2 ) {
-    long double ret;
+    long double ret = 0;
     for(unsigned int i = 0; i < N; ++i) {
       long double d = v[i] - v2(i);
       ret += d*d;

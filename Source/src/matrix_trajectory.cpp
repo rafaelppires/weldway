@@ -8,7 +8,7 @@ MatrixTrajectory::MatrixTrajectory( uint32_t xsteplen ) : step_(0),
 
 //-----------------------------------------------------------------------------
 bool MatrixTrajectory::finished() {
-  return false;
+  return current_.x() > 30000;
 }
 
 //-----------------------------------------------------------------------------
