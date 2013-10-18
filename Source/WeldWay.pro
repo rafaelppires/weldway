@@ -18,7 +18,9 @@ SOURCES += src/main.cpp \
            src/granite_spi_interface.cpp \
            src/switch_back.cpp \
            src/triangular.cpp \
-           src/matrix_trajectory.cpp
+           src/matrix_trajectory.cpp \
+    src/double_e.cpp \
+    src/e_trajectory.cpp
 
 HEADERS += ui/mainwindow.h \
            include/simplemotion.h \
@@ -39,7 +41,8 @@ HEADERS += ui/mainwindow.h \
            include/triangular.h \
            include/matrix_trajectory.h \
            include/e_trajectory.h \
-           include/double_e.h
+           include/double_e.h \
+    include/vector2d.h
 
 FORMS    += ui/mainwindow.ui \
             ui/formconnection.ui

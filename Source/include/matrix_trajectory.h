@@ -4,11 +4,12 @@
 #include <trajectory.h>
 #include <stdint.h>
 #include <vector>
+#include <vector2d.h>
 
 class MatrixTrajectory : public AbstractTrajectory {
 public:
-  typedef std::pair<double,double> Coordinate;
-  MatrixTrajectory();
+  typedef Vector2D Coordinate;
+  MatrixTrajectory(uint32_t xsteplen);
 
   virtual bool finished();
   virtual AbstractProtocol::ConcurrentCmmd32 speed();
@@ -16,11 +17,16 @@ public:
   virtual boost::chrono::milliseconds interval();
   
 protected:
+  uint32_t index() { return step_ % trajectory_.size(); }
   void add( const Coordinate& );
-  
+  double xsteplen_, torch_speed_;
+
 private:
   typedef std::vector< Coordinate > TrajectoryPoints;
   TrajectoryPoints trajectory_;
+  uint32_t step_;
+  double xposbase_;
+  Coordinate last_, current_;
 };
 
 #endif
