@@ -4,6 +4,7 @@
 //-----------------------------------------------------------------------------
 DoubleETrajectory::DoubleETrajectory(int32_t spd, double freq, int32_t ampl) :
     MatrixTrajectory( (TO_PULSES*spd) / (TO_RPM*freq) ) {
+  amplitude_ = ampl;
   double t = 1. / freq,                         // s
          sqrt2 = sqrt(2.),
          hsqr2 = sqrt2 / 2.,

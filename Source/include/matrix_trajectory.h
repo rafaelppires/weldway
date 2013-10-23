@@ -19,7 +19,7 @@ public:
 protected:
   uint32_t index() { return step_ % trajectory_.size(); }
   void add( const Coordinate& );
-  double xsteplen_, torch_speed_;
+  double xsteplen_, torch_speed_, amplitude_;
 
 private:
   typedef std::vector< Coordinate > TrajectoryPoints;
@@ -27,6 +27,7 @@ private:
   uint32_t step_;
   double xposbase_;
   Coordinate last_, current_;
+  bool moveto_done_;
 };
 
 #endif

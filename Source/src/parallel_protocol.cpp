@@ -202,7 +202,7 @@ void ParallelProtocol::setMaxSpeed( uint16_t spd, uint8_t axis ) {
 //-----------------------------------------------------------------------------
 #define LOGPOS 1
 #ifdef LOGPOS
-std::ofstream lgfile("plot.txt");
+std::ofstream lgfile("plot.txt"), lgpoints("points.txt");
 std::map<uint8_t, double> last_pos, last_speed, last_cmd;
 high_resolution_clock::time_point last_tstamp;
 #endif
@@ -235,7 +235,9 @@ void ParallelProtocol::sendPosCmmds( ConcurrentCmmd32 &cmmds ) {
       else                              last_speed[i] = 0;
       last_cmd[i] = cmmds[i];
     }
+    lgpoints << last_cmd[i] << " ";
   }
+  lgpoints << "\n";
   lgfile << "\n";
   last_tstamp = now;
 #endif
