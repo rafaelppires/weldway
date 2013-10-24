@@ -16,9 +16,9 @@ ETrajectory::ETrajectory(int32_t spd, double freq, int32_t ampl) :
   hsqr2 *= l;
 
   add( Coordinate( l, 0 ) );
-  add( Coordinate( l+hsqr2, k*hsqr2 ) );
+  add( Coordinate( 1.5*l, k*hsqr2 ) );
   add( Coordinate( l, k*sqrt2 ) );
-  add( Coordinate( l-hsqr2, k*hsqr2 ) );
+  add( Coordinate( 0.5*l, k*hsqr2 ) );
   add( Coordinate( l, 0 ) );
 
   torch_speed_ = (4. * d + l) / t; // pulses / s

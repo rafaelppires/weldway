@@ -1,0 +1,1 @@
+plot 'points.txt' u 1:2 w lp
