@@ -19,8 +19,9 @@ SOURCES += src/main.cpp \
            src/switch_back.cpp \
            src/triangular.cpp \
            src/matrix_trajectory.cpp \
-    src/double_e.cpp \
-    src/e_trajectory.cpp
+           src/double_e.cpp \
+           src/e_trajectory.cpp \
+           src/rhombus.cpp
 
 HEADERS += ui/mainwindow.h \
            include/simplemotion.h \
@@ -42,7 +43,8 @@ HEADERS += ui/mainwindow.h \
            include/matrix_trajectory.h \
            include/e_trajectory.h \
            include/double_e.h \
-    include/vector2d.h
+           include/vector2d.h \
+           include/rhombus.h
 
 FORMS    += ui/mainwindow.ui \
             ui/formconnection.ui

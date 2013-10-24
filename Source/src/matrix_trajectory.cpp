@@ -39,7 +39,7 @@ AbstractProtocol::ConcurrentCmmd32 MatrixTrajectory::position() {
     if( current_.y() != last_.y() ) ret[ Y_AXIS ] = current_.y() - yoffset;
   } else {
     ret[ X_AXIS ] =  3000;
-    ret[ Y_AXIS ] = -(yoffset + amplitude_) / 2;
+    ret[ Y_AXIS ] = -yoffset -amplitude_ / 2;
     xposbase_ = ret[X_AXIS];
   }
   return ret;
