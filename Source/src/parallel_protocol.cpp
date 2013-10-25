@@ -207,7 +207,7 @@ std::map<uint8_t, double> last_pos, last_speed, last_cmd;
 high_resolution_clock::time_point last_tstamp;
 #endif
 void ParallelProtocol::sendPosCmmds( ConcurrentCmmd32 &cmmds ) {
-  uint32_t pins = axisToPins( axisMask( cmmds ) );
+  //uint32_t pins = axisToPins( axisMask( cmmds ) );
   /*
   ConcurrentCmmd ret = getParam( VelocityLimit, pins );
   ConcurrentCmmd::iterator kt = ret.begin(), kend = ret.end();

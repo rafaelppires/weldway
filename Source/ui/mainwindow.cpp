@@ -7,6 +7,7 @@
 #include <triangular.h>
 #include <double_e.h>
 #include <e_trajectory.h>
+#include <rhombus.h>
 
 //-----------------------------------------------------------------------------
 MainWindow::MainWindow(QWidget *parent) :
@@ -43,6 +44,11 @@ MainWindow::MainWindow(QWidget *parent) :
   trAmplSliderSpin  = new SliderSpin( this, ui->trAmplitudeSlider, ui->trAmplitudeSpinBox, ui->trAmplitudeUnitComboBox, UnitConvPtr(new PositionConv(0, 50)) );
   trFreqSliderSpin  = new SliderSpin( this, ui->trFrequencySlider, ui->trFrequencySpinBox, NULL, UnitConvPtr(new UnitConv(0.1, 10)) );
 
+  // SB + Triang
+  sbtSpeedSliderSpin = new SliderSpin( this, ui->sbtWeldSpeedSlider, ui->sbtWeldSpeedSpinBox, ui->sbtWeldSpeedUnitComboBox, UnitConvPtr(new SpeedConv(0,100)) );
+  sbtAmplSliderSpin  = new SliderSpin( this, ui->sbtAmplitudeSlider, ui->sbtAmplitudeSpinBox, ui->sbtAmplitudeUnitComboBox, UnitConvPtr(new PositionConv(0,50)) );
+  sbtLenSliderSpin   = new SliderSpin( this, ui->sbtForwardLenSlider, ui->sbtForwardLenSpinBox, ui->sbtForwardLenUnitComboBox, UnitConvPtr(new PositionConv(0,30)) );
+
   //ok_label_  = new QLabel( ui->statusbar );
   nok_label_ = new QLabel( statusBar() );
   nok_label_->setObjectName(QStringLiteral("nok_label_"));
@@ -70,6 +76,14 @@ MainWindow::~MainWindow() {
   delete fwLengthSliderSpin;
   delete bwSpeedSliderSpin;
   delete bwLengthSliderSpin;
+
+  delete trSpeedSliderSpin;
+  delete trAmplSliderSpin;
+  delete trFreqSliderSpin;
+
+  delete sbtSpeedSliderSpin;
+  delete sbtAmplSliderSpin;
+  delete sbtLenSliderSpin;
 }
 
 //-----------------------------------------------------------------------------
@@ -98,7 +112,7 @@ void MainWindow::on_executeButton_clicked() {
   } else if( idx == 3 ) { // Switch back
     int32_t fwlen = fwLengthSliderSpin->value( pos_unit ),
             weldspd = sbWeldSpeedSliderSpin->value( spd_unit );
-    boost::shared_ptr<AbstractTrajectory> sb( new SwitchBackTrajectory(fwlen, weldspd) );
+    AbsTrajectoryPtr sb( new SwitchBackTrajectory(fwlen, weldspd) );
     mc.executeTrajectory( sb );
   } else if( idx == 4 ) { // Triangular
     boost::shared_ptr<AbstractTrajectory> tr;
@@ -114,6 +128,11 @@ void MainWindow::on_executeButton_clicked() {
       tr.reset( new TriangularTrajectory( spd, freq, ampl ) );
     }
     mc.executeTrajectory( tr );
+  } else if( idx == 5 ) {
+    int32_t spd  = sbtSpeedSliderSpin->value( spd_unit ),
+            ampl = sbtAmplSliderSpin->value( pos_unit ),
+            len  = sbtLenSliderSpin->value( pos_unit );
+    mc.executeTrajectory( AbsTrajectoryPtr(new Rhombus( ampl, len, ui->sbtOscCountSpinBox->value(), spd )));
   }
   fflush( stdout );
 }
