@@ -15,7 +15,7 @@ void TrajectoryExecuter::operator()() {
 
   uint32_t interval;
   start = high_resolution_clock::now();
-  while( !trajectory_->finished() ) {
+  while( !trajectory_->finished() && !finished() ) {
     now = high_resolution_clock::now();
     fprintf(log, "int %f ", (now - start).count() / 1e+6f );
     if( spd ) {
@@ -51,6 +51,12 @@ bool TrajectoryExecuter::finished() {
    }
    return ret;
  }
+
+//-----------------------------------------------------------------------------
+void TrajectoryExecuter::cancel() {
+  boost::lock_guard<boost::mutex> lock(finish_mutex_);
+  finished_ = true;
+}
 
 //-----------------------------------------------------------------------------
 void MasterCommunicator::setupParallelPort( uint16_t addr ) {
@@ -91,10 +97,22 @@ int32_t MasterCommunicator::getStatus( GraniteParams p, uint8_t axis ) {
 
 //-----------------------------------------------------------------------------
 bool MasterCommunicator::executeTrajectory( AbsTrajectoryPtr at ) {
-  if( !comm_ ) return false;
-  if( trajectory_executer_ && !trajectory_executer_->finished() ) return false;
+  if( !comm_ || busy() ) return false;
   delete trajectory_executer_;
   trajectory_executer_ = new TrajectoryExecuter( at, comm_ );
   thread_executer_.reset( new boost::thread( boost::ref(*trajectory_executer_) ) );
   return true;
+}
+
+//-----------------------------------------------------------------------------
+bool MasterCommunicator::busy() {
+  if( trajectory_executer_ )
+    return !trajectory_executer_->finished();
+  return false;
+}
+
+//-----------------------------------------------------------------------------
+void MasterCommunicator::cancel() {
+  if( trajectory_executer_ )
+    trajectory_executer_->cancel();
 }

@@ -14,6 +14,7 @@ public:
 
   void operator()();
   bool finished();
+  void cancel();
 
 private:
   AbsTrajectoryPtr trajectory_;
@@ -36,6 +37,8 @@ public:
   bool setMaxSpeed(uint16_t speed_rpm, uint8_t axis);
   bool sendPosCmmds(AbstractProtocol::ConcurrentCmmd32 &cmmds);
   bool executeTrajectory( AbsTrajectoryPtr );
+  bool busy();
+  void cancel();
   int32_t getStatus( GraniteParams, uint8_t );
   
 private:

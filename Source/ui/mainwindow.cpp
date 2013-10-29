@@ -100,7 +100,11 @@ void MainWindow::on_executeButton_clicked() {
   std::string pos_unit("pulsos"), spd_unit("rpm");
   MasterCommunicator &mc = MasterCommunicator::getInstance();
   int idx = ui->tabWidget->currentIndex();
-  if( idx == 2 ) {
+
+  if( mc.busy() ) {
+    mc.cancel();
+    printf(">>> Cancelled <<<\n");
+  } else if( idx == 2 ) {
     mc.setMaxSpeed( speedSliderSpin->value( spd_unit ), AXIS_ALL );
 
     AbstractProtocol::ConcurrentCmmd32 cmd;
