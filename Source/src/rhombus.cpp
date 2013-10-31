@@ -40,9 +40,9 @@ AbstractProtocol::ConcurrentCmmd32 Rhombus::position() {
     xbase_ = 4000;
     done = true;
   } else if( cstep == 0 || cstep == 4 * count_ ) {
+    if( cstep == 0 ) { ++cycle_; xbase_ += length_/2; }
     ret[ X_AXIS ] = cstep == 0 ? (xbase_+length_) : (xbase_+length_/2);
     ret[ Y_AXIS ] = - yoffset - amplitude_ / 2;
-    if( cstep == 0 ) { ++cycle_; xbase_ += length_/2; }
     done = true;
   } else if(  cstep % 4 == 1 ) {
     ret[ Y_AXIS ] = - yoffset - ( cycle_%2==0 ? amplitude_ : 0 );
@@ -65,7 +65,7 @@ AbstractProtocol::ConcurrentCmmd32 Rhombus::position() {
 
 //-----------------------------------------------------------------------------
 boost::chrono::milliseconds Rhombus::interval() {
-  int ret = 1000. * TO_RPM * (current_.y() - last_.y()) / (yspeed_ * TO_PULSES);
+  int ret = 1000. * TO_RPM * abs(current_.y() - last_.y()) / (yspeed_ * TO_PULSES);
   if( !step_ ) ret = 3000;
   ++step_;
   last_ = current_;

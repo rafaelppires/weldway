@@ -32,8 +32,8 @@ public:
   virtual void executeTrajectory();
   virtual void finish();
   virtual void setMaxSpeed( uint16_t spd, uint8_t axis );
-  virtual void sendPosCmmds(ConcurrentCmmd32 & );
-  virtual void sendSpdCmmds(ConcurrentCmmd32 & );
+  virtual void sendPosCmmds( const ConcurrentCmmd32 & );
+  virtual void sendSpdCmmds( const ConcurrentCmmd32 & );
   virtual int32_t getStatus( GraniteParams param, uint8_t axis );
 
 private:
@@ -52,10 +52,12 @@ private:
   ConcurrentCmmd sendWord(uint16_t w, uint32_t pins );
   uint32_t axisToPins( uint8_t axis );
   void delay( uint16_t ns );
+  void updatePosition( const ConcurrentCmmd32 &cmmds );
 
   uint8_t reply_axis_;
   ParallelPort port_;
   GraniteSPI spi_;
+  ConcurrentCmmd32 commanded_pos_;
 };
 
 #endif

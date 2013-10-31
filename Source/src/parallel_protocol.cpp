@@ -198,6 +198,11 @@ void ParallelProtocol::setMaxSpeed( uint16_t spd, uint8_t axis ) {
     if( axis & i ) cmmds[i] = spd;
   sendSpdCmmds( cmmds );
 }
+//-----------------------------------------------------------------------------
+void ParallelProtocol::updatePosition( const ConcurrentCmmd32 &cmmds ) {
+  ConcurrentCmmd32::const_iterator it = cmmds.begin(), end = cmmds.end();
+  for(; it != end; ++it) commanded_pos_[ it->first ] = it->second;
+}
 
 //-----------------------------------------------------------------------------
 #define LOGPOS 1
@@ -206,7 +211,7 @@ std::ofstream lgfile("plot.txt"), lgpoints("points.txt");
 std::map<uint8_t, double> last_pos, last_speed, last_cmd;
 high_resolution_clock::time_point last_tstamp;
 #endif
-void ParallelProtocol::sendPosCmmds( ConcurrentCmmd32 &cmmds ) {
+void ParallelProtocol::sendPosCmmds( const ConcurrentCmmd32 &cmmds ) {
   //uint32_t pins = axisToPins( axisMask( cmmds ) );
   /*
   ConcurrentCmmd ret = getParam( VelocityLimit, pins );
@@ -217,7 +222,7 @@ void ParallelProtocol::sendPosCmmds( ConcurrentCmmd32 &cmmds ) {
   //setParam( ControlMode, CONTROLMODE_POSITON, pins ); // position mode
 
   ConcurrentCmmd64 pos_cmmds;
-  ConcurrentCmmd32::iterator it = cmmds.begin(), end = cmmds.end();
+  ConcurrentCmmd32::const_iterator it = cmmds.begin(), end = cmmds.end();
 #ifdef LOGPOS
   high_resolution_clock::time_point now = high_resolution_clock::now();
   double interval = boost::chrono::nanoseconds(now - last_tstamp).count() / 1e+9f;
@@ -229,11 +234,12 @@ void ParallelProtocol::sendPosCmmds( ConcurrentCmmd32 &cmmds ) {
     else if( last_pos[i] + offset < last_cmd[i] && last_speed[i] < 0 ) last_pos[i] = last_cmd[i];
     else last_pos[i] += offset;
     lgfile << last_pos[i] << " ";
-    if( cmmds.find(i) != end ) {
-      if( cmmds[i] > last_pos[i] )      last_speed[i] =  fabs(last_speed[i]);
-      else if( cmmds[i] < last_pos[i] ) last_speed[i] = -fabs(last_speed[i]);
-      else                              last_speed[i] = 0;
-      last_cmd[i] = cmmds[i];
+    ConcurrentCmmd32::const_iterator found;
+    if( (found = cmmds.find(i)) != end ) {
+      if( found->second > last_pos[i] )      last_speed[i] =  fabs(last_speed[i]);
+      else if( found->second < last_pos[i] ) last_speed[i] = -fabs(last_speed[i]);
+      else                                   last_speed[i] = 0;
+      last_cmd[i] = found->second;
     }
     lgpoints << last_cmd[i] << " ";
   }
@@ -253,6 +259,7 @@ void ParallelProtocol::sendPosCmmds( ConcurrentCmmd32 &cmmds ) {
   }
 
   RetAxis rret = sendRawCommand64( pos_cmmds );
+  updatePosition( cmmds );
   /*RetAxis::iterator jt = rret.begin(), jend = rret.end();
   for(; jt != jend; ++jt)
     printf("axis %X returned %X CRC match %X\n", jt->first, jt->second.data, jt->second.crc_match );*/
@@ -292,15 +299,16 @@ AbstractProtocol::ConcurrentCmmd ParallelProtocol::getParam( GraniteParams gp, u
 }
 
 //-----------------------------------------------------------------------------
-void ParallelProtocol::sendSpdCmmds( ConcurrentCmmd32 &cmmds ) {
+void ParallelProtocol::sendSpdCmmds(const ConcurrentCmmd32 &cmmds ) {
   if( cmmds.empty() ) return;
 
   ConcurrentCmmd64 cmmd;
-  ConcurrentCmmd32::iterator it = cmmds.begin(), end = cmmds.end();
+  ConcurrentCmmd32::const_iterator it = cmmds.begin(), end = cmmds.end();
 #ifdef LOGPOS
   for( int i = 1; i < AXIS_ALL; i <<= 1 ) {
-    if( cmmds.find(i) != cmmds.end() )
-      last_speed[i] = cmmds[i] / TO_RPM;
+    ConcurrentCmmd32::const_iterator found;
+    if( (found = cmmds.find(i)) != end )
+      last_speed[i] = found->second / TO_RPM;
   }
 #endif
   for(; it != end; ++it ) {

@@ -33,8 +33,8 @@ public:
   virtual void executeTrajectory() {}
   virtual void finish() {}  
   virtual void setMaxSpeed( uint16_t, uint8_t ) {}
-  virtual void sendPosCmmds( ConcurrentCmmd32 & ) {}
-  virtual void sendSpdCmmds( ConcurrentCmmd32 & ) {}
+  virtual void sendPosCmmds( const ConcurrentCmmd32 & ) {}
+  virtual void sendSpdCmmds( const ConcurrentCmmd32 & ) {}
   virtual int32_t getStatus( GraniteParams, uint8_t axis ) { return ~0; }
 
 private:
