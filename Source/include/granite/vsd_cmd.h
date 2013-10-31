@@ -280,7 +280,54 @@ Two upper bits decide whether to get value, min or max
 #define ENCODER_CORRECTION_LEN 64
 
 
+#ifndef BV
+//bit select
+#define BV(bit) (1<<(bit))
+#define BVL(bit) (1L<<(bit))
+#endif
+
+///////////////////////////////////////////////////////////////////////////////////////
+// FAULT BITS /////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////
+#define FLT_INVALIDCMD	BV(0)
+#define FLT_FOLLOWERROR	BV(1)
+#define FLT_OVERCURRENT BV(2)
+#define FLT_COMMUNICATION BV(3)
+#define FLT_ENCODER	BV(4)
+#define FLT_OVERTEMP BV(5)
+#define FLT_UNDERVOLTAGE BV(6)
+#define FLT_OVERVOLTAGE BV(7)
+#define FLT_PROGRAM BV(8)
+#define FLT_HARDWARE BV(9)
+#define FLT_MEM BV(10)
+#define FLT_INIT BV(11)
+#define FLT_MOTION BV(12)
+#define FLT_RANGE BV(13)
+//to make it necessary to clear faults to activate again
+#define FLT_PSTAGE_FORCED_OFF BV(14)
 
 
+///////////////////////////////////////////////////////////////////////////////////////
+// STATUS BITS/////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////
+#define STAT_POWER_ON BV(0)
+//this is 1 when trajectory planner target reached
+#define STAT_TARGET_REACHED BV(1)
+#define STAT_FERROR_RECOVERY BV(2)
+//run is true only if motor is being actually driven. run=0 clears integrators etc
+#define STAT_RUN BV(3)
+#define STAT_ENABLED BV(4)
+#define STAT_FAULTSTOP BV(5)
+//follow error warning, recovering or disabled
+#define STAT_FERROR_WARNING BV(6)
+//get bit using CFG_STAT_USER_BIT_SOURCE
+#define STAT_USER_BIT BV(7)
+//ready for user command: initialized, running (no fault), not recovering, not homing & no homing aborted, not running sequence
+#define STAT_SERVO_READY BV(8)
+
+#include <string>
+#include <stdint.h>
+std::string statusString( uint16_t status );
+std::string faultString( uint16_t status );
 
 #endif // VSD_CMD_H

@@ -21,7 +21,8 @@ SOURCES += src/main.cpp \
            src/matrix_trajectory.cpp \
            src/double_e.cpp \
            src/e_trajectory.cpp \
-           src/rhombus.cpp
+           src/rhombus.cpp \
+           src/granite/vsd_cmmd.cpp
 
 HEADERS += ui/mainwindow.h \
            include/simplemotion.h \

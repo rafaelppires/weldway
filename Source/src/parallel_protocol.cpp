@@ -321,7 +321,7 @@ void ParallelProtocol::sendSpdCmmds( ConcurrentCmmd32 &cmmds ) {
 int32_t ParallelProtocol::getStatus( GraniteParams param, uint8_t axis ) {
   reply_axis_ = axis;
   AbstractProtocol::ConcurrentCmmd ret = getParam( param, axisToPins(AXIS_ALL) );
-  return ret[axis];
+  return ret.find(axis) != ret.end() ? ret[axis] : int32_t(~0);
 }
 
 //-----------------------------------------------------------------------------

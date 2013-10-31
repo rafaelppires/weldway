@@ -30,8 +30,11 @@ private slots:
 
 private:
   QString stringAxis(uint32_t value);
+  void setStatus( int32_t status, QLabel *label );
+  void checkStatus();
+
   Ui::MainWindow *ui;
-  QLabel *ok_label_, *nok_label_;
+  QLabel *x_statlabel_, *y_statlabel_, *z_statlabel_, *a_statlabel_, *b_statlabel_;
   SimpleMotion *xsmotion, *ysmotion, *zsmotion;
   SliderSpin *speedSliderSpin, *xposSliderSpin, *yposSliderSpin, *zposSliderSpin,
              *fwSpeedSliderSpin, *fwLengthSliderSpin, *bwSpeedSliderSpin, *bwLengthSliderSpin,

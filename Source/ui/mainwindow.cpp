@@ -50,12 +50,40 @@ MainWindow::MainWindow(QWidget *parent) :
   sbtLenSliderSpin   = new SliderSpin( this, ui->sbtForwardLenSlider, ui->sbtForwardLenSpinBox, ui->sbtForwardLenUnitComboBox, UnitConvPtr(new PositionConv(0,30)) );
 
   //ok_label_  = new QLabel( ui->statusbar );
-  nok_label_ = new QLabel( statusBar() );
-  nok_label_->setObjectName(QStringLiteral("nok_label_"));
-  nok_label_->setMaximumSize( QSize(20,20) );
-  nok_label_->setPixmap(QPixmap(QString::fromUtf8(":/imgs/imgs/red.png")));
-  statusBar()->addWidget( nok_label_ );
-  nok_label_->setScaledContents(true);
+  x_statlabel_ = new QLabel( statusBar() );
+  x_statlabel_->setObjectName(QStringLiteral("nok_label_"));
+  x_statlabel_->setMaximumSize( QSize(20,20) );
+  x_statlabel_->setPixmap(QPixmap(QString::fromUtf8(":/imgs/imgs/red.png")));
+  statusBar()->addWidget( x_statlabel_ );
+  x_statlabel_->setScaledContents(true);
+
+  y_statlabel_ = new QLabel( statusBar() );
+  y_statlabel_->setObjectName(QStringLiteral("nok_label_"));
+  y_statlabel_->setMaximumSize( QSize(20,20) );
+  y_statlabel_->setPixmap(QPixmap(QString::fromUtf8(":/imgs/imgs/red.png")));
+  statusBar()->addWidget( y_statlabel_ );
+  y_statlabel_->setScaledContents(true);
+
+  z_statlabel_ = new QLabel( statusBar() );
+  z_statlabel_->setObjectName(QStringLiteral("nok_label_"));
+  z_statlabel_->setMaximumSize( QSize(20,20) );
+  z_statlabel_->setPixmap(QPixmap(QString::fromUtf8(":/imgs/imgs/red.png")));
+  statusBar()->addWidget( z_statlabel_ );
+  z_statlabel_->setScaledContents(true);
+
+  a_statlabel_ = new QLabel( statusBar() );
+  a_statlabel_->setObjectName(QStringLiteral("nok_label_"));
+  a_statlabel_->setMaximumSize( QSize(20,20) );
+  a_statlabel_->setPixmap(QPixmap(QString::fromUtf8(":/imgs/imgs/red.png")));
+  statusBar()->addWidget( a_statlabel_ );
+  a_statlabel_->setScaledContents(true);
+
+  b_statlabel_ = new QLabel( statusBar() );
+  b_statlabel_->setObjectName(QStringLiteral("nok_label_"));
+  b_statlabel_->setMaximumSize( QSize(20,20) );
+  b_statlabel_->setPixmap(QPixmap(QString::fromUtf8(":/imgs/imgs/red.png")));
+  statusBar()->addWidget( b_statlabel_ );
+  b_statlabel_->setScaledContents(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -144,6 +172,7 @@ void MainWindow::on_executeButton_clicked() {
 void MainWindow::openConnectionForm() {
   FormConnection form;
   form.exec();
+  checkStatus();
 }
 
 //-----------------------------------------------------------------------------
@@ -154,15 +183,40 @@ QString MainWindow::stringAxis( uint32_t value ) {
     return QString::number( value );
 }
 
+//-----------------------------------------------------------------------------
+
 #include <granite_spi_interface.h>
+#include <granite/vsd_cmd.h>
 //-----------------------------------------------------------------------------
 void MainWindow::on_getValuesButton_clicked() {
   MasterCommunicator &mc = MasterCommunicator::getInstance();
-  ui->xvalueLabel->setText( stringAxis(mc.getStatus( VelocityLimit, X_AXIS )) );
-  ui->yvalueLabel->setText( stringAxis(mc.getStatus( VelocityLimit, Y_AXIS )) );
-  ui->zvalueLabel->setText( stringAxis(mc.getStatus( VelocityLimit, Z_AXIS )) );
-  ui->avalueLabel->setText( stringAxis(mc.getStatus( VelocityLimit, A_AXIS )) );
-  ui->bvalueLabel->setText( stringAxis(mc.getStatus( VelocityLimit, B_AXIS )) );
+  ui->xvalueLabel->setText( faultString( mc.getStatus( FaultBits, X_AXIS ) ).c_str() );
+  ui->yvalueLabel->setText( faultString( mc.getStatus( FaultBits, Y_AXIS ) ).c_str() );
+  ui->zvalueLabel->setText( faultString( mc.getStatus( FaultBits, Z_AXIS ) ).c_str() );
+  ui->avalueLabel->setText( faultString( mc.getStatus( FaultBits, A_AXIS ) ).c_str() );
+  ui->bvalueLabel->setText( faultString( mc.getStatus( FaultBits, B_AXIS ) ).c_str() );
+}
+
+//-----------------------------------------------------------------------------
+void MainWindow::setStatus( int32_t status, QLabel *label ) {
+  if( status == int32_t(~0) )
+    label->setPixmap(QPixmap(QString::fromUtf8(":/imgs/imgs/red.png")));
+  else if( status == 0 )
+    label->setPixmap(QPixmap(QString::fromUtf8(":/imgs/imgs/green.png")));
+  else {
+    label->setPixmap(QPixmap(QString::fromUtf8(":/imgs/imgs/yellow.png")));
+    label->setStatusTip( faultString(status).c_str() );
+  }
+}
+
+//-----------------------------------------------------------------------------
+void MainWindow::checkStatus() {
+  MasterCommunicator &mc = MasterCommunicator::getInstance();
+  setStatus( mc.getStatus( FaultBits, X_AXIS ), x_statlabel_ );
+  setStatus( mc.getStatus( FaultBits, Y_AXIS ), y_statlabel_ );
+  setStatus( mc.getStatus( FaultBits, Z_AXIS ), z_statlabel_ );
+  setStatus( mc.getStatus( FaultBits, A_AXIS ), a_statlabel_ );
+  setStatus( mc.getStatus( FaultBits, B_AXIS ), b_statlabel_ );
 }
 
 //-----------------------------------------------------------------------------
