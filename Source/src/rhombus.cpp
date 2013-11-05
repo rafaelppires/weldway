@@ -2,6 +2,32 @@
 #include <units.h>
 
 //-----------------------------------------------------------------------------
+Rhombus::Rhombus( int32_t a, int32_t l, uint8_t n, double wspeed ) : {
+  int32_t xbase = 0;
+  for(uint8_t i = 0; i < n; ++i) {
+    add( Coordinate( xbase +   xstep,  ampl ) );
+    add( Coordinate( xbase + 3*xstep, -ampl ) );
+    add( Coordinate( xbase + 4*xstep,     0 ) );
+    xbase += 4*xstep;
+  }
+
+  for(uint8_t i = 0; i < n; ++i) {
+    int sig = n%2 == 0 ? 1 : -1;
+    add( Coordinate( xbase -   xstep, sig*ampl ) );
+    add( Coordinate( xbase - 2*xstep,        0 ) );
+    xbase -= 2*xstep;
+  }
+
+  double xspeed = 3 * wspeed,
+         yspeed = 6 * n * a * wspeed / l;
+  torch_speed_ = sqrt( xspeed*xspeed + yspeed*yspeed );
+  amplitude_   = a;
+  yalternate_  = true;
+}
+//-----------------------------------------------------------------------------
+
+/*
+//-----------------------------------------------------------------------------
 Rhombus::Rhombus( int32_t a, int32_t l, uint8_t n, double wspeed ) :
     amplitude_(a), length_(l), finished_(false), step_(0), current_(0,0), last_(0,0), count_(n), cycle_(0) {
   xspeed_ = 3 * wspeed;
@@ -73,3 +99,4 @@ boost::chrono::milliseconds Rhombus::interval() {
 }
 
 //-----------------------------------------------------------------------------
+*/

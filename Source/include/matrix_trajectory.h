@@ -20,6 +20,7 @@ protected:
   uint32_t index() { return step_ % trajectory_.size(); }
   void add( const Coordinate& );
   double xsteplen_, torch_speed_, amplitude_;
+  bool yalternate_;
 
 private:
   typedef std::vector< Coordinate > TrajectoryPoints;
@@ -28,6 +29,7 @@ private:
   double xposbase_;
   Coordinate last_, current_;
   bool moveto_done_;
+  int ysignal_;
 };
 
 #endif

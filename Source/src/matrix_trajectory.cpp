@@ -3,7 +3,8 @@
 
 //-----------------------------------------------------------------------------
 MatrixTrajectory::MatrixTrajectory( uint32_t xsteplen ) : step_(0),
-    xposbase_(0), xsteplen_(xsteplen), last_(0,0), current_(0,0), moveto_done_(false) {
+    xposbase_(0), xsteplen_(xsteplen), last_(0,0), current_(0,0), yalternate_(false),
+    ysignal_(1), moveto_done_(false) {
 
 }
 
@@ -17,10 +18,13 @@ AbstractProtocol::ConcurrentCmmd32 MatrixTrajectory::speed() {
   AbstractProtocol::ConcurrentCmmd32 ret;
   if( moveto_done_ ) {
     int idx = step_ % trajectory_.size();
-    if( step_ && !idx )
+    if( step_ && !idx ) {
       xposbase_ += xsteplen_;
-    current_ = Coordinate( xposbase_ + trajectory_[idx].x(),
-                           -trajectory_[idx].y() );
+      ysignal_ *= -1;
+      if( !yalternate_ ) ysignal_ = 1;
+    }
+    current_ = Coordinate(  xposbase_ + trajectory_[idx].x(),
+                           - ysignal_ * trajectory_[idx].y() );
     double d = last_.distance( current_ );
     Coordinate speed = (current_ - last_) * (torch_speed_/d);
     ret[ X_AXIS ] = fabs(speed.x());

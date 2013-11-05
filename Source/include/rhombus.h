@@ -1,9 +1,15 @@
 #ifndef _RHOMBUS_H_
 #define _RHOMBUS_H_
 
-#include <trajectory.h>
+#include <matrix_trajectory.h>
 #include <vector2d.h>
 
+class Rhombus : public MatrixTrajectory {
+public:
+  Rhombus(int32_t a, int32_t l, uint8_t n, double wspeed);
+};
+
+/*
 class Rhombus : public AbstractTrajectory {
 public:
   Rhombus(int32_t a, int32_t l, uint8_t n, double wspeed);
@@ -18,6 +24,6 @@ private:
   int32_t xspeed_, yspeed_, amplitude_, xbase_, length_;
   bool finished_;
   Vector2D current_, last_;
-};
+};*/
 
 #endif
