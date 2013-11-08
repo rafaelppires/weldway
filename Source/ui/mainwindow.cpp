@@ -195,6 +195,9 @@ void MainWindow::on_getValuesButton_clicked() {
   ui->zvalueLabel->setText( faultString( mc.getStatus( FaultBits, Z_AXIS ) ).c_str() );
   ui->avalueLabel->setText( faultString( mc.getStatus( FaultBits, A_AXIS ) ).c_str() );
   ui->bvalueLabel->setText( faultString( mc.getStatus( FaultBits, B_AXIS ) ).c_str() );
+
+  //ui->anotherLabel->setText( QString(mc.getStatus( RawPosition, X_AXIS )) );
+  checkStatus();
 }
 
 //-----------------------------------------------------------------------------

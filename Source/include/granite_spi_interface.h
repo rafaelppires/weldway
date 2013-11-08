@@ -25,7 +25,8 @@ enum GraniteParams {
   SimpleStatus,
   FollowingError,
   ActualTorque,
-  ReturnDataPayload
+  ReturnDataPayload,
+  RawPosition
 };
 
 class GraniteSPI {

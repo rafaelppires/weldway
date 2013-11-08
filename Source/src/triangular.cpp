@@ -1,10 +1,19 @@
 #include <triangular.h>
 #include <units.h>
+#include <math.h>
 
 //-----------------------------------------------------------------------------
 TriangularTrajectory::TriangularTrajectory( int32_t spd, double freq, int32_t ampl ) :
                                       weld_spd_(spd), amplitude_(ampl), step_(0) {
+
+  interval_ = 1000. / ( 2. * freq );
   vy_ = 2. * (ampl/TO_PULSES) * freq * TO_RPM;
+  double a = 4000 / TO_RPM;
+  a /= 0.05;
+  double t = interval_/1000.;
+  vy_ =  (a * t - sqrt( a*a*t*t - 4 * a * (vy_/TO_RPM) * t ) ) / 2.;
+  vy_ *= TO_RPM;
+
   interval_ = 1000. / ( 2. * freq );
   total_time_ = 1000. * ((30000-4000)/TO_PULSES) / (spd/TO_RPM);
   printf("Triangular Spd %d Freq %f Ampl %d Vy %d Inter %f Total %f\n",

@@ -224,7 +224,7 @@ Total delay of reply is 64 bits
 #define RUNTIME_STATUSBITS 5102
 #define RUNTIME_CONTROL_MODE 5200
 
-
+//FaultBits
 //0=disabled, other=number PID cycles to wait for serial command
 #define RUNTIME_INPUT_WATCHDOG 5300
 
@@ -324,6 +324,28 @@ Two upper bits decide whether to get value, min or max
 #define STAT_USER_BIT BV(7)
 //ready for user command: initialized, running (no fault), not recovering, not homing & no homing aborted, not running sequence
 #define STAT_SERVO_READY BV(8)
+
+// 0 reserved for SPI return value
+//old QDIN
+#define CAPTURE_TORQUE_TARGET 1
+#define CAPTURE_TORQUE_ACTUAL 2
+#define CAPTURE_VELOCITY_TARGET 3
+#define CAPTURE_VELOCITY_ACTUAL 4
+#define CAPTURE_POSITION_TARGET 5
+#define CAPTURE_POSITION_ACTUAL 6
+
+#define CAPTURE_FOLLOW_ERROR 7
+#define CAPTURE_OUTPUT_VOLTAGE 8
+#define CAPTURE_BUS_VOLTAGE 9
+#define CAPTURE_STATUSBITS 10
+#define CAPTURE_FAULTBITS 11
+
+#define CAPTURE_P_OUT 12
+#define CAPTURE_I_OUT 13
+#define CAPTURE_D_OUT 14
+#define CAPTURE_FF_OUT 15
+
+#define CAPTURE_RAW_POS 25
 
 #include <string>
 #include <stdint.h>

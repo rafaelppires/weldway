@@ -33,7 +33,7 @@
       <item>
        <widget class="QTabWidget" name="tabWidget">
         <property name="currentIndex">
-         <number>5</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="tab_5">
          <attribute name="title">
@@ -132,6 +132,19 @@
           </property>
           <property name="text">
            <string>Get</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="anotherLabel">
+          <property name="geometry">
+           <rect>
+            <x>140</x>
+            <y>250</y>
+            <width>46</width>
+            <height>13</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>...</string>
           </property>
          </widget>
         </widget>

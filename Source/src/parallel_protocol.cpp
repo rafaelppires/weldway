@@ -3,6 +3,7 @@
 #include <boost/thread.hpp>
 #include <fstream>
 #include <units.h>
+#include <granite/vsd_cmd.h>
 using boost::chrono::high_resolution_clock;
 using boost::chrono::nanoseconds;
 
@@ -328,7 +329,12 @@ void ParallelProtocol::sendSpdCmmds(const ConcurrentCmmd32 &cmmds ) {
 //-----------------------------------------------------------------------------
 int32_t ParallelProtocol::getStatus( GraniteParams param, uint8_t axis ) {
   reply_axis_ = axis;
-  AbstractProtocol::ConcurrentCmmd ret = getParam( param, axisToPins(AXIS_ALL) );
+  AbstractProtocol::ConcurrentCmmd ret;
+  if( param == RawPosition ) {
+    setParam( ReturnDataPayload, CAPTURE_RAW_POS, axisToPins(AXIS_ALL) );
+    ret = getParam( ReturnDataPayload, axisToPins(AXIS_ALL) );
+  } else
+    ret = getParam( param, axisToPins(AXIS_ALL) );
   return ret.find(axis) != ret.end() ? ret[axis] : int32_t(~0);
 }
 
