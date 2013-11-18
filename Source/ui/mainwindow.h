@@ -28,6 +28,8 @@ private slots:
   void on_getValuesButton_clicked();
   void openConnectionForm();
 
+  void on_transvTrajectoryComboBox_currentTextChanged(const QString &arg1);
+
 private:
   QString stringAxis(uint32_t value);
   void setStatus( int32_t status, QLabel *label );

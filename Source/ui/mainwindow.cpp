@@ -157,7 +157,9 @@ void MainWindow::on_executeButton_clicked() {
     } else if( tidx == 2 ) {
       tr.reset( new DoubleETrajectory( spd, freq, ampl ) );
     } else {
-      tr.reset( new TriangularTrajectory( spd, freq, ampl ) );
+      uint32_t sup_stop = ui->supSpinBox->value(),
+               inf_stop = ui->infSpinBox->value();
+      tr.reset( new TriangularTrajectory( spd, freq, ampl, sup_stop, inf_stop ) );
     }
     mc.executeTrajectory( tr );
   } else if( idx == 5 ) {
@@ -223,3 +225,10 @@ void MainWindow::checkStatus() {
 }
 
 //-----------------------------------------------------------------------------
+
+void MainWindow::on_transvTrajectoryComboBox_currentTextChanged(const QString &arg1) {
+  if( arg1 == "Triangular" )
+    ui->stopTimeWidget->setHidden(false);
+  else
+    ui->stopTimeWidget->setHidden(true);
+}

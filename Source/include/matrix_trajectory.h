@@ -25,7 +25,7 @@ protected:
 private:
   typedef std::vector< Coordinate > TrajectoryPoints;
   TrajectoryPoints trajectory_;
-  uint32_t step_;
+  uint32_t step_, interval_;
   double xposbase_;
   Coordinate last_, current_;
   bool moveto_done_;

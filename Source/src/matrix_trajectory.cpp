@@ -26,9 +26,12 @@ AbstractProtocol::ConcurrentCmmd32 MatrixTrajectory::speed() {
     current_ = Coordinate(  xposbase_ + trajectory_[idx].x(),
                            - ysignal_ * trajectory_[idx].y() );
     double d = last_.distance( current_ );
+    interval_ = 1000. * (d/TO_PULSES) / (torch_speed_/TO_RPM);
     Coordinate speed = (current_ - last_) * (torch_speed_/d);
-    ret[ X_AXIS ] = fabs(speed.x());
-    if( speed.y() > 1e-5 ) ret[ Y_AXIS ] = fabs(speed.y());
+    double ax, ay = 4000 / (0.05 * TO_RPM); ax = ay;
+    ret[ X_AXIS ] =   adjustedSpeed( fabs(speed.x())/TO_RPM, ax, interval_/1000.) * TO_RPM;
+    if( speed.y() > 1e-5 )
+      ret[ Y_AXIS ] = adjustedSpeed( fabs(speed.y())/TO_RPM, ay, interval_/1000.) * TO_RPM;
   } else
     ret[ X_AXIS ] = ret[ Y_AXIS ] = 650; // max speed
   return ret;
@@ -57,7 +60,7 @@ boost::chrono::milliseconds MatrixTrajectory::interval() {
     ret = 3000;
   } else {
     ++step_;
-    ret = 1000. * (last_.distance( current_ )/TO_PULSES) / (torch_speed_/TO_RPM);
+    ret = interval_;
   }
   last_ = current_;
   return boost::chrono::milliseconds(ret);

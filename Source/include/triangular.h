@@ -6,7 +6,7 @@
 
 class TriangularTrajectory : public AbstractTrajectory {
 public:
-  TriangularTrajectory( int32_t, double, int32_t );
+  TriangularTrajectory( int32_t, double, int32_t, uint32_t, uint32_t );
 
   virtual bool finished();
   virtual AbstractProtocol::ConcurrentCmmd32 speed();
@@ -15,7 +15,7 @@ public:
 private:
   int32_t weld_spd_, amplitude_, vy_;
   double interval_, total_time_;
-  uint32_t step_;
+  uint32_t step_, sstop_, istop_;
 };
 
 #endif
