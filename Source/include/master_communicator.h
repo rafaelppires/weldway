@@ -7,6 +7,8 @@
 #include <granite_spi_interface.h>
 
 //-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
 class TrajectoryExecuter {
 public:
   TrajectoryExecuter( AbsTrajectoryPtr t, boost::shared_ptr< AbstractProtocol > comm )
@@ -15,12 +17,17 @@ public:
   void operator()();
   bool finished();
   void cancel();
+  void setLimits( const Position &init, uint16_t final );
+  void setCurrent( int32_t last );
 
 private:
   AbsTrajectoryPtr trajectory_;
   boost::shared_ptr< AbstractProtocol > comm_;
   boost::mutex finish_mutex_;
   bool finished_;
+  Position trajectory_init_;
+  uint16_t trajectory_final_;
+  int32_t current_pos_;
 };
 
 //-----------------------------------------------------------------------------
@@ -40,6 +47,7 @@ public:
   bool busy();
   void cancel();
   int32_t getStatus( GraniteParams, uint8_t );
+  void setLimits( const Position &init, uint16_t final );
   
 private:
   MasterCommunicator() {}
@@ -49,6 +57,8 @@ private:
   boost::shared_ptr< AbstractProtocol > comm_;
   TrajectoryExecuter *trajectory_executer_;
   boost::shared_ptr<boost::thread> thread_executer_;
+  Position trajectory_init_;
+  uint16_t trajectory_final_;
 };
 
 #endif

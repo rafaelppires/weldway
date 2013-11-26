@@ -8,6 +8,7 @@
 #include <units.h>
 #include <stdint.h>
 #include <protocol.h>
+#include <master_communicator.h>
 
 namespace Ui {
 class MainWindow;
@@ -34,6 +35,7 @@ private:
   QString stringAxis(uint32_t value);
   void setStatus( int32_t status, QLabel *label );
   void checkStatus();
+  void setLimits( MasterCommunicator &mc );
 
   Ui::MainWindow *ui;
   QLabel *x_statlabel_, *y_statlabel_, *z_statlabel_, *a_statlabel_, *b_statlabel_;

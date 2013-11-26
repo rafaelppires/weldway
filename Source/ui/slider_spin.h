@@ -14,6 +14,7 @@ public:
   double value( std::string unit = "" );
   void setValue( double );
   void addMultiplier(SliderSpin*, double , bool goon = true );
+  UnitConvPtr getConversionObj();
 
 private slots:
   void changeSpinBox(int);

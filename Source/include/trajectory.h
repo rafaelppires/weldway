@@ -4,8 +4,10 @@
 #include <protocol.h>
 #include <math.h>
 #include <boost/chrono.hpp>
-//#include <master_communicator.h>
+#include <vector2d.h>
 
+//-----------------------------------------------------------------------------
+typedef Vector3<uint16_t> Position;
 //-----------------------------------------------------------------------------
 enum TrajectoryControl {
   POSITION = 1,
@@ -23,10 +25,24 @@ public:
   virtual AbstractProtocol::ConcurrentCmmd32 speed() = 0;
   virtual AbstractProtocol::ConcurrentCmmd32 position() = 0;
   virtual boost::chrono::milliseconds interval() = 0;
+
+  void setLimits( const Position &init, uint16_t final ) {
+    trajectory_init_ = init;
+    trajectory_final_ = final;
+  }
+
+  void setCurrent( int32_t pos ) {
+    current_pos_ = pos;
+  }
+
 protected:
   double adjustedSpeed( double v, double a, double t) { // all dimensions must be at the same units
     return (a * t - sqrt( a*a*t*t - 4 * a * v * t ) ) / 2.;
   }
+  Position trajectory_init_;
+  uint16_t trajectory_final_;
+  int32_t current_pos_;
+
 private:
   TrajectoryControl mode_;
 };

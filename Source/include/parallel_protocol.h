@@ -35,6 +35,7 @@ public:
   virtual void sendPosCmmds( const ConcurrentCmmd32 & );
   virtual void sendSpdCmmds( const ConcurrentCmmd32 & );
   virtual int32_t getStatus( GraniteParams param, uint8_t axis );
+  virtual int32_t getLastSentPos();
 
 private:
   RetAxis sendRawCommand32( uint32_t cmd, uint32_t pins ); // same command to pins in the mask "pins"
@@ -57,7 +58,7 @@ private:
   uint8_t reply_axis_;
   ParallelPort port_;
   GraniteSPI spi_;
-  ConcurrentCmmd32 commanded_pos_;
+  ConcurrentCmmd32 commanded_pos_, last_cmmd_;
 };
 
 #endif

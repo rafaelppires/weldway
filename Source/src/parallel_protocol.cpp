@@ -251,6 +251,7 @@ void ParallelProtocol::sendPosCmmds( const ConcurrentCmmd32 &cmmds ) {
   for(; it != end; ++it) {
     printf("p[%X] = [%d]\n", it->first, it->second );
     pos_cmmds[ it->first ] = spi_.graniteAbsTarget( it->second );
+    last_cmmd_[it->first] = it->second;
   }
 
   uint64_t nope = spi_.nope();
@@ -264,6 +265,11 @@ void ParallelProtocol::sendPosCmmds( const ConcurrentCmmd32 &cmmds ) {
   /*RetAxis::iterator jt = rret.begin(), jend = rret.end();
   for(; jt != jend; ++jt)
     printf("axis %X returned %X CRC match %X\n", jt->first, jt->second.data, jt->second.crc_match );*/
+}
+
+//-----------------------------------------------------------------------------
+int32_t ParallelProtocol::getLastSentPos() {
+  return last_cmmd_[X_AXIS];
 }
 
 //-----------------------------------------------------------------------------

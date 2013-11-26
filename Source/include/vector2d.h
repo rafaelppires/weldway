@@ -47,10 +47,23 @@ template< typename T>
 class Vector2 : public Vector<2, T> {
   typedef Vector<2, T> s;
 public:
+  Vector2() { x() = y() = 0; }
   Vector2( const s& v ) { x() = v(0); y() = v(1); }
   Vector2( T a, T b ) { x() = a; y() = b; }
   T& x() { return s::v[0]; }
   T& y() { return s::v[1];}
+};
+
+template< typename T>
+class Vector3 : public Vector<3, T> {
+  typedef Vector<3, T> s;
+public:
+  Vector3() { x() = y() = z() = 0; }
+  Vector3( const s& v ) { x() = v(0); y() = v(1); z() = v(2); }
+  Vector3( T a, T b, T c ) { x() = a; y() = b; z() = c; }
+  T& x() { return s::v[0]; }
+  T& y() { return s::v[1]; }
+  T& z() { return s::v[2]; }
 };
 
 typedef Vector2<double> Vector2D;

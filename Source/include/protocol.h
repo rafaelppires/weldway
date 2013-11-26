@@ -36,6 +36,7 @@ public:
   virtual void sendPosCmmds( const ConcurrentCmmd32 & ) {}
   virtual void sendSpdCmmds( const ConcurrentCmmd32 & ) {}
   virtual int32_t getStatus( GraniteParams, uint8_t axis ) { return ~0; }
+  virtual int32_t getLastSentPos() { return 0; }
 
 private:
   CommType type_;

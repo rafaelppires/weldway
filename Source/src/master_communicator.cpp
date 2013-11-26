@@ -15,6 +15,8 @@ void TrajectoryExecuter::operator()() {
 
   uint32_t interval;
   start = high_resolution_clock::now();
+  trajectory_->setCurrent( current_pos_ );
+  trajectory_->setLimits( trajectory_init_, trajectory_final_ );
   while( !trajectory_->finished() && !finished() ) {
     now = high_resolution_clock::now();
     fprintf(log, "int %f ", (now - start).count() / 1e+6f );
@@ -40,6 +42,17 @@ finish_traj:
   }
 
   fclose(log);
+}
+
+//-----------------------------------------------------------------------------
+void TrajectoryExecuter::setLimits( const Position &init, uint16_t final ) {
+  trajectory_init_ = init;
+  trajectory_final_ = final;
+}
+
+//-----------------------------------------------------------------------------
+void TrajectoryExecuter::setCurrent( int32_t last ) {
+  current_pos_ = last;
 }
 
 //-----------------------------------------------------------------------------
@@ -100,6 +113,8 @@ bool MasterCommunicator::executeTrajectory( AbsTrajectoryPtr at ) {
   if( !comm_ || busy() ) return false;
   delete trajectory_executer_;
   trajectory_executer_ = new TrajectoryExecuter( at, comm_ );
+  trajectory_executer_->setCurrent( comm_->getLastSentPos() );
+  trajectory_executer_->setLimits( trajectory_init_, trajectory_final_ );
   thread_executer_.reset( new boost::thread( boost::ref(*trajectory_executer_) ) );
   return true;
 }
@@ -115,4 +130,10 @@ bool MasterCommunicator::busy() {
 void MasterCommunicator::cancel() {
   if( trajectory_executer_ )
     trajectory_executer_->cancel();
+}
+
+//-----------------------------------------------------------------------------
+void MasterCommunicator::setLimits( const Position &init, uint16_t final ) {
+  trajectory_init_ = init;
+  trajectory_final_ = final;
 }

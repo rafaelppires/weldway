@@ -124,11 +124,31 @@ void MainWindow::on_findZeroPushButton_clicked() {
 }
 
 //-----------------------------------------------------------------------------
+void MainWindow::setLimits( MasterCommunicator &mc ) {
+  double xv = ui->xinitSpinBox->value(),
+         yv = ui->yinitSpinBox->value(),
+         zv = ui->zinitSpinBox->value();
+
+  std::string cur_unit = ui->initFinalPosUnitComboBox->currentText().toStdString(),
+              unit = "pulsos";
+  UnitConvPtr xconv = xposSliderSpin->getConversionObj(),
+              yconv = yposSliderSpin->getConversionObj(),
+              zconv = zposSliderSpin->getConversionObj();
+  xconv->getConv(unit);
+  Position init( xconv->convertFromTo( xv, cur_unit, unit ),
+                 yconv->convertFromTo( yv, cur_unit, unit ),
+                 zconv->convertFromTo( zv, cur_unit, unit ) );
+  uint16_t final = xconv->convertFromTo( ui->xfinalSpinBox->value() , cur_unit, unit );
+  mc.setLimits( init, final );
+}
+
+//-----------------------------------------------------------------------------
 void MainWindow::on_executeButton_clicked() {
   std::string pos_unit("pulsos"), spd_unit("rpm");
   MasterCommunicator &mc = MasterCommunicator::getInstance();
   int idx = ui->tabWidget->currentIndex();
 
+  setLimits( mc );
   if( mc.busy() ) {
     mc.cancel();
     printf(">>> Cancelled <<<\n");

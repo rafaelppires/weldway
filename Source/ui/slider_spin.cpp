@@ -68,20 +68,19 @@ void SliderSpin::onUnitComboCurrentTextChanged( const QString &arg1 ) {
 //-----------------------------------------------------------------------------
 double SliderSpin::toCurrent( double value ) {
   std::string unit = unitcombo_ ? unitcombo_->currentText().toStdString() : std::string("");
-  return value * unit_->getConv( unit );
+  return unit_->convertTo( value, unit );
 }
 
 //-----------------------------------------------------------------------------
 double SliderSpin::fromCurrent( double value ) {
   std::string unit = unitcombo_ ? unitcombo_->currentText().toStdString() : std::string("");
-  return value / unit_->getConv( unit );
+  return unit_->convertFrom( value, unit );
 }
 
 //-----------------------------------------------------------------------------
 double SliderSpin::value( std::string u ) {
   std::string unit = unitcombo_ ? unitcombo_->currentText().toStdString() : std::string("");
-  return spinbox_->value() * unit_->getConv( u ) /
-          unit_->getConv( unit );
+  return unit_->convertFromTo( spinbox_->value(), unit, u );
 }
 
 //-----------------------------------------------------------------------------
@@ -89,6 +88,11 @@ void SliderSpin::addMultiplier( SliderSpin *ss, double m, bool goon  ) {
   multipliers_[ss] = m;
   if( goon )
     ss->addMultiplier( this, 1./m, false );
+}
+
+//-----------------------------------------------------------------------------
+UnitConvPtr SliderSpin::getConversionObj() {
+  return unit_;
 }
 
 //-----------------------------------------------------------------------------

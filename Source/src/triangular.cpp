@@ -13,14 +13,14 @@ TriangularTrajectory::TriangularTrajectory( int32_t spd, double freq, int32_t am
   vy_ = adjustedSpeed( vy_/TO_RPM, ay, interval_/1000. ) * TO_RPM;
 
   interval_ = 1000. / ( 2. * freq );
-  total_time_ = 1000. * ((30000-4000)/TO_PULSES) / (spd/TO_RPM);
+  total_time_ = interval_;
   printf("Triangular Spd %d Freq %f Ampl %d Vy %d Inter %f Total %f\n",
          spd, freq, ampl, vy_, interval_, total_time_ );
 }
 
 //-----------------------------------------------------------------------------
 bool TriangularTrajectory::finished() {
-  if( interval_ * step_ > total_time_  )
+  if( (interval_ + istop_ + sstop_) * step_ > total_time_  )
     return true;
   return false;
 }
@@ -40,16 +40,17 @@ AbstractProtocol::ConcurrentCmmd32 TriangularTrajectory::speed() {
 //-----------------------------------------------------------------------------
 AbstractProtocol::ConcurrentCmmd32 TriangularTrajectory::position() {
   AbstractProtocol::ConcurrentCmmd32 ret;
-  int32_t yoffset = 400; // 10 mm
+  int32_t yoffset = trajectory_init_.y(); // 10 mm
   if( !step_ ) {
-    ret[ X_AXIS ] = 4000;
+    total_time_ = 1000. * (fabs(trajectory_final_ - trajectory_init_.x())/TO_PULSES) / (weld_spd_/TO_RPM);
+    ret[ X_AXIS ] = trajectory_init_.x();
     ret[ Y_AXIS ] = -( yoffset + amplitude_ / 2 );
   } else if( step_ % 2 == 0 ) { // even
     ret[ Y_AXIS ] = -yoffset;
   } else { // odd
     ret[ Y_AXIS ] = -( yoffset + amplitude_ );
     if( step_ == 1 )
-      ret[ X_AXIS ] = 30000;
+      ret[ X_AXIS ] = trajectory_final_;
   }
   return ret;
 }
@@ -58,11 +59,11 @@ AbstractProtocol::ConcurrentCmmd32 TriangularTrajectory::position() {
 boost::chrono::milliseconds TriangularTrajectory::interval() {
   int ret;
   if( !step_ )
-    ret = 3000;
+    ret = 500 + 1000. * (fabs(current_pos_-trajectory_init_.x())/TO_PULSES) / (650/TO_RPM);
   else if( step_ % 2 == 0 )
-    ret = interval_ + sstop_;
-  else
     ret = interval_ + istop_;
+  else
+    ret = interval_ + sstop_;
   ++step_;
   return boost::chrono::milliseconds( ret );
 }

@@ -33,7 +33,7 @@
       <item>
        <widget class="QTabWidget" name="tabWidget">
         <property name="currentIndex">
-         <number>4</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="tab_5">
          <attribute name="title">
@@ -155,76 +155,25 @@
          <attribute name="title">
           <string>Trajetória</string>
          </attribute>
-         <layout class="QHBoxLayout" name="horizontalLayout_2">
-          <item>
+         <layout class="QGridLayout" name="gridLayout_22">
+          <item row="0" column="1">
            <layout class="QGridLayout" name="gridLayout">
-            <item row="1" column="1">
-             <widget class="QDoubleSpinBox" name="doubleSpinBox_3">
-              <property name="maximum">
-               <double>850.000000000000000</double>
+            <item row="2" column="0">
+             <widget class="QLabel" name="label_27">
+              <property name="text">
+               <string>Z:</string>
               </property>
-              <property name="value">
-               <double>300.000000000000000</double>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="2">
-             <widget class="QComboBox" name="finalPosUnitComboBox">
-              <item>
-               <property name="text">
-                <string>mm</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>cm</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>m</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>pulsos</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>&quot;</string>
-               </property>
-              </item>
              </widget>
             </item>
             <item row="1" column="0">
-             <widget class="QPushButton" name="markPositionPushButton_3">
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>30</height>
-               </size>
-              </property>
+             <widget class="QLabel" name="label_26">
               <property name="text">
-               <string>Marcar Posição Final</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0">
-             <widget class="QPushButton" name="markPositionPushButton">
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>30</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>Marcar Posição Inicial</string>
+               <string>Y:</string>
               </property>
              </widget>
             </item>
             <item row="0" column="1">
-             <widget class="QDoubleSpinBox" name="doubleSpinBox_2">
+             <widget class="QDoubleSpinBox" name="xinitSpinBox">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -235,46 +184,127 @@
                <double>850.000000000000000</double>
               </property>
               <property name="value">
-               <double>100.000000000000000</double>
+               <double>200.000000000000000</double>
               </property>
              </widget>
             </item>
-            <item row="0" column="2">
-             <widget class="QComboBox" name="initPosUnitComboBox">
-              <property name="sizeIncrement">
-               <size>
-                <width>0</width>
-                <height>0</height>
-               </size>
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_25">
+              <property name="text">
+               <string>X:</string>
               </property>
-              <item>
-               <property name="text">
-                <string>mm</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>cm</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>m</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>pulsos</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>&quot;</string>
-               </property>
-              </item>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QDoubleSpinBox" name="yinitSpinBox">
+              <property name="maximum">
+               <double>750.000000000000000</double>
+              </property>
+              <property name="value">
+               <double>60.000000000000000</double>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QDoubleSpinBox" name="zinitSpinBox"/>
+            </item>
+           </layout>
+          </item>
+          <item row="3" column="1">
+           <layout class="QGridLayout" name="gridLayout_21">
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_28">
+              <property name="text">
+               <string>X:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QDoubleSpinBox" name="xfinalSpinBox">
+              <property name="maximum">
+               <double>850.000000000000000</double>
+              </property>
+              <property name="value">
+               <double>750.000000000000000</double>
+              </property>
              </widget>
             </item>
            </layout>
+          </item>
+          <item row="0" column="0">
+           <widget class="QPushButton" name="markPositionPushButton">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>30</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Marcar Posição Inicial</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QPushButton" name="markPositionPushButton_3">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>30</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Marcar Posição Final</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QComboBox" name="initFinalPosUnitComboBox">
+            <property name="sizeIncrement">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
+            <item>
+             <property name="text">
+              <string>mm</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>cm</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>m</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>pulsos</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>&quot;</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="label_29">
+            <property name="text">
+             <string>Unidade:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QPushButton" name="pushButton">
+            <property name="text">
+             <string>Inverter Sentido</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>

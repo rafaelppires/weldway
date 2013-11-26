@@ -13,7 +13,7 @@ public:
   virtual AbstractProtocol::ConcurrentCmmd32 position();
   virtual boost::chrono::milliseconds interval();
 private:
-  int32_t weld_spd_, amplitude_, vy_;
+  int32_t weld_spd_, amplitude_, vy_, ta_, tb_;
   double interval_, total_time_;
   uint32_t step_, sstop_, istop_;
 };

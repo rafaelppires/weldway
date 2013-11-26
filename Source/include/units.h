@@ -25,6 +25,9 @@ class UnitConv {
 public:
   UnitConv( double f, double t );
   virtual double getConv( std::string unit ) { return 1; }
+  double convertFromTo( double value, std::string from, std::string to );
+  double convertFrom( double value, std::string unit );
+  double convertTo( double value, std::string unit );
   double from, to, range;
 };
 
