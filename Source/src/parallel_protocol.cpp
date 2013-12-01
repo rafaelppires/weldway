@@ -96,6 +96,16 @@ ParallelProtocol::ParallelProtocol( uint16_t addr ) :
 }
 
 //-----------------------------------------------------------------------------
+void ParallelProtocol::startTorch() {
+  port_.setHighPinSync( TORCH_ENABLE_PIN );
+}
+
+//-----------------------------------------------------------------------------
+void ParallelProtocol::stopTorch() {
+  port_.setLowPinSync( TORCH_ENABLE_PIN );
+}
+
+//-----------------------------------------------------------------------------
 void ParallelProtocol::emergencyCallback( bool st ) {
   std::cout << "emerg now " << int(st) << "\n";
 }

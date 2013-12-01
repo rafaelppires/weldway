@@ -13,7 +13,7 @@ MasterParallel::Inp32t MasterParallel::in  = 0;
 MasterParallel::Out32t MasterParallel::out = 0;
 //-----------------------------------------------------------------------------
 MasterParallel::MasterParallel( uint16_t addr ) : addr_(addr),
-    data_ready_(false), current_(0) {
+    data_ready_(false), current_(2) {
   if( !in || !out ) {
     HINSTANCE lib = LoadLibrary( UNICODE ? (LPCTSTR)L"inpout32.dll" : (LPCTSTR)"inpout32.dll");
     if( !lib ) { std::cerr << "damn! no lib\n"; exit(0); }
@@ -201,14 +201,22 @@ uint32_t ParallelPort::readPins( uint32_t mask ) {
 }
 
 //-----------------------------------------------------------------------------
+bool ParallelPort::invertedPin( uint8_t pinidx ) {
+  return pinidx == 1 || pinidx == 9 || pinidx == 11 || pinidx == 17;
+}
+
+//-----------------------------------------------------------------------------
 void ParallelPort::setHighPinSync( uint8_t pinidx ) {
-  uint32_t v = 1 << pinidx;
-  master_parallel_.writePinsSync( v, v );
+  uint32_t v = 1 << pinidx,
+           value = invertedPin(pinidx) ? 0 : v;
+  master_parallel_.writePinsSync( value, v );
 }
 
 //-----------------------------------------------------------------------------
 void ParallelPort::setLowPinSync( uint8_t pinidx ) {
-  master_parallel_.writePinsSync( 0, 1 << pinidx );
+  uint32_t v = 1 << pinidx,
+           value = invertedPin(pinidx) ? v : 0;
+  master_parallel_.writePinsSync( value, v );
 }
 
 //-----------------------------------------------------------------------------

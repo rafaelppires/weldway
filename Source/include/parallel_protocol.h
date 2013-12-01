@@ -16,6 +16,8 @@
 #define SPIREAD_DATA_PIN  15      // SPI Read data pin
 #define SPIREAD_DATA_MSK  0x8000  // SPI Read data pin mask
 
+#define TORCH_ENABLE_PIN  1
+
 struct RetRawCmmd {
   uint8_t  stat;
   uint16_t data;
@@ -36,6 +38,8 @@ public:
   virtual void sendSpdCmmds( const ConcurrentCmmd32 & );
   virtual int32_t getStatus( GraniteParams param, uint8_t axis );
   virtual int32_t getLastSentPos();
+  virtual void startTorch();
+  virtual void stopTorch();
 
 private:
   RetAxis sendRawCommand32( uint32_t cmd, uint32_t pins ); // same command to pins in the mask "pins"

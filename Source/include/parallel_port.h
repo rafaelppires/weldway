@@ -5,7 +5,6 @@
 #include <vector>
 #include <string>
 #include <map>
-#include <master_communicator.h>
 #include <boost/thread.hpp>
 
 // BASE (Data)
@@ -122,6 +121,7 @@ public:
   void startLogging();
   void stopLogging();
 private:
+  bool invertedPin( uint8_t pinidx );
   static std::string toStdString( char * );
   std::map< uint8_t, boost::thread* > square_threads_;
   std::map< uint8_t, boost::thread* > reading_threads_;

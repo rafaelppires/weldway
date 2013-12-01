@@ -17,6 +17,7 @@ void TrajectoryExecuter::operator()() {
   start = high_resolution_clock::now();
   trajectory_->setCurrent( current_pos_ );
   trajectory_->setLimits( trajectory_init_, trajectory_final_ );
+  comm_->startTorch();
   while( !trajectory_->finished() && !finished() ) {
     now = high_resolution_clock::now();
     fprintf(log, "int %f ", (now - start).count() / 1e+6f );
@@ -35,12 +36,7 @@ void TrajectoryExecuter::operator()() {
     fprintf(log, "cmd %f %d ms\n", (start - now).count() / 1e+6f, interv.count() );
     boost::this_thread::sleep_for( interv );
   }
-finish_traj:
-  {
-  boost::lock_guard<boost::mutex> lock(finish_mutex_);
-  finished_ = true;
-  }
-
+  cancel();
   fclose(log);
 }
 
@@ -68,6 +64,7 @@ bool TrajectoryExecuter::finished() {
 //-----------------------------------------------------------------------------
 void TrajectoryExecuter::cancel() {
   boost::lock_guard<boost::mutex> lock(finish_mutex_);
+  comm_->stopTorch();
   finished_ = true;
 }
 
