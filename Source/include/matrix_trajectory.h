@@ -15,6 +15,7 @@ public:
   virtual AbstractProtocol::ConcurrentCmmd32 speed();
   virtual AbstractProtocol::ConcurrentCmmd32 position();
   virtual boost::chrono::milliseconds interval();
+  virtual bool torchOn();
   
 protected:
   uint32_t index() { return step_ % trajectory_.size(); }
@@ -28,7 +29,7 @@ private:
   uint32_t step_, interval_;
   double xposbase_;
   Coordinate last_, current_;
-  bool moveto_done_;
+  bool moveto_done_, torch_on_;
   int ysignal_;
 };
 

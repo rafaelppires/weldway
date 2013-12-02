@@ -8,7 +8,8 @@ using boost::chrono::milliseconds;
 //-----------------------------------------------------------------------------
 void TrajectoryExecuter::operator()() {
   bool spd = trajectory_->controlMode() & VELOCITY,
-       pos = trajectory_->controlMode() & POSITION;
+       pos = trajectory_->controlMode() & POSITION,
+       torch = false;
   high_resolution_clock::time_point now, start;
 
   FILE *log = fopen("log.txt", "w");
@@ -17,9 +18,14 @@ void TrajectoryExecuter::operator()() {
   start = high_resolution_clock::now();
   trajectory_->setCurrent( current_pos_ );
   trajectory_->setLimits( trajectory_init_, trajectory_final_ );
-  comm_->startTorch();
+
   while( !trajectory_->finished() && !finished() ) {
     now = high_resolution_clock::now();
+    if( !torch && trajectory_->torchOn() ) {
+      comm_->startTorch();
+      torch = true;
+    }
+
     fprintf(log, "int %f ", (now - start).count() / 1e+6f );
     if( spd ) {
       AbstractProtocol::ConcurrentCmmd32 cmmds = trajectory_->speed();

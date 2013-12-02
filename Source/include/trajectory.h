@@ -25,6 +25,7 @@ public:
   virtual AbstractProtocol::ConcurrentCmmd32 speed() = 0;
   virtual AbstractProtocol::ConcurrentCmmd32 position() = 0;
   virtual boost::chrono::milliseconds interval() = 0;
+  virtual bool torchOn() = 0;
 
   void setLimits( const Position &init, uint16_t final ) {
     trajectory_init_ = init;

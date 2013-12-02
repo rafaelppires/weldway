@@ -5,11 +5,12 @@
 //-----------------------------------------------------------------------------
 TriangularTrajectory::TriangularTrajectory( int32_t spd, double freq, int32_t ampl,
                                             uint32_t sstop, uint32_t istop ) :
-    weld_spd_(spd), amplitude_(ampl), step_(0), sstop_(sstop), istop_(istop) {
+    weld_spd_(spd), amplitude_(ampl), step_(0), sstop_(sstop), istop_(istop),
+    torch_on_(false) {
 
   interval_ = 1000. / ( 2. * freq );
   vy_ = 2. * (ampl/TO_PULSES) * freq * TO_RPM;
-  double ay = 4000 / (0.05 * TO_RPM);
+  double ay = 4000 / (0.025 * TO_RPM);
   vy_ = adjustedSpeed( vy_/TO_RPM, ay, interval_/1000. ) * TO_RPM;
 
   interval_ = 1000. / ( 2. * freq );
@@ -23,6 +24,11 @@ bool TriangularTrajectory::finished() {
   if( (interval_ + istop_ + sstop_) * step_ > total_time_  )
     return true;
   return false;
+}
+
+//-----------------------------------------------------------------------------
+bool TriangularTrajectory::torchOn() {
+  return torch_on_;
 }
 
 //-----------------------------------------------------------------------------
@@ -45,6 +51,7 @@ AbstractProtocol::ConcurrentCmmd32 TriangularTrajectory::position() {
     total_time_ = 1000. * (fabs(trajectory_final_ - trajectory_init_.x())/TO_PULSES) / (weld_spd_/TO_RPM);
     ret[ X_AXIS ] = trajectory_init_.x();
     ret[ Y_AXIS ] = -( yoffset + amplitude_ / 2 );
+    torch_on_ = true;
   } else if( step_ % 2 == 0 ) { // even
     ret[ Y_AXIS ] = -yoffset;
   } else { // odd

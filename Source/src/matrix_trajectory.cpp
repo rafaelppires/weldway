@@ -4,7 +4,7 @@
 //-----------------------------------------------------------------------------
 MatrixTrajectory::MatrixTrajectory( uint32_t xsteplen ) : step_(0),
     xposbase_(0), xsteplen_(xsteplen), last_(0,0), current_(0,0), yalternate_(false),
-    ysignal_(1), moveto_done_(false) {
+    ysignal_(1), moveto_done_(false), torch_on_(false) {
 
 }
 
@@ -28,7 +28,7 @@ AbstractProtocol::ConcurrentCmmd32 MatrixTrajectory::speed() {
     double d = last_.distance( current_ );
     interval_ = 1000. * (d/TO_PULSES) / (torch_speed_/TO_RPM);
     Coordinate speed = (current_ - last_) * (torch_speed_/d);
-    double ax, ay = 4000 / (0.05 * TO_RPM); ax = ay;
+    double ax, ay = 4000 / (0.025 * TO_RPM); ax = ay;
     ret[ X_AXIS ] =   adjustedSpeed( fabs(speed.x())/TO_RPM, ax, interval_/1000.) * TO_RPM;
     if( speed.y() > 1e-5 )
       ret[ Y_AXIS ] = adjustedSpeed( fabs(speed.y())/TO_RPM, ay, interval_/1000.) * TO_RPM;
@@ -53,11 +53,17 @@ AbstractProtocol::ConcurrentCmmd32 MatrixTrajectory::position() {
 }
 
 //-----------------------------------------------------------------------------
+bool MatrixTrajectory::torchOn() {
+  return torch_on_;
+}
+
+//-----------------------------------------------------------------------------
 boost::chrono::milliseconds MatrixTrajectory::interval() {
   uint32_t ret = 0;
   if( !step_ && !moveto_done_ ) {
     moveto_done_ = true;
     ret = 500 + 1000. * (fabs(current_pos_-trajectory_init_.x())/TO_PULSES) / (650/TO_RPM);
+    torch_on_ = true;
   } else {
     ++step_;
     ret = interval_;
