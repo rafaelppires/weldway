@@ -10,7 +10,7 @@ MatrixTrajectory::MatrixTrajectory( uint32_t xsteplen ) : step_(0),
 
 //-----------------------------------------------------------------------------
 bool MatrixTrajectory::finished() {
-  return current_.x() > trajectory_final_;
+  return current_.x() > trajectory_final_.x();
 }
 
 //-----------------------------------------------------------------------------
@@ -28,7 +28,9 @@ AbstractProtocol::ConcurrentCmmd32 MatrixTrajectory::speed() {
     double d = last_.distance( current_ );
     interval_ = 1000. * (d/TO_PULSES) / (torch_speed_/TO_RPM);
     Coordinate speed = (current_ - last_) * (torch_speed_/d);
-    double ax, ay = 4000 / (0.025 * TO_RPM); ax = ay;
+
+    double ax = 4000 / (0.025 * TO_RPM), 
+           ay = 4000 / (0.025 * TO_RPM);
     ret[ X_AXIS ] =   adjustedSpeed( fabs(speed.x())/TO_RPM, ax, interval_/1000.) * TO_RPM;
     if( speed.y() > 1e-5 )
       ret[ Y_AXIS ] = adjustedSpeed( fabs(speed.y())/TO_RPM, ay, interval_/1000.) * TO_RPM;

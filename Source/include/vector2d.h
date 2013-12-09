@@ -66,6 +66,11 @@ public:
   T& z() { return s::v[2]; }
 };
 
-typedef Vector2<double> Vector2D;
+typedef Vector2<double> Vector2D;    // double
+typedef Vector3<double> Vector3D;
+typedef Vector2<int16_t> Vector2S;   // short
+typedef Vector3<int16_t> Vector3S;
+typedef Vector2<uint16_t> Vector2US; // unsigned short
+typedef Vector3<uint16_t> Vector3US;
 
 #endif

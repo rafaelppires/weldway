@@ -47,7 +47,7 @@ void TrajectoryExecuter::operator()() {
 }
 
 //-----------------------------------------------------------------------------
-void TrajectoryExecuter::setLimits( const Position &init, uint16_t final ) {
+void TrajectoryExecuter::setLimits( const Vector3US &init, const Vector3US &final ) {
   trajectory_init_ = init;
   trajectory_final_ = final;
 }
@@ -136,7 +136,7 @@ void MasterCommunicator::cancel() {
 }
 
 //-----------------------------------------------------------------------------
-void MasterCommunicator::setLimits( const Position &init, uint16_t final ) {
+void MasterCommunicator::setLimits( const Vector3US &init, const Vector3US &final ) {
   trajectory_init_ = init;
   trajectory_final_ = final;
 }

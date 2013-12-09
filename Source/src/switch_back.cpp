@@ -51,8 +51,8 @@ AbstractProtocol::ConcurrentCmmd32 SwitchBackTrajectory::position() {
   } else { // odd
     ret[ X_AXIS ] = last_pos_ + fwlen_;
   }
-  if( ret[X_AXIS] > trajectory_final_ ) {
-    ret[ X_AXIS ] = trajectory_final_;
+  if( ret[ X_AXIS] > trajectory_final_.x() ) {
+    ret[ X_AXIS ] = trajectory_final_.x();
     finished_ = true;
   }
   last_pos_ = ret[X_AXIS];

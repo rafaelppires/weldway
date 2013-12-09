@@ -27,7 +27,7 @@ public:
   virtual boost::chrono::milliseconds interval() = 0;
   virtual bool torchOn() = 0;
 
-  void setLimits( const Position &init, uint16_t final ) {
+  void setLimits( const Vector3US &init, const Vector3US &final ) {
     trajectory_init_ = init;
     trajectory_final_ = final;
   }
@@ -40,8 +40,7 @@ protected:
   double adjustedSpeed( double v, double a, double t) { // all dimensions must be at the same units
     return (a * t - sqrt( a*a*t*t - 4 * a * v * t ) ) / 2.;
   }
-  Position trajectory_init_;
-  uint16_t trajectory_final_;
+  Vector3US trajectory_init_, trajectory_final_;
   int32_t current_pos_;
 
 private:

@@ -31,6 +31,7 @@ void MasterParallel::iteration() {
   while( !data_ready_ )
     condition_.wait(lock);
 
+
   out( addr_, decodeBase(current_) ); // base addres (write only pins)
   out( addr_ + 2, decodeBase2(current_) ); // base address + 2 (read/write pins)
 

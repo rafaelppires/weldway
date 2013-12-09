@@ -20,7 +20,7 @@ MainWindow::MainWindow(QWidget *parent) :
   connect( ui->actionConnection, SIGNAL(triggered()), SLOT(openConnectionForm()));
 
   // Fixed Position
-  speedSliderSpin = new SliderSpin( this, ui->speedSlider, ui->speedSpinBox, ui->speedUnitComboBox, UnitConvPtr(new SpeedConv(1, 100)) );
+  speedSliderSpin = new SliderSpin( this, ui->speedSlider, ui->speedSpinBox, ui->speedUnitComboBox, UnitConvPtr(new SpeedConv(1, 667)) );
   xposSliderSpin  = new SliderSpin( this, ui->xpositionSlider, ui->xpositionSpinBox, ui->xposUnitComboBox, UnitConvPtr(new PositionConv(0, 875)) );
   yposSliderSpin  = new SliderSpin( this, ui->ypositionSlider, ui->ypositionSpinBox, ui->yposUnitComboBox, UnitConvPtr(new PositionConv(0, 175)) );
   zposSliderSpin  = new SliderSpin( this, ui->zpositionSlider, ui->zpositionSpinBox, ui->zposUnitComboBox, UnitConvPtr(new PositionConv(0, 100)) );
@@ -135,10 +135,11 @@ void MainWindow::setLimits( MasterCommunicator &mc ) {
               yconv = yposSliderSpin->getConversionObj(),
               zconv = zposSliderSpin->getConversionObj();
   xconv->getConv(unit);
-  Position init( xconv->convertFromTo( xv, cur_unit, unit ),
-                 yconv->convertFromTo( yv, cur_unit, unit ),
-                 zconv->convertFromTo( zv, cur_unit, unit ) );
-  uint16_t final = xconv->convertFromTo( ui->xfinalSpinBox->value() , cur_unit, unit );
+  Vector3US init( xconv->convertFromTo( xv, cur_unit, unit ),
+                  yconv->convertFromTo( yv, cur_unit, unit ),
+                  zconv->convertFromTo( zv, cur_unit, unit ) ),
+            final( xconv->convertFromTo( ui->xfinalSpinBox->value() , cur_unit, unit ),
+                   yconv->convertFromTo( ui->yfinalSpinBox->value(),  cur_unit, unit ), 0 );
   mc.setLimits( init, final );
 }
 
