@@ -30,6 +30,7 @@ class ParallelProtocol : public AbstractProtocol {
 public:
   ParallelProtocol( uint16_t addr );
   virtual void startHoming( uint8_t );
+  virtual void startHomingSequence( std::string );
   virtual void moveTo();
   virtual void executeTrajectory();
   virtual void finish();
@@ -40,6 +41,8 @@ public:
   virtual int32_t getLastSentPos();
   virtual void startTorch();
   virtual void stopTorch();
+  virtual void sendAngularIncrement( AngularDirection dir, double spd, double inc );
+  virtual void sendLinearIncrement( uint8_t axis, double spd, double inc );
 
 private:
   RetAxis sendRawCommand32( uint32_t cmd, uint32_t pins ); // same command to pins in the mask "pins"
@@ -63,6 +66,7 @@ private:
   ParallelPort port_;
   GraniteSPI spi_;
   ConcurrentCmmd32 commanded_pos_, last_cmmd_;
+  boost::thread *homing_thread_;
 };
 
 #endif

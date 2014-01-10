@@ -38,15 +38,23 @@ public:
     return instance;
   }
 
-  void setupParallelPort( uint16_t addr );
+  // Queries
+  bool busy();
+  int32_t getStatus( GraniteParams, uint8_t );
+
+  // Actions
   bool startHoming( uint8_t axis );
-  bool setMaxSpeed(uint16_t speed_rpm, uint8_t axis);
+  bool startHomingSequence( std::string sequence );
   bool sendPosCmmds(AbstractProtocol::ConcurrentCmmd32 &cmmds);
   bool executeTrajectory( AbsTrajectoryPtr );
-  bool busy();
   void cancel();
-  int32_t getStatus( GraniteParams, uint8_t );
+  bool sendAngularIncrement( AngularDirection, double spd, double inc );
+  bool sendIncrement( uint8_t axis, double spd, double inc );
+
+  // Setup
+  void setupParallelPort( uint16_t addr );
   void setLimits(const Vector3US &init, const Vector3US &final );
+  bool setMaxSpeed(uint16_t speed_rpm, uint8_t axis);
   
 private:
   MasterCommunicator() {}

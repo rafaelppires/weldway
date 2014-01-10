@@ -92,6 +92,13 @@ bool MasterCommunicator::startHoming( uint8_t axis ) {
 }
 
 //-----------------------------------------------------------------------------
+bool MasterCommunicator::startHomingSequence( std::string sequence ) {
+  if( !comm_ ) return false;
+  comm_->startHomingSequence( sequence );
+  return true;
+}
+
+//-----------------------------------------------------------------------------
 bool MasterCommunicator::setMaxSpeed( uint16_t speed_rpm, uint8_t axis ) {
   if( !comm_ ) return false;
   comm_->setMaxSpeed( speed_rpm, axis );
@@ -140,3 +147,18 @@ void MasterCommunicator::setLimits( const Vector3US &init, const Vector3US &fina
   trajectory_init_ = init;
   trajectory_final_ = final;
 }
+//-----------------------------------------------------------------------------
+bool MasterCommunicator::sendAngularIncrement( AngularDirection dir, double spd, double inc ) {
+  if( !comm_ || busy() ) return false;
+  comm_->sendAngularIncrement(dir,spd,inc);
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+bool MasterCommunicator::sendIncrement( uint8_t axis, double spd, double inc ) {
+  if( !comm_ || busy() ) return false;
+  comm_->sendLinearIncrement(axis,spd,inc);
+  return true;
+}
+
+//-----------------------------------------------------------------------------

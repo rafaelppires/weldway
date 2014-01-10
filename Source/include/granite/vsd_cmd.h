@@ -324,6 +324,19 @@ Two upper bits decide whether to get value, min or max
 #define STAT_USER_BIT BV(7)
 //ready for user command: initialized, running (no fault), not recovering, not homing & no homing aborted, not running sequence
 #define STAT_SERVO_READY BV(8)
+//running sequence
+#define STAT_RUN_SEQUENCE BV(9)
+//for information only
+//#define STAT_EXT_DISABLE_EVENT BV(10)
+#define STAT_BRAKING BV(10)
+//writing 1 to this initiates homing
+#define STAT_HOMING BV(11)
+#define STAT_INITIALIZED BV(12)
+#define STAT_VOLTAGES_OK BV(13)
+//this is 1 when opto out should indicate error, same as STAT_FAULTSTOP
+//#define STAT_FAULT_INDICATOR_OUT BV(14)
+//outputs disabled until reset
+#define STAT_PERMANENT_STOP BV(15)
 
 // 0 reserved for SPI return value
 //old QDIN

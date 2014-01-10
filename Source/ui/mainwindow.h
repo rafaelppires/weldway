@@ -8,7 +8,7 @@
 #include <units.h>
 #include <stdint.h>
 #include <protocol.h>
-#include <master_communicator.h>
+#include <keypress_manager.h>
 
 namespace Ui {
 class MainWindow;
@@ -20,6 +20,9 @@ class MainWindow : public QMainWindow {
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+
+protected:
+  void keyPressEvent(QKeyEvent *event);
 
 public slots:
   void on_findZeroPushButton_clicked();
@@ -44,6 +47,7 @@ private:
              *fwSpeedSliderSpin, *fwLengthSliderSpin, *bwSpeedSliderSpin, *bwLengthSliderSpin,
              *sbWeldSpeedSliderSpin, *trSpeedSliderSpin, *trAmplSliderSpin, *trFreqSliderSpin,
              *sbtSpeedSliderSpin, *sbtAmplSliderSpin, *sbtLenSliderSpin;
+  KeyPressManager keypress_manager_;
 };
 
 #endif // MAINWINDOW_H

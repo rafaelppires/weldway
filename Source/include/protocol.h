@@ -21,6 +21,12 @@ enum CommType {
 };
 
 //-----------------------------------------------------------------------------
+enum AngularDirection {
+  ANGULAR_VERTICAL,
+  ANGULAR_HORIZONTAL
+};
+
+//-----------------------------------------------------------------------------
 class AbstractProtocol {
 public:
   typedef std::map<uint8_t, int16_t> ConcurrentCmmd;   // Tuples <Axis,Cmmd> which are sent to be executed concurrently (usually position and speed)
@@ -29,6 +35,7 @@ public:
 
   AbstractProtocol( CommType t ) : type_(t) {}
   virtual void startHoming( uint8_t ) {}
+  virtual void startHomingSequence( std::string ) {}
   virtual void moveTo() {}
   virtual void executeTrajectory() {}
   virtual void finish() {}  
@@ -39,6 +46,8 @@ public:
   virtual int32_t getLastSentPos() { return 0; }
   virtual void startTorch() {}
   virtual void stopTorch() {}
+  virtual void sendAngularIncrement( AngularDirection dir, double spd, double inc ) {}
+  virtual void sendLinearIncrement( uint8_t axis, double spd, double inc ) {}
 
 private:
   CommType type_;

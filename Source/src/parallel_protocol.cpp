@@ -89,7 +89,7 @@ AbstractProtocol::ConcurrentCmmd ParallelProtocol::sendWord( uint16_t w[AXIS_CNT
 
 //-----------------------------------------------------------------------------
 ParallelProtocol::ParallelProtocol( uint16_t addr ) :
-    AbstractProtocol( PARALLEL ), port_(addr) {
+    AbstractProtocol( PARALLEL ), port_(addr), homing_thread_(0) {
   port_.startSquareSignal( MANIP_ENABL_PIN, 1000. ); // Pin 16 - 1kHz
   port_.startReadingPin( MANIP_EMERG_PIN, 1./3 /*s*/,
                          std::bind1st( std::mem_fun(&ParallelProtocol::emergencyCallback), this ) );
@@ -199,7 +199,41 @@ RetAxis ParallelProtocol::sendRawCommand32( ConcurrentCmmd32 &cmmds ) {
 
 //-----------------------------------------------------------------------------
 void ParallelProtocol::startHoming( uint8_t axis ) {
-  sendRawCommand32( spi_.startHoming(), axisToPins( axis ) );
+  ConcurrentCmmd32 cmmd;
+  uint32_t nope = spi_.nope();
+  for( uint8_t i = 1; i < AXIS_ALL; i <<= 1) {
+    if( i & axis ) cmmd[i] = spi_.startHoming();
+    else           cmmd[i] = nope;
+  }
+  sendRawCommand32( cmmd );
+}
+//-----------------------------------------------------------------------------
+class HomingSequencer {
+public:
+  HomingSequencer( std::string, ParallelProtocol &p ) : protocol_(p) {}
+
+  void operator()() {
+    protocol_.startHoming( A_AXIS | X_AXIS | Y_AXIS | Z_AXIS );
+    //protocol_.startHoming( A_AXIS );
+    int status = -1;
+
+    while( status ) {
+      status = protocol_.getStatus( StatusBits, A_AXIS ) & STAT_HOMING;
+      printf("Stat: %d\n", status & STAT_HOMING );
+      fflush( stdout );
+      boost::this_thread::sleep_for( boost::chrono::milliseconds( 500 ) );
+    }
+    //protocol_.startHoming( B_AXIS );
+    protocol_.startHoming( B_AXIS );
+  }
+
+private:
+  ParallelProtocol &protocol_;
+};
+
+//-----------------------------------------------------------------------------
+void ParallelProtocol::startHomingSequence( std::string sequence ) {
+  homing_thread_ = new boost::thread( HomingSequencer( sequence, *this ) );
 }
 
 //-----------------------------------------------------------------------------
@@ -352,6 +386,16 @@ int32_t ParallelProtocol::getStatus( GraniteParams param, uint8_t axis ) {
   } else
     ret = getParam( param, axisToPins(AXIS_ALL) );
   return ret.find(axis) != ret.end() ? ret[axis] : int32_t(~0);
+}
+
+//-----------------------------------------------------------------------------
+void ParallelProtocol::sendAngularIncrement( AngularDirection dir, double spd, double inc ) {
+  printf("Angular increment direction %d, speed %f, incr %f\n", dir, spd, inc );
+}
+
+//-----------------------------------------------------------------------------
+void ParallelProtocol::sendLinearIncrement( uint8_t axis, double spd, double inc ) {
+  printf("Linear increment axis %d, speed %f, incr %f\n", axis, spd, inc);
 }
 
 //-----------------------------------------------------------------------------

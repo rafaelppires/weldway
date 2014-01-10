@@ -1,3 +1,4 @@
+#include <QtWidgets>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <iostream>
@@ -11,7 +12,7 @@
 
 //-----------------------------------------------------------------------------
 MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent), ui(new Ui::MainWindow) {
+    QMainWindow(parent), ui(new Ui::MainWindow), keypress_manager_( MasterCommunicator::getInstance() ) {
   ui->setupUi(this);
   xsmotion = new SimpleMotion( "X_AXIS" );
   ysmotion = new SimpleMotion( "Y_AXIS" );
@@ -120,7 +121,8 @@ void MainWindow::on_findZeroPushButton_clicked() {
   //ysmotion->startHoming();
   //zsmotion->startHoming();
 
-  MasterCommunicator::getInstance().startHoming( AXIS_ALL );
+  //MasterCommunicator::getInstance().startHoming( AXIS_ALL );
+  MasterCommunicator::getInstance().startHomingSequence( "X;YZ" );
 }
 
 //-----------------------------------------------------------------------------
@@ -253,3 +255,39 @@ void MainWindow::on_transvTrajectoryComboBox_currentTextChanged(const QString &a
   else
     ui->stopTimeWidget->setHidden(true);
 }
+//-----------------------------------------------------------------------------
+void MainWindow::keyPressEvent(QKeyEvent *event) {
+  switch (event->key()) {
+  case Qt::Key_8:
+    printf("up");
+    keypress_manager_.angularUp();
+    break;
+  case Qt::Key_2:
+    printf("down");
+    keypress_manager_.angularDown();
+    break;
+  case Qt::Key_4:
+    printf("left");
+    keypress_manager_.angularLeft();
+    break;
+  case Qt::Key_6:
+    printf("right");
+    keypress_manager_.angularRight();
+    break;
+  case Qt::Key_Less:
+  case Qt::Key_Comma:
+    printf("< left");
+    keypress_manager_.xaxisLeft();
+    break;
+  case Qt::Key_Period:
+  case Qt::Key_Greater:
+    printf("> right");
+    keypress_manager_.xaxisRight();
+    break;
+  default:
+    QMainWindow::keyPressEvent(event);
+  };
+    fflush( stdout );
+}
+
+//-----------------------------------------------------------------------------
