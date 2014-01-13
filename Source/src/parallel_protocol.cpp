@@ -89,7 +89,7 @@ AbstractProtocol::ConcurrentCmmd ParallelProtocol::sendWord( uint16_t w[AXIS_CNT
 
 //-----------------------------------------------------------------------------
 ParallelProtocol::ParallelProtocol( uint16_t addr ) :
-    AbstractProtocol( PARALLEL ), port_(addr), homing_thread_(0) {
+    AbstractProtocol( PARALLEL ), port_(addr), homing_thread_(0), homing_done_(false) {
   port_.startSquareSignal( MANIP_ENABL_PIN, 1000. ); // Pin 16 - 1kHz
   port_.startReadingPin( MANIP_EMERG_PIN, 1./3 /*s*/,
                          std::bind1st( std::mem_fun(&ParallelProtocol::emergencyCallback), this ) );
@@ -106,8 +106,17 @@ void ParallelProtocol::stopTorch() {
 }
 
 //-----------------------------------------------------------------------------
-void ParallelProtocol::emergencyCallback( bool st ) {
-  std::cout << "emerg now " << int(st) << "\n";
+void ParallelProtocol::emergencyCallback( bool inactive ) {
+  std::cout << "emerg now " << int(inactive) << "\n";
+  if( inactive ) return;
+  homing_done_ = false;
+  if( bool(emergency_callback_) )
+    emergency_callback_();
+}
+
+//-----------------------------------------------------------------------------
+void ParallelProtocol::setEmergencyCallback( EmergencyCallbackType cback ) {
+  emergency_callback_ = cback;
 }
 
 //-----------------------------------------------------------------------------
@@ -224,7 +233,7 @@ public:
       boost::this_thread::sleep_for( boost::chrono::milliseconds( 500 ) );
     }
     //protocol_.startHoming( B_AXIS );
-    protocol_.startHoming( B_AXIS );
+    protocol_.homingDone();
   }
 
 private:
@@ -234,6 +243,12 @@ private:
 //-----------------------------------------------------------------------------
 void ParallelProtocol::startHomingSequence( std::string sequence ) {
   homing_thread_ = new boost::thread( HomingSequencer( sequence, *this ) );
+}
+
+//-----------------------------------------------------------------------------
+void ParallelProtocol::homingDone() {
+ commanded_pos_.clear();
+ homing_done_ = true;
 }
 
 //-----------------------------------------------------------------------------
@@ -390,12 +405,24 @@ int32_t ParallelProtocol::getStatus( GraniteParams param, uint8_t axis ) {
 
 //-----------------------------------------------------------------------------
 void ParallelProtocol::sendAngularIncrement( AngularDirection dir, double spd, double inc ) {
+  if( !homing_done_ ) return;
   printf("Angular increment direction %d, speed %f, incr %f\n", dir, spd, inc );
 }
 
 //-----------------------------------------------------------------------------
-void ParallelProtocol::sendLinearIncrement( uint8_t axis, double spd, double inc ) {
-  printf("Linear increment axis %d, speed %f, incr %f\n", axis, spd, inc);
+void ParallelProtocol::sendLinearIncrement( uint8_t axis, int32_t spd, int32_t inc ) {
+  if( !homing_done_ ) return;
+  printf(" Linear increment axis %d, speed %d, incr %d\n", axis, spd, inc);
+  ConcurrentCmmd32 speeds, pos;
+  int32_t cpos = 0;
+  if( commanded_pos_.find(axis) != commanded_pos_.end() )
+    cpos = commanded_pos_[axis];
+
+  speeds[ axis ] = spd;
+  pos[ axis ] = cpos + inc;
+
+  sendSpdCmmds( speeds );
+  sendPosCmmds( pos );
 }
 
 //-----------------------------------------------------------------------------

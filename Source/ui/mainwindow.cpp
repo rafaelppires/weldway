@@ -284,6 +284,22 @@ void MainWindow::keyPressEvent(QKeyEvent *event) {
     printf("> right");
     keypress_manager_.xaxisRight();
     break;
+  case Qt::Key_PageUp:
+    printf("z up");
+    keypress_manager_.zaxisUp();
+    break;
+  case Qt::Key_PageDown:
+    printf("z down");
+    keypress_manager_.zaxisDown();
+    break;
+  case Qt::Key_Plus:
+    printf("y front");
+    keypress_manager_.yaxisFront();
+    break;
+  case Qt::Key_Minus:
+    printf("y back");
+    keypress_manager_.yaxisBack();
+    break;
   default:
     QMainWindow::keyPressEvent(event);
   };

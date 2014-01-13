@@ -47,7 +47,7 @@ public:
   virtual void startTorch() {}
   virtual void stopTorch() {}
   virtual void sendAngularIncrement( AngularDirection dir, double spd, double inc ) {}
-  virtual void sendLinearIncrement( uint8_t axis, double spd, double inc ) {}
+  virtual void sendLinearIncrement( uint8_t axis, int32_t spd, int32_t inc ) {}
 
 private:
   CommType type_;

@@ -81,7 +81,16 @@ void MasterCommunicator::setupParallelPort( uint16_t addr ) {
     delete comm_.get();
   }
 
-  comm_.reset( new ParallelProtocol( addr ) );
+  ParallelProtocol *p;
+  comm_.reset( p = new ParallelProtocol( addr ) );
+  p->setEmergencyCallback( boost::bind( &MasterCommunicator::emergencyCallback, this ) );
+}
+
+//-----------------------------------------------------------------------------
+void MasterCommunicator::emergencyCallback() {
+  printf("EMERGENCY! Run to the hills\n");
+  fflush(stdout);
+  cancel();
 }
 
 //-----------------------------------------------------------------------------

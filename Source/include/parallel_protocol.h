@@ -24,6 +24,7 @@ struct RetRawCmmd {
   uint8_t  crc_match;
 };
 
+typedef boost::function< void() > EmergencyCallbackType;
 typedef std::map< uint8_t, RetRawCmmd > RetAxis;
 
 class ParallelProtocol : public AbstractProtocol {
@@ -42,7 +43,9 @@ public:
   virtual void startTorch();
   virtual void stopTorch();
   virtual void sendAngularIncrement( AngularDirection dir, double spd, double inc );
-  virtual void sendLinearIncrement( uint8_t axis, double spd, double inc );
+  virtual void sendLinearIncrement(uint8_t axis, int32_t spd, int32_t inc );
+  void homingDone();
+  void setEmergencyCallback( EmergencyCallbackType cback );
 
 private:
   RetAxis sendRawCommand32( uint32_t cmd, uint32_t pins ); // same command to pins in the mask "pins"
@@ -67,6 +70,8 @@ private:
   GraniteSPI spi_;
   ConcurrentCmmd32 commanded_pos_, last_cmmd_;
   boost::thread *homing_thread_;
+  bool homing_done_;
+  EmergencyCallbackType emergency_callback_;
 };
 
 #endif

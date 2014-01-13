@@ -60,6 +60,7 @@ private:
   MasterCommunicator() {}
   MasterCommunicator(MasterCommunicator const&);
   void operator=(MasterCommunicator const&);
+  void emergencyCallback();
 
   boost::shared_ptr< AbstractProtocol > comm_;
   TrajectoryExecuter *trajectory_executer_;
