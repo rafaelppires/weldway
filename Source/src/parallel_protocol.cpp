@@ -407,6 +407,23 @@ int32_t ParallelProtocol::getStatus( GraniteParams param, uint8_t axis ) {
 void ParallelProtocol::sendAngularIncrement( AngularDirection dir, double spd, double inc ) {
   if( !homing_done_ ) return;
   printf("Angular increment direction %d, speed %f, incr %f\n", dir, spd, inc );
+  ConcurrentCmmd32 speeds, pos;
+  while( inc >  360 ) inc -= 360;
+  while( inc < -360 ) inc += 360;
+  int32_t pulses = 36*400 * inc/360,
+          apos = commanded_pos_[A_AXIS],
+          bpos = commanded_pos_[B_AXIS];
+  speeds[A_AXIS] = speeds[B_AXIS] = spd;
+  if( dir == ANGULAR_VERTICAL ) {
+    pos[A_AXIS] = apos + pulses;
+    pos[B_AXIS] = apos - pulses;
+  } else if( dir == ANGULAR_HORIZONTAL ) {
+    pos[A_AXIS] = apos + pulses;
+    pos[B_AXIS] = apos + pulses;
+  }
+
+  sendSpdCmmds( speeds );
+  sendPosCmmds( pos );
 }
 
 //-----------------------------------------------------------------------------
