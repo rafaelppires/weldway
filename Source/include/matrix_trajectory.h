@@ -4,7 +4,7 @@
 #include <trajectory.h>
 #include <stdint.h>
 #include <vector>
-#include <vector2d.h>
+#include <vectorxd.h>
 
 class MatrixTrajectory : public AbstractTrajectory {
 public:

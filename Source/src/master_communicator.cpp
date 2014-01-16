@@ -1,5 +1,6 @@
 #include <master_communicator.h>
 #include <parallel_protocol.h>
+#include <debug_protocol.h>
 #include <boost/chrono.hpp>
 using boost::chrono::high_resolution_clock;
 using boost::chrono::nanoseconds;
@@ -76,14 +77,20 @@ void TrajectoryExecuter::cancel() {
 
 //-----------------------------------------------------------------------------
 void MasterCommunicator::setupParallelPort( uint16_t addr ) {
-  if( comm_ ) {
+  if( comm_ )
     comm_->finish();
-    delete comm_.get();
-  }
 
   ParallelProtocol *p;
   comm_.reset( p = new ParallelProtocol( addr ) );
   p->setEmergencyCallback( boost::bind( &MasterCommunicator::emergencyCallback, this ) );
+}
+
+//-----------------------------------------------------------------------------
+void MasterCommunicator::setupDebug() {
+  if( comm_ )
+    comm_->finish();
+
+  comm_.reset( new DebugProtocol );
 }
 
 //-----------------------------------------------------------------------------

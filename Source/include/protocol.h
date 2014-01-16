@@ -17,7 +17,8 @@
 enum CommType {
   PARALLEL,
   USB_HUB,
-  USB_PROXY
+  USB_PROXY,
+  DEBUG
 };
 
 //-----------------------------------------------------------------------------

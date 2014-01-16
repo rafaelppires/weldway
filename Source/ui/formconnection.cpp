@@ -26,10 +26,13 @@ FormConnection::FormConnection(QWidget *parent) :
 }
 //-----------------------------------------------------------------------------
 void FormConnection::onAccept() {
+  MasterCommunicator &mc = MasterCommunicator::getInstance();
   if( ui->parallelRadioButton->isChecked() ) {
     int idx = ui->parallelPortComboBox->currentIndex();
     if( idx < 0 || idx >= devlist_.size() ) return;
-    MasterCommunicator::getInstance().setupParallelPort( devlist_[idx].second );
+    mc.setupParallelPort( devlist_[idx].second );
+  } else if( ui->debugRadioButton->isChecked() ) {
+    mc.setupDebug();
   }
 }
 

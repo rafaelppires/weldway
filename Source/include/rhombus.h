@@ -2,7 +2,7 @@
 #define _RHOMBUS_H_
 
 #include <matrix_trajectory.h>
-#include <vector2d.h>
+#include <vectorxd.h>
 
 class Rhombus : public MatrixTrajectory {
 public:

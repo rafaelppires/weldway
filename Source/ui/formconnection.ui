@@ -35,17 +35,10 @@
      <x>10</x>
      <y>10</y>
      <width>301</width>
-     <height>80</height>
+     <height>111</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout">
-    <item row="1" column="0">
-     <widget class="QRadioButton" name="parallelRadioButton">
-      <property name="text">
-       <string>Paralela</string>
-      </property>
-     </widget>
-    </item>
     <item row="0" column="0">
      <widget class="QRadioButton" name="usbRadioButton">
       <property name="text">
@@ -53,8 +46,22 @@
       </property>
      </widget>
     </item>
+    <item row="1" column="0">
+     <widget class="QRadioButton" name="parallelRadioButton">
+      <property name="text">
+       <string>Paralela</string>
+      </property>
+     </widget>
+    </item>
     <item row="1" column="1">
      <widget class="QComboBox" name="parallelPortComboBox"/>
+    </item>
+    <item row="2" column="0">
+     <widget class="QRadioButton" name="debugRadioButton">
+      <property name="text">
+       <string>Debug</string>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>

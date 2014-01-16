@@ -4,7 +4,7 @@
 #include <protocol.h>
 #include <math.h>
 #include <boost/chrono.hpp>
-#include <vector2d.h>
+#include <vectorxd.h>
 
 //-----------------------------------------------------------------------------
 typedef Vector3<uint16_t> Position;

@@ -53,6 +53,7 @@ public:
 
   // Setup
   void setupParallelPort( uint16_t addr );
+  void setupDebug();
   void setLimits(const Vector3US &init, const Vector3US &final );
   bool setMaxSpeed(uint16_t speed_rpm, uint8_t axis);
   
