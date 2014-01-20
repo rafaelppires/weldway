@@ -8,7 +8,7 @@
 
 class SwitchBackTrajectory : public AbstractTrajectory {
 public:
-  SwitchBackTrajectory( int32_t, int32_t );
+  SwitchBackTrajectory( int32_t, int32_t, double total_length );
 
 private:
 

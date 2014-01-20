@@ -7,7 +7,7 @@
 
 class DoubleETrajectory : public MatrixTrajectory {
 public:
-  DoubleETrajectory(int32_t spd, double freq, int32_t ampl);
+  DoubleETrajectory(int32_t spd, double freq, int32_t ampl, double total_length);
 private:
 };
 

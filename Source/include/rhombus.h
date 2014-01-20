@@ -6,7 +6,7 @@
 
 class Rhombus : public MatrixTrajectory {
 public:
-  Rhombus(int32_t a, int32_t l, uint8_t n, double wspeed);
+  Rhombus(int32_t a, int32_t l, uint8_t n, double wspeed, double total_length);
 };
 
 #endif

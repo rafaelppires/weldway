@@ -6,7 +6,7 @@
 
 class ETrajectory : public MatrixTrajectory {
 public:
-  ETrajectory(int32_t spd, double freq, int32_t ampl);
+  ETrajectory(int32_t spd, double freq, int32_t ampl, double total_length);
 
 
 };

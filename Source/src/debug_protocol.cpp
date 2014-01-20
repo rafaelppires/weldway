@@ -1,7 +1,7 @@
 #include <debug_protocol.h>
 
 //-----------------------------------------------------------------------------
-DebugProtocol::DebugProtocol() : AbstractProtocol( DEBUG ) {
+DebugProtocol::DebugProtocol() : AbstractProtocol( DEBUG ), posfile_("pos.dat") {
 
 }
   
@@ -36,8 +36,9 @@ void DebugProtocol::setMaxSpeed( uint16_t spd, uint8_t axis ) {
 }
   
 //-----------------------------------------------------------------------------
-void DebugProtocol::sendPosCmmds( const ConcurrentCmmd32 & ) {
-
+void DebugProtocol::sendPosCmmds( const ConcurrentCmmd32 &cmmds ) {
+  ConcurrentCmmd32 c = cmmds;
+  posfile_ << c[X_AXIS] << " " << c[Y_AXIS] << "\n";
 }
   
 //-----------------------------------------------------------------------------

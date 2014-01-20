@@ -38,7 +38,7 @@ private:
   QString stringAxis(uint32_t value);
   void setStatus( int32_t status, QLabel *label );
   void checkStatus();
-  void setLimits( MasterCommunicator &mc );
+  void setLimits(MasterCommunicator &mc , Vector3I &init, Vector3I &final);
 
   Ui::MainWindow *ui;
   QLabel *x_statlabel_, *y_statlabel_, *z_statlabel_, *a_statlabel_, *b_statlabel_;

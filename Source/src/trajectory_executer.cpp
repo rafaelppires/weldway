@@ -45,6 +45,7 @@ void TrajectoryExecuter::operator()() {
     last_pos = *it;
     last_spd = spds;
   }
+  cancel();
 }
 
 //-----------------------------------------------------------------------------

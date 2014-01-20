@@ -1,1 +1,1 @@
-plot 'plot.txt' u 1:2 w lp
+plot 'pos.dat' u 1:2 w lp

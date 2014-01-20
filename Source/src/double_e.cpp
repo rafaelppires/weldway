@@ -2,7 +2,7 @@
 #include <units.h>
 
 //-----------------------------------------------------------------------------
-DoubleETrajectory::DoubleETrajectory(int32_t spd, double freq, int32_t ampl) :
+DoubleETrajectory::DoubleETrajectory(int32_t spd, double freq, int32_t ampl, double total_length) :
     MatrixTrajectory( (TO_PULSES*spd) / (TO_RPM*freq) ) {
   amplitude_ = ampl;
   double t = 1. / freq,                         // s

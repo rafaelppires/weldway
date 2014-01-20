@@ -265,12 +265,6 @@ void ParallelProtocol::updatePosition( const ConcurrentCmmd32 &cmmds ) {
 }
 
 //-----------------------------------------------------------------------------
-#define LOGPOS 1
-#ifdef LOGPOS
-std::ofstream lgfile("plot.txt"), lgpoints("points.txt");
-std::map<uint8_t, double> last_pos, last_speed, last_cmd;
-high_resolution_clock::time_point last_tstamp;
-#endif
 void ParallelProtocol::sendPosCmmds( const ConcurrentCmmd32 &cmmds ) {
   //uint32_t pins = axisToPins( axisMask( cmmds ) );
   /*
@@ -283,30 +277,6 @@ void ParallelProtocol::sendPosCmmds( const ConcurrentCmmd32 &cmmds ) {
 
   ConcurrentCmmd64 pos_cmmds;
   ConcurrentCmmd32::const_iterator it = cmmds.begin(), end = cmmds.end();
-#ifdef LOGPOS
-  high_resolution_clock::time_point now = high_resolution_clock::now();
-  double interval = boost::chrono::nanoseconds(now - last_tstamp).count() / 1e+9f;
-  if( interval > 10 ) interval = 0;
-  printf("Int: %f\n", interval);
-  for( int i = 1; i < AXIS_ALL; i <<=1 ) {
-    double offset = last_speed[i] * interval;
-    if( last_pos[i] + offset > last_cmd[i] && last_speed[i] > 0 ) last_pos[i] = last_cmd[i];
-    else if( last_pos[i] + offset < last_cmd[i] && last_speed[i] < 0 ) last_pos[i] = last_cmd[i];
-    else last_pos[i] += offset;
-    lgfile << last_pos[i] << " ";
-    ConcurrentCmmd32::const_iterator found;
-    if( (found = cmmds.find(i)) != end ) {
-      if( found->second > last_pos[i] )      last_speed[i] =  fabs(last_speed[i]);
-      else if( found->second < last_pos[i] ) last_speed[i] = -fabs(last_speed[i]);
-      else                                   last_speed[i] = 0;
-      last_cmd[i] = found->second;
-    }
-    lgpoints << last_cmd[i] << " ";
-  }
-  lgpoints << "\n";
-  lgfile << "\n";
-  last_tstamp = now;
-#endif
   for(; it != end; ++it) {
     printf("p[%X] = [%d]\n", it->first, it->second );
     pos_cmmds[ it->first ] = spi_.graniteAbsTarget( it->second );

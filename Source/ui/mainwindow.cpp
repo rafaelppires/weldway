@@ -126,7 +126,7 @@ void MainWindow::on_findZeroPushButton_clicked() {
 }
 
 //-----------------------------------------------------------------------------
-void MainWindow::setLimits( MasterCommunicator &mc ) {
+void MainWindow::setLimits( MasterCommunicator &mc, Vector3I &init, Vector3I &final ) {
   double xv = ui->xinitSpinBox->value(),
          yv = ui->yinitSpinBox->value(),
          zv = ui->zinitSpinBox->value();
@@ -137,11 +137,12 @@ void MainWindow::setLimits( MasterCommunicator &mc ) {
               yconv = yposSliderSpin->getConversionObj(),
               zconv = zposSliderSpin->getConversionObj();
   xconv->getConv(unit);
-  Vector3I  init( xconv->convertFromTo( xv, cur_unit, unit ),
-                  yconv->convertFromTo( yv, cur_unit, unit ),
-                  zconv->convertFromTo( zv, cur_unit, unit ) ),
-            final( xconv->convertFromTo( ui->xfinalSpinBox->value() , cur_unit, unit ),
-                   yconv->convertFromTo( ui->yfinalSpinBox->value(),  cur_unit, unit ), 0 );
+  init = Vector3I( xconv->convertFromTo( xv, cur_unit, unit ),
+                   yconv->convertFromTo( yv, cur_unit, unit ),
+                   zconv->convertFromTo( zv, cur_unit, unit ) );
+  final = Vector3I( xconv->convertFromTo( ui->xfinalSpinBox->value() , cur_unit, unit ),
+                    yconv->convertFromTo( ui->yfinalSpinBox->value(),  cur_unit, unit ),
+                    zconv->convertFromTo( ui->zfinalSpinBox->value(),  cur_unit, unit ));
   mc.setLimits( init, final );
 }
 
@@ -151,7 +152,9 @@ void MainWindow::on_executeButton_clicked() {
   MasterCommunicator &mc = MasterCommunicator::getInstance();
   int idx = ui->tabWidget->currentIndex();
 
-  setLimits( mc );
+  Vector3I  init, final;
+  setLimits( mc, init, final );
+  double length = init.distance( final );
   if( mc.busy() ) {
     mc.cancel();
     printf(">>> Cancelled <<<\n");
@@ -167,7 +170,7 @@ void MainWindow::on_executeButton_clicked() {
   } else if( idx == 3 ) { // Switch back
     int32_t fwlen = fwLengthSliderSpin->value( pos_unit ),
             weldspd = sbWeldSpeedSliderSpin->value( spd_unit );
-    AbsTrajectoryPtr sb( new SwitchBackTrajectory(fwlen, weldspd) );
+    AbsTrajectoryPtr sb( new SwitchBackTrajectory(fwlen, weldspd, length) );
     mc.executeTrajectory( sb );
   } else if( idx == 4 ) { // Triangular
     boost::shared_ptr<AbstractTrajectory> tr;
@@ -176,20 +179,20 @@ void MainWindow::on_executeButton_clicked() {
             ampl = trAmplSliderSpin->value( pos_unit ),
             tidx = ui->transvTrajectoryComboBox->currentIndex();
     if( tidx == 1 ) {
-      tr.reset( new ETrajectory( spd, freq, ampl ) );
+      tr.reset( new ETrajectory( spd, freq, ampl, length ) );
     } else if( tidx == 2 ) {
-      tr.reset( new DoubleETrajectory( spd, freq, ampl ) );
+      tr.reset( new DoubleETrajectory( spd, freq, ampl, length ) );
     } else {
       uint32_t sup_stop = ui->supSpinBox->value(),
                inf_stop = ui->infSpinBox->value();
-      tr.reset( new TriangularTrajectory( spd, freq, ampl, sup_stop, inf_stop ) );
+      tr.reset( new TriangularTrajectory( spd, freq, ampl, sup_stop, inf_stop, length ) );
     }
     mc.executeTrajectory( tr );
   } else if( idx == 5 ) {
     int32_t spd  = sbtSpeedSliderSpin->value( spd_unit ),
             ampl = sbtAmplSliderSpin->value( pos_unit ),
             len  = sbtLenSliderSpin->value( pos_unit );
-    mc.executeTrajectory( AbsTrajectoryPtr(new Rhombus( ampl, len, ui->sbtOscCountSpinBox->value(), spd )));
+    mc.executeTrajectory( AbsTrajectoryPtr(new Rhombus( ampl, len, ui->sbtOscCountSpinBox->value(), spd, length )));
   }
   fflush( stdout );
 }
