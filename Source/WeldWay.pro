@@ -24,7 +24,8 @@ SOURCES += src/main.cpp \
            src/rhombus.cpp \
            src/granite/vsd_cmmd.cpp \
            src/keypress_manager.cpp \
-           src/debug_protocol.cpp
+           src/debug_protocol.cpp \
+           src/trajectory_executer.cpp
 
 HEADERS += ui/mainwindow.h \
            include/simplemotion.h \
@@ -49,7 +50,8 @@ HEADERS += ui/mainwindow.h \
            include/vectorxd.h \
            include/rhombus.h \
            include/keypress_manager.h \
-           include/debug_protocol.h
+           include/debug_protocol.h \
+           include/trajectory_executer.h
 
 FORMS    += ui/mainwindow.ui \
             ui/formconnection.ui

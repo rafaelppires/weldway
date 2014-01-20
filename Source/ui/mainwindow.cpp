@@ -137,7 +137,7 @@ void MainWindow::setLimits( MasterCommunicator &mc ) {
               yconv = yposSliderSpin->getConversionObj(),
               zconv = zposSliderSpin->getConversionObj();
   xconv->getConv(unit);
-  Vector3US init( xconv->convertFromTo( xv, cur_unit, unit ),
+  Vector3I  init( xconv->convertFromTo( xv, cur_unit, unit ),
                   yconv->convertFromTo( yv, cur_unit, unit ),
                   zconv->convertFromTo( zv, cur_unit, unit ) ),
             final( xconv->convertFromTo( ui->xfinalSpinBox->value() , cur_unit, unit ),

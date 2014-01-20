@@ -51,8 +51,8 @@ int32_t DebugProtocol::getStatus( GraniteParams param, uint8_t axis ) {
 }
   
 //-----------------------------------------------------------------------------
-int32_t DebugProtocol::getLastSentPos() {
-  return 0;
+Vector3I DebugProtocol::getLastSentPos() {
+  return Vector3I(0,0,0);
 }
   
 //-----------------------------------------------------------------------------

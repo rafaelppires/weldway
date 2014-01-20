@@ -2,6 +2,7 @@
 #define _VECTOR2D_H_
 
 #include <cmath>
+#include <stdint.h>
 
 template< unsigned int N, typename T >
 class Vector {
@@ -66,11 +67,19 @@ public:
   T& z() { return s::v[2]; }
 };
 
-typedef Vector2<double> Vector2D;    // double
-typedef Vector3<double> Vector3D;
-typedef Vector2<int16_t> Vector2S;   // short
-typedef Vector3<int16_t> Vector3S;
+typedef Vector2<double>   Vector2D;  // double
+typedef Vector3<double>   Vector3D;
+
+typedef Vector2<int16_t>  Vector2S;  // short
+typedef Vector3<int16_t>  Vector3S;
+
 typedef Vector2<uint16_t> Vector2US; // unsigned short
 typedef Vector3<uint16_t> Vector3US;
+
+typedef Vector2<uint32_t> Vector2UI; // unsigned integer
+typedef Vector3<uint32_t> Vector3UI;
+
+typedef Vector2<int32_t>  Vector2I;  // integer
+typedef Vector3<int32_t>  Vector3I;
 
 #endif

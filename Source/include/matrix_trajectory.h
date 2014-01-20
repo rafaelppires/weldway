@@ -11,10 +11,10 @@ public:
   typedef Vector2D Coordinate;
   MatrixTrajectory(uint32_t xsteplen);
 
-  virtual bool finished();
-  virtual AbstractProtocol::ConcurrentCmmd32 speed();
-  virtual AbstractProtocol::ConcurrentCmmd32 position();
-  virtual boost::chrono::milliseconds interval();
+  //virtual bool finished();
+  //virtual AbstractProtocol::ConcurrentCmmd32 speed();
+  //virtual AbstractProtocol::ConcurrentCmmd32 position();
+  //virtual boost::chrono::milliseconds interval();
   virtual bool torchOn();
   
 protected:

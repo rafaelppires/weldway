@@ -1,52 +1,28 @@
 #ifndef _TRAJECTORY_H_
 #define _TRAJECTORY_H_
 
-#include <protocol.h>
-#include <math.h>
-#include <boost/chrono.hpp>
 #include <vectorxd.h>
+#include <vector>
+#include <boost/shared_ptr.hpp>
 
 //-----------------------------------------------------------------------------
-typedef Vector3<uint16_t> Position;
-//-----------------------------------------------------------------------------
-enum TrajectoryControl {
-  POSITION = 1,
-  VELOCITY = 2,
-  SPDPOS   = 3,
-  TORQUE   = 4
-};
+typedef std::vector<Vector3I>  PositionVector;
+typedef std::vector<Vector3US> SpeedVector;
 
 //-----------------------------------------------------------------------------
 class AbstractTrajectory {
 public:
-  AbstractTrajectory() : mode_( SPDPOS ) {}
-  TrajectoryControl controlMode() { return mode_; }
-  virtual bool finished() = 0;
-  virtual AbstractProtocol::ConcurrentCmmd32 speed() = 0;
-  virtual AbstractProtocol::ConcurrentCmmd32 position() = 0;
-  virtual boost::chrono::milliseconds interval() = 0;
-  virtual bool torchOn() = 0;
+  AbstractTrajectory() {}
 
-  void setLimits( const Vector3US &init, const Vector3US &final ) {
-    trajectory_init_ = init;
-    trajectory_final_ = final;
-  }
-
-  void setCurrent( int32_t pos ) {
-    current_pos_ = pos;
-  }
+  virtual const PositionVector& positions() const { return positions_; }
+  virtual const SpeedVector& speeds() const { return speeds_; }
 
 protected:
-  double adjustedSpeed( double v, double a, double t) { // all dimensions must be at the same units
-    return (a * t - sqrt( a*a*t*t - 4 * a * v * t ) ) / 2.;
-  }
-  Vector3US trajectory_init_, trajectory_final_;
-  int32_t current_pos_;
-
-private:
-  TrajectoryControl mode_;
+  PositionVector positions_;
+  SpeedVector speeds_;
 };
 
+//-----------------------------------------------------------------------------
 typedef boost::shared_ptr< AbstractTrajectory > AbsTrajectoryPtr;
 
 //-----------------------------------------------------------------------------

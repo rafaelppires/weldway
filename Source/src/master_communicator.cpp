@@ -7,75 +7,6 @@ using boost::chrono::nanoseconds;
 using boost::chrono::milliseconds;
 
 //-----------------------------------------------------------------------------
-void TrajectoryExecuter::operator()() {
-  bool spd = trajectory_->controlMode() & VELOCITY,
-       pos = trajectory_->controlMode() & POSITION,
-       torch = false;
-  high_resolution_clock::time_point now, start;
-
-  FILE *log = fopen("log.txt", "w");
-
-  uint32_t interval;
-  start = high_resolution_clock::now();
-  trajectory_->setCurrent( current_pos_ );
-  trajectory_->setLimits( trajectory_init_, trajectory_final_ );
-
-  while( !trajectory_->finished() && !finished() ) {
-    now = high_resolution_clock::now();
-    if( !torch && trajectory_->torchOn() ) {
-      comm_->startTorch();
-      torch = true;
-    }
-
-    fprintf(log, "int %f ", (now - start).count() / 1e+6f );
-    if( spd ) {
-      AbstractProtocol::ConcurrentCmmd32 cmmds = trajectory_->speed();
-      comm_->sendSpdCmmds( cmmds );
-    }
-
-    if( pos ) {
-      AbstractProtocol::ConcurrentCmmd32 cmmds = trajectory_->position();
-      comm_->sendPosCmmds( cmmds );
-    }
-    //goto finish_traj;
-    start = high_resolution_clock::now();
-    milliseconds interv = trajectory_->interval() - boost::chrono::duration_cast<milliseconds>(start - now);
-    fprintf(log, "cmd %f %d ms\n", (start - now).count() / 1e+6f, interv.count() );
-    boost::this_thread::sleep_for( interv );
-  }
-  cancel();
-  fclose(log);
-}
-
-//-----------------------------------------------------------------------------
-void TrajectoryExecuter::setLimits( const Vector3US &init, const Vector3US &final ) {
-  trajectory_init_ = init;
-  trajectory_final_ = final;
-}
-
-//-----------------------------------------------------------------------------
-void TrajectoryExecuter::setCurrent( int32_t last ) {
-  current_pos_ = last;
-}
-
-//-----------------------------------------------------------------------------
-bool TrajectoryExecuter::finished() {
-   bool ret;
-   {
-     boost::lock_guard<boost::mutex> lock(finish_mutex_);
-     ret = finished_;
-   }
-   return ret;
- }
-
-//-----------------------------------------------------------------------------
-void TrajectoryExecuter::cancel() {
-  boost::lock_guard<boost::mutex> lock(finish_mutex_);
-  comm_->stopTorch();
-  finished_ = true;
-}
-
-//-----------------------------------------------------------------------------
 void MasterCommunicator::setupParallelPort( uint16_t addr ) {
   if( comm_ )
     comm_->finish();
@@ -159,7 +90,7 @@ void MasterCommunicator::cancel() {
 }
 
 //-----------------------------------------------------------------------------
-void MasterCommunicator::setLimits( const Vector3US &init, const Vector3US &final ) {
+void MasterCommunicator::setLimits(const Vector3I &init, const Vector3I &final ) {
   trajectory_init_ = init;
   trajectory_final_ = final;
 }

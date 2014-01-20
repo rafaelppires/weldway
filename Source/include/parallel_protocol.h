@@ -39,7 +39,7 @@ public:
   virtual void sendPosCmmds( const ConcurrentCmmd32 & );
   virtual void sendSpdCmmds( const ConcurrentCmmd32 & );
   virtual int32_t getStatus( GraniteParams param, uint8_t axis );
-  virtual int32_t getLastSentPos();
+  virtual Vector3I getLastSentPos();
   virtual void startTorch();
   virtual void stopTorch();
   virtual void sendAngularIncrement( AngularDirection dir, double spd, double inc );

@@ -5,29 +5,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
 #include <granite_spi_interface.h>
-
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-class TrajectoryExecuter {
-public:
-  TrajectoryExecuter( AbsTrajectoryPtr t, boost::shared_ptr< AbstractProtocol > comm )
-      : trajectory_(t), comm_(comm), finished_(false) {}
-
-  void operator()();
-  bool finished();
-  void cancel();
-  void setLimits(const Vector3US &init, const Vector3US &final );
-  void setCurrent( int32_t last );
-
-private:
-  AbsTrajectoryPtr trajectory_;
-  boost::shared_ptr< AbstractProtocol > comm_;
-  boost::mutex finish_mutex_;
-  bool finished_;
-  Vector3US trajectory_init_, trajectory_final_;
-  int32_t current_pos_;
-};
+#include <trajectory_executer.h>
 
 //-----------------------------------------------------------------------------
 class MasterCommunicator {
@@ -54,7 +32,7 @@ public:
   // Setup
   void setupParallelPort( uint16_t addr );
   void setupDebug();
-  void setLimits(const Vector3US &init, const Vector3US &final );
+  void setLimits(const Vector3I &init, const Vector3I &final );
   bool setMaxSpeed(uint16_t speed_rpm, uint8_t axis);
   
 private:
@@ -66,7 +44,7 @@ private:
   boost::shared_ptr< AbstractProtocol > comm_;
   TrajectoryExecuter *trajectory_executer_;
   boost::shared_ptr<boost::thread> thread_executer_;
-  Vector3US trajectory_init_, trajectory_final_;
+  Vector3I trajectory_init_, trajectory_final_;
 };
 
 #endif

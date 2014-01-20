@@ -9,12 +9,12 @@ MatrixTrajectory::MatrixTrajectory( uint32_t xsteplen ) : step_(0),
 }
 
 //-----------------------------------------------------------------------------
-bool MatrixTrajectory::finished() {
+/*bool MatrixTrajectory::finished() {
   return current_.x() > trajectory_final_.x();
-}
+}*/
 
 //-----------------------------------------------------------------------------
-AbstractProtocol::ConcurrentCmmd32 MatrixTrajectory::speed() {
+/*AbstractProtocol::ConcurrentCmmd32 MatrixTrajectory::speed() {
   AbstractProtocol::ConcurrentCmmd32 ret;
   if( moveto_done_ ) {
     int idx = step_ % trajectory_.size();
@@ -52,7 +52,7 @@ AbstractProtocol::ConcurrentCmmd32 MatrixTrajectory::position() {
     current_.x() = xposbase_ = ret[X_AXIS];
   }
   return ret;
-}
+}*/
 
 //-----------------------------------------------------------------------------
 bool MatrixTrajectory::torchOn() {
@@ -60,7 +60,7 @@ bool MatrixTrajectory::torchOn() {
 }
 
 //-----------------------------------------------------------------------------
-boost::chrono::milliseconds MatrixTrajectory::interval() {
+/*boost::chrono::milliseconds MatrixTrajectory::interval() {
   uint32_t ret = 0;
   if( !step_ && !moveto_done_ ) {
     moveto_done_ = true;
@@ -72,7 +72,7 @@ boost::chrono::milliseconds MatrixTrajectory::interval() {
   }
   last_ = current_;
   return boost::chrono::milliseconds(ret);
-}
+}*/
 
 //-----------------------------------------------------------------------------
 void MatrixTrajectory::add( const Coordinate &c ) {

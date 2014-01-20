@@ -327,8 +327,8 @@ void ParallelProtocol::sendPosCmmds( const ConcurrentCmmd32 &cmmds ) {
 }
 
 //-----------------------------------------------------------------------------
-int32_t ParallelProtocol::getLastSentPos() {
-  return last_cmmd_[X_AXIS];
+Vector3I ParallelProtocol::getLastSentPos() {
+  return Vector3I( last_cmmd_[X_AXIS], last_cmmd_[Y_AXIS], last_cmmd_[Z_AXIS] );
 }
 
 //-----------------------------------------------------------------------------

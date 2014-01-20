@@ -3,6 +3,7 @@
 
 #include <map>
 #include <stdint.h>
+#include <vectorxd.h>
 #include <granite_spi_interface.h>
 
 #define X_AXIS   0x01
@@ -44,7 +45,7 @@ public:
   virtual void sendPosCmmds( const ConcurrentCmmd32 & ) {}
   virtual void sendSpdCmmds( const ConcurrentCmmd32 & ) {}
   virtual int32_t getStatus( GraniteParams, uint8_t axis ) { return ~0; }
-  virtual int32_t getLastSentPos() { return 0; }
+  virtual Vector3I getLastSentPos() { return Vector3I(0,0,0); }
   virtual void startTorch() {}
   virtual void stopTorch() {}
   virtual void sendAngularIncrement( AngularDirection dir, double spd, double inc ) {}
