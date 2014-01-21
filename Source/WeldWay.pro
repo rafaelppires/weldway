@@ -51,7 +51,8 @@ HEADERS += ui/mainwindow.h \
            include/rhombus.h \
            include/keypress_manager.h \
            include/debug_protocol.h \
-           include/trajectory_executer.h
+           include/trajectory_executer.h \
+           include/Matrix.h
 
 FORMS    += ui/mainwindow.ui \
             ui/formconnection.ui

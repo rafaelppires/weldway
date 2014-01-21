@@ -6,6 +6,12 @@ DebugProtocol::DebugProtocol() : AbstractProtocol( DEBUG ), posfile_("pos.dat") 
 }
   
 //-----------------------------------------------------------------------------
+DebugProtocol::~DebugProtocol() {
+  posfile_.flush();
+  posfile_.close();
+}
+
+//-----------------------------------------------------------------------------
 void DebugProtocol::startHoming( uint8_t ) {
 
 }
@@ -37,8 +43,9 @@ void DebugProtocol::setMaxSpeed( uint16_t spd, uint8_t axis ) {
   
 //-----------------------------------------------------------------------------
 void DebugProtocol::sendPosCmmds( const ConcurrentCmmd32 &cmmds ) {
-  ConcurrentCmmd32 c = cmmds;
-  posfile_ << c[X_AXIS] << " " << c[Y_AXIS] << "\n";
+  last_pos_ = cmmds;
+  posfile_ << last_pos_[X_AXIS] << " " << last_pos_[Y_AXIS] << " " << last_pos_[Z_AXIS] << "\n";
+  posfile_.flush();
 }
   
 //-----------------------------------------------------------------------------
@@ -53,7 +60,7 @@ int32_t DebugProtocol::getStatus( GraniteParams param, uint8_t axis ) {
   
 //-----------------------------------------------------------------------------
 Vector3I DebugProtocol::getLastSentPos() {
-  return Vector3I(0,0,0);
+  return Vector3I(last_pos_[X_AXIS],last_pos_[Y_AXIS],last_pos_[Z_AXIS]);
 }
   
 //-----------------------------------------------------------------------------

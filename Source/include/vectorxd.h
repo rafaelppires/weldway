@@ -3,6 +3,7 @@
 
 #include <cmath>
 #include <stdint.h>
+#include <Matrix.h>
 
 template< unsigned int N, typename T >
 class Vector {
@@ -15,6 +16,13 @@ public:
       long double d = v[i] - v2(i);
       ret += d*d;
     }
+    return sqrt( ret );
+  }
+
+  long double length() {
+    long double ret = 0;
+    for(unsigned int i = 0; i < N; ++i)
+      ret += v[i] * v[i];
     return sqrt( ret );
   }
 
@@ -54,6 +62,14 @@ public:
 
   T& operator()( unsigned int i ) {
     return v[i>=N ? N-1 : i];
+  }
+
+  template< typename T2 >
+  operator Matrix<T2>() {
+    Matrix<T2> ret(N,1);
+    for(unsigned int i = 0; i < N; ++i )
+      ret(i,0) = v[i];
+    return ret;
   }
 
   T v[N];

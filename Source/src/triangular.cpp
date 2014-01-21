@@ -22,7 +22,7 @@ TriangularTrajectory::TriangularTrajectory( int32_t spd, double freq, int32_t am
     add( cur_pos, Vector3I( 2*risexlen,  ampl, 0 ) );
   }
   add( cur_pos, Vector3I( sstoplen,          0, 0 ) );
-  add( cur_pos, Vector3I( 2*risexlen, -ampl/2., 0 ) );
+  add( cur_pos, Vector3I( 2*risexlen,    -ampl, 0 ) );
   add( cur_pos, Vector3I( istoplen,          0, 0 ) );
   add( cur_pos, Vector3I( risexlen,    ampl/2., 0 ) );
 

@@ -8,6 +8,7 @@ class DebugProtocol : public AbstractProtocol {
 public:
   
   DebugProtocol();
+  ~DebugProtocol();
   virtual void startHoming( uint8_t );
   virtual void startHomingSequence( std::string );
   virtual void moveTo();
@@ -25,6 +26,7 @@ public:
 
 private:
   std::ofstream posfile_;
+  ConcurrentCmmd32 last_pos_;
 };
 
 #endif

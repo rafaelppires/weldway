@@ -1,5 +1,6 @@
 #include <trajectory_executer.h>
 #include <boost/chrono.hpp>
+#include <Matrix.h>
 using boost::chrono::high_resolution_clock;
 using boost::chrono::nanoseconds;
 using boost::chrono::milliseconds;
@@ -26,7 +27,7 @@ void TrajectoryExecuter::operator()() {
   for(; it != end; ++it) {
     start = high_resolution_clock::now();
     delta = *it - last_pos;
-    std::cout << *it << " --- " << delta << " curpos: " << current_pos_ << "\n";
+
     Vector3US spds = getSpeedsAndInterval( delta, interval );
     uint16_t sx = spds.x(), sy = spds.y(), sz = spds.z();
 
@@ -35,9 +36,10 @@ void TrajectoryExecuter::operator()() {
     if( sz && sz != last_spd.z() ) spdcmmds[ Z_AXIS ] = sz;
 
     current_pos_ += delta;
-    if( delta.x() ) poscmmds[ X_AXIS ] = current_pos_.x();
-    if( delta.y() ) poscmmds[ Y_AXIS ] = current_pos_.y();
-    if( delta.z() ) poscmmds[ Z_AXIS ] = current_pos_.z();
+    std::cout << *it << " --- " << delta << " curpos: " << current_pos_ << "\n";
+    if( delta.x() ) poscmmds[ X_AXIS ] =  current_pos_.x();
+    if( delta.y() ) poscmmds[ Y_AXIS ] = -current_pos_.y();
+    if( delta.z() ) poscmmds[ Z_AXIS ] =  current_pos_.z();
 
     comm_->sendSpdCmmds(spdcmmds);
     comm_->sendPosCmmds(poscmmds);
@@ -57,12 +59,38 @@ void TrajectoryExecuter::waitFor( uint32_t ms ) {
 
 //-----------------------------------------------------------------------------
 uint32_t TrajectoryExecuter::gotoInitial() {
-  return 0;
+  AbstractProtocol::ConcurrentCmmd32 poscmmds;
+  poscmmds[ X_AXIS ] = trajectory_init_.x();
+  poscmmds[ Y_AXIS ] = trajectory_init_.y();
+  poscmmds[ Z_AXIS ] = trajectory_init_.z();
+  comm_->sendPosCmmds(poscmmds);
 }
 
 //-----------------------------------------------------------------------------
 void TrajectoryExecuter::trajectoryRotate() {
+  Vector3I rotate_vector = trajectory_final_ - trajectory_init_;
+  long double len = rotate_vector.length(),
+              overz_sin = rotate_vector.y() / len,
+              overz_cos = rotate_vector.x() / len,
+              overy_sin = rotate_vector.z() / len,
+              overy_cos = overz_cos;
+  std::cout << "ROTATE VECTOR " << rotate_vector << "\n";
+  MatrixLD overz(3), overy(3);
+  overz(0,0) = overz(1,1) = overz_cos;
+  overz(1,0) = overz_sin;
+  overz(0,1) = -overz_sin;
 
+  overy(0,0) = overy(2,2) = overy_cos;
+  overy(2,0) = overy_sin;
+  overy(0,2) = -overy_sin;
+
+  MatrixLD rotateyz( overz * overy );
+  PositionVector::iterator it = positions_.begin(),
+                           end = positions_.end();
+  for(; it != end; ++it) {
+    MatrixLD rotated( rotateyz * MatrixLD(*it) );
+    *it = Vector3I( 0.5+rotated(0,0), 0.5+rotated(1,0), 0.5+rotated(2,0) );
+  }
 }
 
 //-----------------------------------------------------------------------------

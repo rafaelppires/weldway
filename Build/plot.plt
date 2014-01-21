@@ -1,1 +1,1 @@
-plot 'pos.dat' u 1:2 w lp
+splot 'pos.dat' u 1:2:3 w lp

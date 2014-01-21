@@ -250,5 +250,7 @@ private:
   boost::shared_array<T> data_;
 };
 
+typedef Matrix<long double> MatrixLD;
+
 #endif
 
