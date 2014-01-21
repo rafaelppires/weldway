@@ -59,6 +59,17 @@ public:
   T v[N];
 };
 
+template <typename Stream, int N, typename T>
+Stream& operator<<( Stream &out, const Vector<N,T> &v ) {
+  out << "(";
+  for(unsigned int i = 0; i < N; ++i ) {
+    out << v(i);
+    if( i != N-1 ) out << ",";
+  }
+  out << ")";
+  return out;
+}
+
 template< typename T>
 class Vector2 : public Vector<2, T> {
   typedef Vector<2, T> s;
@@ -80,7 +91,16 @@ public:
   T& x() { return s::v[0]; }
   T& y() { return s::v[1]; }
   T& z() { return s::v[2]; }
+
+  const T& x() const { return s::v[0]; }
+  const T& y() const { return s::v[1]; }
+  const T& z() const { return s::v[2]; }
 };
+
+template <typename Stream, typename T>
+Stream& operator<<( Stream &out, const Vector3<T> &v ) {
+  return operator<< <Stream, 3, T>( out, *static_cast<const Vector<3,T>*>(&v) );
+}
 
 typedef Vector2<double>   Vector2D;  // double
 typedef Vector3<double>   Vector3D;

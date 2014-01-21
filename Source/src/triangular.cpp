@@ -34,6 +34,8 @@ TriangularTrajectory::TriangularTrajectory( int32_t spd, double freq, int32_t am
 //-----------------------------------------------------------------------------
 void TriangularTrajectory::add( Vector3I &accumulator, const Vector3I &delta ) {
   accumulator += delta;
+  //printf("(%d,%d,%d) d(%d,%d,%d)\n", accumulator.x(), accumulator.y(), accumulator.z(),
+  //                                     delta.x(), delta.y(), delta.z());
   positions_.push_back( accumulator );
 }
 

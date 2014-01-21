@@ -26,6 +26,7 @@ void TrajectoryExecuter::operator()() {
   for(; it != end; ++it) {
     start = high_resolution_clock::now();
     delta = *it - last_pos;
+    std::cout << *it << " --- " << delta << " curpos: " << current_pos_ << "\n";
     Vector3US spds = getSpeedsAndInterval( delta, interval );
     uint16_t sx = spds.x(), sy = spds.y(), sz = spds.z();
 
@@ -33,9 +34,10 @@ void TrajectoryExecuter::operator()() {
     if( sy && sy != last_spd.y() ) spdcmmds[ Y_AXIS ] = sy;
     if( sz && sz != last_spd.z() ) spdcmmds[ Z_AXIS ] = sz;
 
-    if( delta.x() ) poscmmds[ X_AXIS ] = current_pos_.x() + delta.x();
-    if( delta.y() ) poscmmds[ Y_AXIS ] = current_pos_.y() + delta.y();
-    if( delta.z() ) poscmmds[ Z_AXIS ] = current_pos_.z() + delta.z();
+    current_pos_ += delta;
+    if( delta.x() ) poscmmds[ X_AXIS ] = current_pos_.x();
+    if( delta.y() ) poscmmds[ Y_AXIS ] = current_pos_.y();
+    if( delta.z() ) poscmmds[ Z_AXIS ] = current_pos_.z();
 
     comm_->sendSpdCmmds(spdcmmds);
     comm_->sendPosCmmds(poscmmds);
