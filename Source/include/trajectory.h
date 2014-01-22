@@ -7,7 +7,7 @@
 
 //-----------------------------------------------------------------------------
 typedef std::vector<Vector3I>  PositionVector;
-typedef std::vector<Vector3US> SpeedVector;
+typedef std::vector<double>    SpeedVector;
 
 //-----------------------------------------------------------------------------
 class AbstractTrajectory {

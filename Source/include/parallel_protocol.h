@@ -27,25 +27,20 @@ struct RetRawCmmd {
 typedef boost::function< void() > EmergencyCallbackType;
 typedef std::map< uint8_t, RetRawCmmd > RetAxis;
 
+//-----------------------------------------------------------------------------
 class ParallelProtocol : public AbstractProtocol {
 public:
   ParallelProtocol( uint16_t addr );
   virtual void startHoming( uint8_t );
   virtual void startHomingSequence( std::string );
-  virtual void moveTo();
-  virtual void executeTrajectory();
-  virtual void finish();
   virtual void setMaxSpeed( uint16_t spd, uint8_t axis );
   virtual void sendPosCmmds( const ConcurrentCmmd32 & );
   virtual void sendSpdCmmds( const ConcurrentCmmd32 & );
   virtual int32_t getStatus( GraniteParams param, uint8_t axis );
-  virtual Vector3I getLastSentPos();
   virtual void startTorch();
   virtual void stopTorch();
-  virtual void sendAngularIncrement( AngularDirection dir, double spd, double inc );
-  virtual void sendLinearIncrement(uint8_t axis, int32_t spd, int32_t inc );
-  void homingDone();
   void setEmergencyCallback( EmergencyCallbackType cback );
+  virtual void homingDone();
 
 private:
   RetAxis sendRawCommand32( uint32_t cmd, uint32_t pins ); // same command to pins in the mask "pins"
@@ -68,10 +63,20 @@ private:
   uint8_t reply_axis_;
   ParallelPort port_;
   GraniteSPI spi_;
-  ConcurrentCmmd32 commanded_pos_, last_cmmd_;
   boost::thread *homing_thread_;
-  bool homing_done_;
   EmergencyCallbackType emergency_callback_;
 };
+
+//-----------------------------------------------------------------------------
+class HomingSequencer {
+public:
+  HomingSequencer( std::string, ParallelProtocol &p ) : protocol_(p) {}
+
+  void operator()();
+private:
+  ParallelProtocol &protocol_;
+};
+
+//-----------------------------------------------------------------------------
 
 #endif

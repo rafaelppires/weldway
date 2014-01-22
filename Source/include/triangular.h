@@ -8,7 +8,7 @@ class TriangularTrajectory : public AbstractTrajectory {
 public:
   TriangularTrajectory(int32_t, double, int32_t, uint32_t, uint32_t , double total_length);
 private:
-  void add( Vector3I &accumulator, const Vector3I &delta );
+  void add(Vector3I &accumulator, const Vector3I &delta , double spdmm);
 };
 
 #endif

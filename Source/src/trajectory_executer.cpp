@@ -11,59 +11,68 @@ void TrajectoryExecuter::operator()() {
   speeds_.clear();
   positions_ = trajectory_->positions();
   speeds_ = trajectory_->speeds();
+  size_t spd_idx = 0,
+         spds_sz = speeds_.size();
 
   trajectoryRotate();
-
   waitFor( gotoInitial() + 200 );
-  current_pos_ = trajectory_init_;
 
   PositionVector::iterator it = positions_.begin(),
                            end = positions_.end();
   Vector3I last_pos(0,0,0), delta(0,0,0);
-  Vector3US last_spd(0,0,0);
   uint16_t interval;
-  AbstractProtocol::ConcurrentCmmd32 poscmmds, spdcmmds;
+
   high_resolution_clock::time_point now, start;
   for(; it != end; ++it) {
     start = high_resolution_clock::now();
     delta = *it - last_pos;
 
-    Vector3US spds = getSpeedsAndInterval( delta, interval );
-    uint16_t sx = spds.x(), sy = spds.y(), sz = spds.z();
+    Vector3US spds = getSpeedsAndInterval( delta, interval, speeds_[spd_idx++] );
+    if( spd_idx >= spds_sz ) spd_idx = spds_sz - 1;
 
-    if( sx && sx != last_spd.x() ) spdcmmds[ X_AXIS ] = sx;
-    if( sy && sy != last_spd.y() ) spdcmmds[ Y_AXIS ] = sy;
-    if( sz && sz != last_spd.z() ) spdcmmds[ Z_AXIS ] = sz;
-
-    current_pos_ += delta;
-    std::cout << *it << " --- " << delta << " curpos: " << current_pos_ << "\n";
-    if( delta.x() ) poscmmds[ X_AXIS ] =  current_pos_.x();
-    if( delta.y() ) poscmmds[ Y_AXIS ] = -current_pos_.y();
-    if( delta.z() ) poscmmds[ Z_AXIS ] =  current_pos_.z();
-
-    comm_->sendSpdCmmds(spdcmmds);
-    comm_->sendPosCmmds(poscmmds);
+    deliverSpeedsAndPositions( delta, spds );
+    std::cout << *it << " --- " << delta << " curpos: " << current_pos_ << " spd: " << spds << " inter: " << interval << "\n";
     now = high_resolution_clock::now();
 
     waitFor( interval - boost::chrono::duration_cast<milliseconds>(now - start).count() );
     last_pos = *it;
-    last_spd = spds;
   }
   cancel();
 }
 
 //-----------------------------------------------------------------------------
-void TrajectoryExecuter::waitFor( uint32_t ms ) {
+void TrajectoryExecuter::deliverSpeedsAndPositions( const Vector3I &delta, const Vector3US &speeds ) {
+  AbstractProtocol::ConcurrentCmmd32 poscmmds, spdcmmds;
+  uint16_t sx = speeds.x(), sy = speeds.y(), sz = speeds.z();
+  int32_t  dx = delta.x(), dy = delta.y(), dz = delta.z();
 
+  if( dx && sx && sx != last_spd_.x() ) spdcmmds[ X_AXIS ] = sx;
+  if( dy && sy && sy != last_spd_.y() ) spdcmmds[ Y_AXIS ] = sy;
+  if( dz && sz && sz != last_spd_.z() ) spdcmmds[ Z_AXIS ] = sz;
+
+  current_pos_ += delta;
+  if( delta.x() ) poscmmds[ X_AXIS ] =  current_pos_.x();
+  if( delta.y() ) poscmmds[ Y_AXIS ] = -current_pos_.y();
+  if( delta.z() ) poscmmds[ Z_AXIS ] =  current_pos_.z();
+
+  comm_->sendSpdCmmds(spdcmmds);
+  comm_->sendPosCmmds(poscmmds);
+
+  last_spd_ = Vector3US(spdcmmds[ X_AXIS ], spdcmmds[ Y_AXIS ], spdcmmds[ Z_AXIS ]);
 }
 
 //-----------------------------------------------------------------------------
-uint32_t TrajectoryExecuter::gotoInitial() {
-  AbstractProtocol::ConcurrentCmmd32 poscmmds;
-  poscmmds[ X_AXIS ] = trajectory_init_.x();
-  poscmmds[ Y_AXIS ] = trajectory_init_.y();
-  poscmmds[ Z_AXIS ] = trajectory_init_.z();
-  comm_->sendPosCmmds(poscmmds);
+void TrajectoryExecuter::waitFor( uint32_t ms ) {
+  std::cout << "Inter: " << ms << "\n";
+  boost::this_thread::sleep_for( boost::chrono::milliseconds( ms ) );
+}
+
+//-----------------------------------------------------------------------------
+uint16_t TrajectoryExecuter::gotoInitial() {
+  uint16_t ret;
+  Vector3I delta = trajectory_init_ - current_pos_;
+  deliverSpeedsAndPositions( delta, getSpeedsAndInterval( delta, ret, 650 ) );
+  return ret;
 }
 
 //-----------------------------------------------------------------------------
@@ -94,10 +103,23 @@ void TrajectoryExecuter::trajectoryRotate() {
 }
 
 //-----------------------------------------------------------------------------
-Vector3US TrajectoryExecuter::getSpeedsAndInterval( Vector3I, uint16_t &interval ) {
-  // Find out resultant
+Vector3US TrajectoryExecuter::getSpeedsAndInterval( const Vector3I &delta, uint16_t &interval, double res_spd ) {
   // Decompose to find the axis projection
-  // return adjustedSpeed();
+  Vector3D vr( Vector3D(delta).unary() );
+  vr *= res_spd / TO_RPM; // mm/s
+  // Adjust Speed
+  interval = 0.5 + 1000. * delta.length() * TO_RPM / (TO_PULSES * res_spd); // ms
+  Vector3US ret;
+  //                   mm/s         mm/s²              s
+  ret.x() = fixSpeed( vr.x(), acceleration_.x(), interval/1000. );
+  ret.y() = fixSpeed( vr.y(), acceleration_.y(), interval/1000. );
+  ret.z() = fixSpeed( vr.z(), acceleration_.z(), interval/1000. );
+  return ret;
+}
+//-----------------------------------------------------------------------------
+uint16_t TrajectoryExecuter::fixSpeed( double v, double a, double t ) {
+  if( a * t / v > 4. ) return 0.5 + adjustedSpeed(v,a,t) * TO_RPM;
+  return 0;
 }
 
 //-----------------------------------------------------------------------------

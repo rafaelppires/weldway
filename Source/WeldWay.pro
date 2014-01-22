@@ -25,7 +25,8 @@ SOURCES += src/main.cpp \
            src/granite/vsd_cmmd.cpp \
            src/keypress_manager.cpp \
            src/debug_protocol.cpp \
-           src/trajectory_executer.cpp
+           src/trajectory_executer.cpp \
+    src/protocol.cpp
 
 HEADERS += ui/mainwindow.h \
            include/simplemotion.h \

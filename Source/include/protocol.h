@@ -35,21 +35,25 @@ public:
   typedef std::map<uint8_t, int32_t> ConcurrentCmmd32; // Same as above, with a 32bit word
   typedef std::map<uint8_t, int64_t> ConcurrentCmmd64; // Same as above, with a 64bit word
 
-  AbstractProtocol( CommType t ) : type_(t) {}
+  AbstractProtocol( CommType t ) : type_(t), homing_done_(false) {}
   virtual void startHoming( uint8_t ) {}
   virtual void startHomingSequence( std::string ) {}
-  virtual void moveTo() {}
-  virtual void executeTrajectory() {}
-  virtual void finish() {}  
   virtual void setMaxSpeed( uint16_t, uint8_t ) {}
   virtual void sendPosCmmds( const ConcurrentCmmd32 & ) {}
   virtual void sendSpdCmmds( const ConcurrentCmmd32 & ) {}
   virtual int32_t getStatus( GraniteParams, uint8_t axis ) { return ~0; }
-  virtual Vector3I getLastSentPos() { return Vector3I(0,0,0); }
+  virtual Vector3I getLastSentPos();
   virtual void startTorch() {}
   virtual void stopTorch() {}
-  virtual void sendAngularIncrement( AngularDirection dir, double spd, double inc ) {}
-  virtual void sendLinearIncrement( uint8_t axis, int32_t spd, int32_t inc ) {}
+  virtual void sendAngularIncrement( AngularDirection dir, double spd, double inc );
+  virtual void sendLinearIncrement( uint8_t axis, int32_t spd, int32_t inc );
+  virtual void finish() {}
+
+protected:
+  virtual void homingDone();
+
+  bool homing_done_;
+  ConcurrentCmmd32 lastcmmd_pos_;
 
 private:
   CommType type_;

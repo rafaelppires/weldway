@@ -10,7 +10,7 @@ class TrajectoryExecuter {
 public:
   TrajectoryExecuter( AbsTrajectoryPtr t, boost::shared_ptr< AbstractProtocol > comm )
       : trajectory_(t), comm_(comm), finished_(false) {
-    acceleration_.x() = acceleration_.y() = acceleration_.z() = 4000 / (0.025 * TO_RPM);
+    acceleration_.x() = acceleration_.y() = acceleration_.z() = 4000 / (0.025 * TO_RPM); // mm/s²
   }
 
   void operator()();
@@ -18,14 +18,16 @@ public:
   void cancel();
   void setLimits(const Vector3I &init, const Vector3I &final );
   void setCurrent( const Vector3I &last );
-  Vector3US getSpeedsAndInterval(Vector3I , uint16_t &interval);
+  Vector3US getSpeedsAndInterval(const Vector3I &delta, uint16_t &interval, double res_spd);
 
 private:
   void waitFor( uint32_t ms );
-  uint32_t gotoInitial();
+  uint16_t gotoInitial();
   void trajectoryRotate();
+  void deliverSpeedsAndPositions( const Vector3I &delta, const Vector3US &speeds );
 
   // all dimensions must be at the same base units
+  uint16_t fixSpeed( double v, double a, double t );
   double adjustedSpeed( double v, double a, double t) {
     return (a * t - sqrt( a*a*t*t - 4 * a * v * t ) ) / 2.;
   }
@@ -38,6 +40,7 @@ private:
   PositionVector positions_;
   SpeedVector speeds_;
   Vector3D acceleration_;
+  Vector3US last_spd_;
 };
 
 #endif

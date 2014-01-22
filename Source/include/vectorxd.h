@@ -8,9 +8,12 @@
 template< unsigned int N, typename T >
 class Vector {
 public:
+  Vector() {
+    for(unsigned int i = 0; i < N; ++i) v[i] = 0;
+  }
 
   template <typename T2>
-  long double distance( const Vector<N,T2> &v2 ) {
+  long double distance( const Vector<N,T2> &v2 ) const {
     long double ret = 0;
     for(unsigned int i = 0; i < N; ++i) {
       long double d = v[i] - v2(i);
@@ -19,11 +22,15 @@ public:
     return sqrt( ret );
   }
 
-  long double length() {
+  long double length() const {
     long double ret = 0;
     for(unsigned int i = 0; i < N; ++i)
       ret += v[i] * v[i];
     return sqrt( ret );
+  }
+
+  Vector<N,T> unary() const {
+    return *this / length();
   }
 
   template <typename T2>
@@ -34,7 +41,14 @@ public:
   }
 
   template <typename T2>
-  Vector<N,T> operator+( const Vector<N,T2> &v2 ) {
+  Vector<N,T>& operator*=( T2 k ) {
+    for(unsigned int i = 0; i < N; ++i )
+      v[i] *= k;
+    return *this;
+  }
+
+  template <typename T2>
+  Vector<N,T> operator+( const Vector<N,T2> &v2 ) const {
     Vector<N,T> ret;
     for(unsigned int i = 0; i < N; ++i )
       ret(i) = v[i] + v2(i);
@@ -42,17 +56,26 @@ public:
   }
 
   template <typename T2>
-  Vector<N,T> operator-( const Vector<N,T2> &v2 ) {
+  Vector<N,T> operator-( const Vector<N,T2> &v2 ) const {
     Vector<N,T> ret;
     for(unsigned int i = 0; i < N; ++i )
       ret(i) = v[i] - v2(i);
     return ret;
   }
 
-  Vector<N,T> operator*( T k ) {
+  template <typename T2>
+  Vector<N,T> operator*( T2 k ) const {
     Vector<N,T> ret;
     for(unsigned int i = 0; i < N; ++i )
     ret(i) = v[i] * k;
+    return ret;
+  }
+
+  template <typename T2>
+  Vector<N,T> operator/( T2 k ) const {
+    Vector<N,T> ret;
+    for(unsigned int i = 0; i < N; ++i )
+    ret(i) = v[i] / k;
     return ret;
   }
 
@@ -90,7 +113,7 @@ template< typename T>
 class Vector2 : public Vector<2, T> {
   typedef Vector<2, T> s;
 public:
-  Vector2() { x() = y() = 0; }
+  Vector2(){}
   Vector2( const s& v ) { x() = v(0); y() = v(1); }
   Vector2( T a, T b ) { x() = a; y() = b; }
   T& x() { return s::v[0]; }
@@ -101,8 +124,10 @@ template< typename T>
 class Vector3 : public Vector<3, T> {
   typedef Vector<3, T> s;
 public:
-  Vector3() { x() = y() = z() = 0; }
-  Vector3( const s& v ) { x() = v(0); y() = v(1); z() = v(2); }
+  Vector3(){}
+
+  template< typename T2 >
+  Vector3( const Vector<3, T2>& v ) { x() = v(0); y() = v(1); z() = v(2); }
   Vector3( T a, T b, T c ) { x() = a; y() = b; z() = c; }
   T& x() { return s::v[0]; }
   T& y() { return s::v[1]; }

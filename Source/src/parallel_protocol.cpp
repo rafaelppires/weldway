@@ -89,7 +89,7 @@ AbstractProtocol::ConcurrentCmmd ParallelProtocol::sendWord( uint16_t w[AXIS_CNT
 
 //-----------------------------------------------------------------------------
 ParallelProtocol::ParallelProtocol( uint16_t addr ) :
-    AbstractProtocol( PARALLEL ), port_(addr), homing_thread_(0), homing_done_(false) {
+    AbstractProtocol( PARALLEL ), port_(addr), homing_thread_(0) {
   port_.startSquareSignal( MANIP_ENABL_PIN, 1000. ); // Pin 16 - 1kHz
   port_.startReadingPin( MANIP_EMERG_PIN, 1./3 /*s*/,
                          std::bind1st( std::mem_fun(&ParallelProtocol::emergencyCallback), this ) );
@@ -216,39 +216,28 @@ void ParallelProtocol::startHoming( uint8_t axis ) {
   }
   sendRawCommand32( cmmd );
 }
+
 //-----------------------------------------------------------------------------
-class HomingSequencer {
-public:
-  HomingSequencer( std::string, ParallelProtocol &p ) : protocol_(p) {}
-
-  void operator()() {
-    protocol_.startHoming( A_AXIS | X_AXIS | Y_AXIS | Z_AXIS );
-    //protocol_.startHoming( A_AXIS );
-    int status = -1;
-
-    while( status ) {
-      status = protocol_.getStatus( StatusBits, A_AXIS ) & STAT_HOMING;
-      printf("Stat: %d\n", status & STAT_HOMING );
-      fflush( stdout );
-      boost::this_thread::sleep_for( boost::chrono::milliseconds( 500 ) );
-    }
-    //protocol_.startHoming( B_AXIS );
-    protocol_.homingDone();
+void HomingSequencer::operator()() {
+  protocol_.startHoming( A_AXIS | X_AXIS | Y_AXIS | Z_AXIS );
+  int status = -1;
+  while( status ) {
+    status = protocol_.getStatus( StatusBits, A_AXIS ) & STAT_HOMING;
+    fflush( stdout );
+    boost::this_thread::sleep_for( boost::chrono::milliseconds( 500 ) );
   }
-
-private:
-  ParallelProtocol &protocol_;
-};
-
-//-----------------------------------------------------------------------------
-void ParallelProtocol::startHomingSequence( std::string sequence ) {
-  homing_thread_ = new boost::thread( HomingSequencer( sequence, *this ) );
+  //protocol_.startHoming( B_AXIS );
+  protocol_.homingDone();
 }
 
 //-----------------------------------------------------------------------------
 void ParallelProtocol::homingDone() {
- commanded_pos_.clear();
- homing_done_ = true;
+  AbstractProtocol::homingDone();
+}
+
+//-----------------------------------------------------------------------------
+void ParallelProtocol::startHomingSequence( std::string sequence ) {
+  homing_thread_ = new boost::thread( HomingSequencer( sequence, *this ) );
 }
 
 //-----------------------------------------------------------------------------
@@ -257,11 +246,6 @@ void ParallelProtocol::setMaxSpeed( uint16_t spd, uint8_t axis ) {
   for( uint32_t i = 1; i < AXIS_ALL; i <<= 1 )
     if( axis & i ) cmmds[i] = spd;
   sendSpdCmmds( cmmds );
-}
-//-----------------------------------------------------------------------------
-void ParallelProtocol::updatePosition( const ConcurrentCmmd32 &cmmds ) {
-  ConcurrentCmmd32::const_iterator it = cmmds.begin(), end = cmmds.end();
-  for(; it != end; ++it) commanded_pos_[ it->first ] = it->second;
 }
 
 //-----------------------------------------------------------------------------
@@ -280,7 +264,7 @@ void ParallelProtocol::sendPosCmmds( const ConcurrentCmmd32 &cmmds ) {
   for(; it != end; ++it) {
     printf("p[%X] = [%d]\n", it->first, it->second );
     pos_cmmds[ it->first ] = spi_.graniteAbsTarget( it->second );
-    last_cmmd_[it->first] = it->second;
+    lastcmmd_pos_[it->first] = it->second;
   }
 
   uint64_t nope = spi_.nope();
@@ -290,15 +274,10 @@ void ParallelProtocol::sendPosCmmds( const ConcurrentCmmd32 &cmmds ) {
   }
 
   RetAxis rret = sendRawCommand64( pos_cmmds );
-  updatePosition( cmmds );
+
   /*RetAxis::iterator jt = rret.begin(), jend = rret.end();
   for(; jt != jend; ++jt)
     printf("axis %X returned %X CRC match %X\n", jt->first, jt->second.data, jt->second.crc_match );*/
-}
-
-//-----------------------------------------------------------------------------
-Vector3I ParallelProtocol::getLastSentPos() {
-  return Vector3I( last_cmmd_[X_AXIS], last_cmmd_[Y_AXIS], last_cmmd_[Z_AXIS] );
 }
 
 //-----------------------------------------------------------------------------
@@ -374,57 +353,4 @@ int32_t ParallelProtocol::getStatus( GraniteParams param, uint8_t axis ) {
 }
 
 //-----------------------------------------------------------------------------
-void ParallelProtocol::sendAngularIncrement( AngularDirection dir, double spd, double inc ) {
-  if( !homing_done_ ) return;
-  printf("Angular increment direction %d, speed %f, incr %f\n", dir, spd, inc );
-  ConcurrentCmmd32 speeds, pos;
-  while( inc >  360 ) inc -= 360;
-  while( inc < -360 ) inc += 360;
-  int32_t pulses = 36*400 * inc/360,
-          apos = commanded_pos_[A_AXIS],
-          bpos = commanded_pos_[B_AXIS];
-  speeds[A_AXIS] = speeds[B_AXIS] = spd;
-  if( dir == ANGULAR_VERTICAL ) {
-    pos[A_AXIS] = apos + pulses;
-    pos[B_AXIS] = apos - pulses;
-  } else if( dir == ANGULAR_HORIZONTAL ) {
-    pos[A_AXIS] = apos + pulses;
-    pos[B_AXIS] = apos + pulses;
-  }
 
-  sendSpdCmmds( speeds );
-  sendPosCmmds( pos );
-}
-
-//-----------------------------------------------------------------------------
-void ParallelProtocol::sendLinearIncrement( uint8_t axis, int32_t spd, int32_t inc ) {
-  if( !homing_done_ ) return;
-  printf(" Linear increment axis %d, speed %d, incr %d\n", axis, spd, inc);
-  ConcurrentCmmd32 speeds, pos;
-  int32_t cpos = 0;
-  if( commanded_pos_.find(axis) != commanded_pos_.end() )
-    cpos = commanded_pos_[axis];
-
-  speeds[ axis ] = spd;
-  pos[ axis ] = cpos + inc;
-
-  sendSpdCmmds( speeds );
-  sendPosCmmds( pos );
-}
-
-//-----------------------------------------------------------------------------
-void ParallelProtocol::moveTo() {
-
-}
-
-//-----------------------------------------------------------------------------
-void ParallelProtocol::executeTrajectory() {
-
-}
-
-//-----------------------------------------------------------------------------
-void ParallelProtocol::finish() {
-
-}
-
-//-----------------------------------------------------------------------------
