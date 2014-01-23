@@ -18,7 +18,7 @@ public:
   void cancel();
   void setLimits(const Vector3I &init, const Vector3I &final );
   void setCurrent( const Vector3I &last );
-  Vector3US getSpeedsAndInterval(const Vector3I &delta, uint16_t &interval, double res_spd);
+  Vector3US getSpeedsAndInterval(const Vector3D &delta, uint16_t &interval, double res_spd);
 
 private:
   void waitFor( uint32_t ms );

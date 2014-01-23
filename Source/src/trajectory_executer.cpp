@@ -19,7 +19,7 @@ void TrajectoryExecuter::operator()() {
 
   PositionVector::iterator it = positions_.begin(),
                            end = positions_.end();
-  Vector3I last_pos(0,0,0), delta(0,0,0);
+  Vector3D last_pos(0,0,0), delta(0,0,0);
   uint16_t interval;
 
   high_resolution_clock::time_point now, start;
@@ -32,6 +32,7 @@ void TrajectoryExecuter::operator()() {
 
     deliverSpeedsAndPositions( delta, spds );
     std::cout << *it << " --- " << delta << " curpos: " << current_pos_ << " spd: " << spds << " inter: " << interval << "\n";
+    fflush(stdout);
     now = high_resolution_clock::now();
 
     waitFor( interval - boost::chrono::duration_cast<milliseconds>(now - start).count() );
@@ -82,19 +83,25 @@ void TrajectoryExecuter::trajectoryRotate() {
               overz_sin = rotate_vector.y() / len,
               overz_cos = rotate_vector.x() / len,
               overy_sin = rotate_vector.z() / len,
-              overy_cos = overz_cos;
-  std::cout << "ROTATE VECTOR " << rotate_vector << "\n";
-  MatrixLD overz(3), overy(3);
+              overy_cos = overz_cos,
+              overx_sin = sin( 30 * 3.14 /180 ),
+              overx_cos = cos( 30 * 3.14 /180 );
+
+  MatrixLD overx(3), overy(3), overz(3);
   overz(0,0) = overz(1,1) = overz_cos;
-  overz(1,0) = overz_sin;
+  overz(1,0) =  overz_sin;
   overz(0,1) = -overz_sin;
 
   overy(0,0) = overy(2,2) = overy_cos;
-  overy(2,0) = overy_sin;
+  overy(2,0) =  overy_sin;
   overy(0,2) = -overy_sin;
 
-  MatrixLD rotateyz( overz * overy );
-  PositionVector::iterator it = positions_.begin(),
+  overx(1,1) = overx(2,2) = overx_cos;
+  overx(1,2) =  overx_sin;
+  overx(2,1) = -overx_sin;
+
+  MatrixLD rotateyz( overx * overy * overz );
+  PositionVector::iterator it  = positions_.begin(),
                            end = positions_.end();
   for(; it != end; ++it) {
     MatrixLD rotated( rotateyz * MatrixLD(*it) );
@@ -104,7 +111,7 @@ void TrajectoryExecuter::trajectoryRotate() {
 }
 
 //-----------------------------------------------------------------------------
-Vector3US TrajectoryExecuter::getSpeedsAndInterval( const Vector3I &delta, uint16_t &interval, double res_spd ) {
+Vector3US TrajectoryExecuter::getSpeedsAndInterval( const Vector3D &delta, uint16_t &interval, double res_spd ) {
   // Decompose to find the axis projection
   Vector3D vr( Vector3D(delta).unary() );
   vr *= res_spd / TO_RPM; // mm/s

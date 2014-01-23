@@ -17,15 +17,12 @@ SOURCES += src/main.cpp \
            src/granite/sm_consts.cpp \
            src/granite_spi_interface.cpp \
            src/switch_back.cpp \
-           src/triangular.cpp \
-           src/double_e.cpp \
-           src/e_trajectory.cpp \
            src/rhombus.cpp \
            src/granite/vsd_cmmd.cpp \
            src/keypress_manager.cpp \
            src/debug_protocol.cpp \
            src/trajectory_executer.cpp \
-    src/protocol.cpp
+           src/protocol.cpp
 
 HEADERS += ui/mainwindow.h \
            include/simplemotion.h \
