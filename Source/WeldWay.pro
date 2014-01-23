@@ -18,7 +18,6 @@ SOURCES += src/main.cpp \
            src/granite_spi_interface.cpp \
            src/switch_back.cpp \
            src/triangular.cpp \
-           src/matrix_trajectory.cpp \
            src/double_e.cpp \
            src/e_trajectory.cpp \
            src/rhombus.cpp \
@@ -45,7 +44,6 @@ HEADERS += ui/mainwindow.h \
            include/switch_back.h \
            include/protocol.h \
            include/triangular.h \
-           include/matrix_trajectory.h \
            include/e_trajectory.h \
            include/double_e.h \
            include/vectorxd.h \

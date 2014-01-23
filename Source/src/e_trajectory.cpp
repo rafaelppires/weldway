@@ -2,8 +2,8 @@
 #include <units.h>
 
 //-----------------------------------------------------------------------------
-ETrajectory::ETrajectory(int32_t spd, double freq, int32_t ampl, double total_length) :
-    MatrixTrajectory( (TO_PULSES*spd) / (TO_RPM*freq) ) {
+ETrajectory::ETrajectory(int32_t spd, double freq, int32_t ampl, double total_length) {
+  xsteplen_ = ( (TO_PULSES*spd) / (TO_RPM*freq) );
   amplitude_ = ampl;
   double t = 1. / freq,                         // s
          sqrt2 = sqrt(2.),

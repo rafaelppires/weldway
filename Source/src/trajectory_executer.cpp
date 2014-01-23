@@ -99,6 +99,7 @@ void TrajectoryExecuter::trajectoryRotate() {
   for(; it != end; ++it) {
     MatrixLD rotated( rotateyz * MatrixLD(*it) );
     *it = Vector3I( 0.5+rotated(0,0), 0.5+rotated(1,0), 0.5+rotated(2,0) );
+    if( trajectory_final_.x() < trajectory_init_.x() ) it->x() *= -1;
   }
 }
 

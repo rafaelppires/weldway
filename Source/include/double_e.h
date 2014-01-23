@@ -3,12 +3,14 @@
 
 #include <trajectory.h>
 #include <stdint.h>
-#include <matrix_trajectory.h>
 
-class DoubleETrajectory : public MatrixTrajectory {
+class DoubleETrajectory : public AbstractTrajectory {
 public:
   DoubleETrajectory(int32_t spd, double freq, int32_t ampl, double total_length);
 private:
+  typedef Vector2D Coordinate;
+  void add( const Coordinate& ) {}
+  double xsteplen_, torch_speed_, amplitude_;
 };
 
 #endif

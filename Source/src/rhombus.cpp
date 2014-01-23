@@ -2,7 +2,8 @@
 #include <units.h>
 
 //-----------------------------------------------------------------------------
-Rhombus::Rhombus(int32_t a, int32_t l, uint8_t n, double wspeed , double total_length) : MatrixTrajectory(l/2) {
+Rhombus::Rhombus(int32_t a, int32_t l, uint8_t n, double wspeed , double total_length) {
+  xsteplen_ = (l/2);
   int32_t xbase = 0,
           xstep = l / (4 * n);
   for(uint8_t i = 0; i < n; ++i) {
