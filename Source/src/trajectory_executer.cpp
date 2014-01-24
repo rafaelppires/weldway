@@ -1,12 +1,15 @@
 #include <trajectory_executer.h>
 #include <boost/chrono.hpp>
 #include <Matrix.h>
+#include <granite/vsd_cmd.h>
 using boost::chrono::high_resolution_clock;
 using boost::chrono::nanoseconds;
 using boost::chrono::milliseconds;
 
 //-----------------------------------------------------------------------------
 void TrajectoryExecuter::operator()() {
+  if( !comm_->homingDone() ) { cancel(); return; }
+
   positions_.clear();
   speeds_.clear();
   positions_ = trajectory_->positions();
@@ -15,7 +18,9 @@ void TrajectoryExecuter::operator()() {
          spds_sz = speeds_.size();
 
   trajectoryRotate();
-  waitFor( gotoInitial() + 200 );
+
+  gotoInitial();
+  waitFor( 200 );
 
   PositionVector::iterator it = positions_.begin(),
                            end = positions_.end();
@@ -23,6 +28,7 @@ void TrajectoryExecuter::operator()() {
   uint16_t interval;
 
   high_resolution_clock::time_point now, start;
+  uint16_t count = 0;
   for(; it != end; ++it) {
     start = high_resolution_clock::now();
     delta = *it - last_pos;
@@ -31,12 +37,13 @@ void TrajectoryExecuter::operator()() {
     if( spd_idx >= spds_sz ) spd_idx = spds_sz - 1;
 
     deliverSpeedsAndPositions( delta, spds );
-    std::cout << *it << " --- " << delta << " curpos: " << current_pos_ << " spd: " << spds << " inter: " << interval << "\n";
+    std::cout << "(" << ++count << ") "<< *it << " --- " << delta << " curpos: " << current_pos_ << " spd: " << spds << " inter: " << interval << "\n";
     fflush(stdout);
     now = high_resolution_clock::now();
 
     waitFor( interval - boost::chrono::duration_cast<milliseconds>(now - start).count() );
     last_pos = *it;
+    if( finished() ) break;
   }
   cancel();
 }
@@ -69,11 +76,21 @@ void TrajectoryExecuter::waitFor( uint32_t ms ) {
 }
 
 //-----------------------------------------------------------------------------
-uint16_t TrajectoryExecuter::gotoInitial() {
+void TrajectoryExecuter::gotoInitial() {
   uint16_t ret;
   Vector3I delta = trajectory_init_ - current_pos_;
   deliverSpeedsAndPositions( delta, getSpeedsAndInterval( delta, ret, 650 ) );
-  return ret;
+  int status = -1;
+  while( status ) {
+    status = 0;
+    for( uint8_t i = 1; i < 8; i<<=1 )
+      if( !(comm_->getStatus( StatusBits, i) & STAT_TARGET_REACHED) ) {
+        status = -1;
+        break;
+      }
+    if( status )
+    boost::this_thread::sleep_for( boost::chrono::milliseconds( 100 ) );
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -123,15 +140,15 @@ void TrajectoryExecuter::trajectoryRotate() {
 //-----------------------------------------------------------------------------
 Vector3US TrajectoryExecuter::getSpeedsAndInterval( const Vector3D &delta, uint16_t &interval, double res_spd ) {
   // Decompose to find the axis projection
-  Vector3D vr( Vector3D(delta).unary() );
+  Vector3D vr( delta.unary() );
   vr *= res_spd / TO_RPM; // mm/s
   // Adjust Speed
   interval = 0.5 + 1000. * delta.length() * TO_RPM / (TO_PULSES * res_spd); // ms
   Vector3US ret;
   //                   mm/s         mm/s²              s
-  ret.x() = fixSpeed( vr.x(), acceleration_.x(), interval/1000. );
-  ret.y() = fixSpeed( vr.y(), acceleration_.y(), interval/1000. );
-  ret.z() = fixSpeed( vr.z(), acceleration_.z(), interval/1000. );
+  ret.x() = fixSpeed( abs(vr.x()), acceleration_.x(), interval/1000. );
+  ret.y() = fixSpeed( abs(vr.y()), acceleration_.y(), interval/1000. );
+  ret.z() = fixSpeed( abs(vr.z()), acceleration_.z(), interval/1000. );
   return ret;
 }
 //-----------------------------------------------------------------------------

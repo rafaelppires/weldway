@@ -19,6 +19,7 @@ public:
   // Queries
   bool busy();
   int32_t getStatus( GraniteParams, uint8_t );
+  Vector3D currentPosition();
 
   // Actions
   bool startHoming( uint8_t axis );

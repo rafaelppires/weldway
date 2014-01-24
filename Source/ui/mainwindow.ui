@@ -259,7 +259,7 @@
            </layout>
           </item>
           <item row="0" column="0">
-           <widget class="QPushButton" name="markPositionPushButton">
+           <widget class="QPushButton" name="markInitPositionButton">
             <property name="minimumSize">
              <size>
               <width>0</width>
@@ -272,7 +272,7 @@
            </widget>
           </item>
           <item row="3" column="0">
-           <widget class="QPushButton" name="markPositionPushButton_3">
+           <widget class="QPushButton" name="markFinalPositionButton">
             <property name="minimumSize">
              <size>
               <width>0</width>
@@ -327,7 +327,7 @@
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QPushButton" name="pushButton">
+           <widget class="QPushButton" name="invertDirectionButton">
             <property name="text">
              <string>Inverter Sentido</string>
             </property>

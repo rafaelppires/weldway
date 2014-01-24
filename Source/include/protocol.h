@@ -48,9 +48,10 @@ public:
   virtual void sendAngularIncrement( AngularDirection dir, double spd, double inc );
   virtual void sendLinearIncrement( uint8_t axis, int32_t spd, int32_t inc );
   virtual void finish() {}
+  bool homingDone() { return homing_done_; }
 
 protected:
-  virtual void homingDone();
+  virtual void homingFinished();
 
   bool homing_done_;
   ConcurrentCmmd32 lastcmmd_pos_;

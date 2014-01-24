@@ -23,7 +23,7 @@ public:
 
 private:
   void waitFor( uint32_t ms );
-  uint16_t gotoInitial();
+  void gotoInitial();
   void trajectoryRotate();
   void deliverSpeedsAndPositions( const Vector3I &delta, const Vector3US &speeds );
 

@@ -31,8 +31,10 @@ private slots:
   void on_executeButton_clicked();
   void on_getValuesButton_clicked();
   void openConnectionForm();
-
   void on_transvTrajectoryComboBox_currentTextChanged(const QString &arg1);
+  void on_invertDirectionButton_clicked();
+  void on_markFinalPositionButton_clicked();
+  void on_markInitPositionButton_clicked();
 
 private:
   QString stringAxis(uint32_t value);

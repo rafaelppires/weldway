@@ -2,7 +2,7 @@
 
 //-----------------------------------------------------------------------------
 Vector3I AbstractProtocol::getLastSentPos() {
-  return Vector3I( lastcmmd_pos_[X_AXIS], lastcmmd_pos_[Y_AXIS], lastcmmd_pos_[Z_AXIS] );
+  return Vector3I( lastcmmd_pos_[X_AXIS], -lastcmmd_pos_[Y_AXIS], lastcmmd_pos_[Z_AXIS] );
 }
 
 //-----------------------------------------------------------------------------
@@ -45,7 +45,7 @@ void AbstractProtocol::sendLinearIncrement( uint8_t axis, int32_t spd, int32_t i
 }
 
 //-----------------------------------------------------------------------------
-void AbstractProtocol::homingDone() {
+void AbstractProtocol::homingFinished() {
  lastcmmd_pos_.clear();
  homing_done_ = true;
 }

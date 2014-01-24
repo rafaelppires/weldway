@@ -219,20 +219,29 @@ void ParallelProtocol::startHoming( uint8_t axis ) {
 
 //-----------------------------------------------------------------------------
 void HomingSequencer::operator()() {
-  protocol_.startHoming( A_AXIS | X_AXIS | Y_AXIS | Z_AXIS );
+  protocol_.startHoming( /*A_AXIS |*/ X_AXIS | Y_AXIS | Z_AXIS );
   int status = -1;
-  while( status ) {
-    status = protocol_.getStatus( StatusBits, A_AXIS ) & STAT_HOMING;
-    fflush( stdout );
+  /*while( status ) {
+    //status = protocol_.getStatus( StatusBits, A_AXIS ) & STAT_HOMING;
+    status = 0;
     boost::this_thread::sleep_for( boost::chrono::milliseconds( 500 ) );
   }
   //protocol_.startHoming( B_AXIS );
-  protocol_.homingDone();
+  */
+  status = -1;
+  while( status ) {
+    status = 0;
+    for( uint8_t i = 1; i < 8; i<<=1 ) {
+      if( protocol_.getStatus( StatusBits, i) & STAT_HOMING ) { status = -1; break; }
+    }
+    boost::this_thread::sleep_for( boost::chrono::milliseconds( 500 ) );
+  }
+  protocol_.homingFinished();
 }
 
 //-----------------------------------------------------------------------------
-void ParallelProtocol::homingDone() {
-  AbstractProtocol::homingDone();
+void ParallelProtocol::homingFinished() {
+  AbstractProtocol::homingFinished();
 }
 
 //-----------------------------------------------------------------------------
@@ -258,7 +267,7 @@ void ParallelProtocol::sendPosCmmds( const ConcurrentCmmd32 &cmmds ) {
     printf("[%X] = [%d]\n", kt->first, kt->second );*/
 
   //setParam( ControlMode, CONTROLMODE_POSITON, pins ); // position mode
-
+  if( !homingDone() ) return;
   ConcurrentCmmd64 pos_cmmds;
   ConcurrentCmmd32::const_iterator it = cmmds.begin(), end = cmmds.end();
   for(; it != end; ++it) {

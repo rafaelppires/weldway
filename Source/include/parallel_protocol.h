@@ -40,7 +40,7 @@ public:
   virtual void startTorch();
   virtual void stopTorch();
   void setEmergencyCallback( EmergencyCallbackType cback );
-  virtual void homingDone();
+  virtual void homingFinished();
 
 private:
   RetAxis sendRawCommand32( uint32_t cmd, uint32_t pins ); // same command to pins in the mask "pins"

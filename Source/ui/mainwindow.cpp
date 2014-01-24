@@ -311,3 +311,34 @@ void MainWindow::keyPressEvent(QKeyEvent *event) {
 }
 
 //-----------------------------------------------------------------------------
+void MainWindow::on_invertDirectionButton_clicked() {
+  double xt = ui->xinitSpinBox->value(),
+         yt = ui->yinitSpinBox->value(),
+         zt = ui->zinitSpinBox->value();
+  ui->xinitSpinBox->setValue( ui->xfinalSpinBox->value() );
+  ui->yinitSpinBox->setValue( ui->yfinalSpinBox->value() );
+  ui->zinitSpinBox->setValue( ui->zfinalSpinBox->value() );
+  ui->xfinalSpinBox->setValue( xt );
+  ui->yfinalSpinBox->setValue( yt );
+  ui->zfinalSpinBox->setValue( zt );
+}
+
+//-----------------------------------------------------------------------------
+void MainWindow::on_markFinalPositionButton_clicked() {
+    MasterCommunicator &mc = MasterCommunicator::getInstance();
+    Vector3D pos = mc.currentPosition();
+    ui->xfinalSpinBox->setValue( pos.x() );
+    ui->yfinalSpinBox->setValue( pos.y() );
+    ui->zfinalSpinBox->setValue( pos.z() );
+}
+
+//-----------------------------------------------------------------------------
+void MainWindow::on_markInitPositionButton_clicked() {
+    MasterCommunicator &mc = MasterCommunicator::getInstance();
+    Vector3D pos = mc.currentPosition();
+    ui->xinitSpinBox->setValue( pos.x() );
+    ui->yinitSpinBox->setValue( pos.y() );
+    ui->zinitSpinBox->setValue( pos.z() );
+}
+
+//-----------------------------------------------------------------------------

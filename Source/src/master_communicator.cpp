@@ -97,6 +97,14 @@ void MasterCommunicator::setLimits(const Vector3I &init, const Vector3I &final )
 }
 
 //-----------------------------------------------------------------------------
+Vector3D MasterCommunicator::currentPosition() {
+  Vector3D ret;
+  if( !comm_ ) return ret;
+  ret = comm_->getLastSentPos();
+  return ret / TO_PULSES;
+}
+
+//-----------------------------------------------------------------------------
 void MasterCommunicator::setAngularOffset( double angle ) {
   angular_offset_ = angle * acos(-1) / 180;
 }
