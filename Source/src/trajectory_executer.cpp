@@ -77,15 +77,20 @@ uint16_t TrajectoryExecuter::gotoInitial() {
 }
 
 //-----------------------------------------------------------------------------
+void TrajectoryExecuter::setAngularOffset( double angle ) {
+  overx_angle_ = angle;
+}
+
+//-----------------------------------------------------------------------------
 void TrajectoryExecuter::trajectoryRotate() {
   Vector3I rotate_vector = trajectory_final_ - trajectory_init_;
   long double len = rotate_vector.length(),
-              overz_sin = rotate_vector.y() / len,
-              overz_cos = rotate_vector.x() / len,
+              overx_sin = sin( overx_angle_ ),
+              overx_cos = cos( overx_angle_ ),
               overy_sin = rotate_vector.z() / len,
-              overy_cos = overz_cos,
-              overx_sin = sin( 30 * 3.14 /180 ),
-              overx_cos = cos( 30 * 3.14 /180 );
+              overy_cos = rotate_vector.x() / len,
+              overz_sin = rotate_vector.y() / len,
+              overz_cos = overy_cos;
 
   MatrixLD overx(3), overy(3), overz(3);
   overz(0,0) = overz(1,1) = overz_cos;
@@ -100,14 +105,19 @@ void TrajectoryExecuter::trajectoryRotate() {
   overx(1,2) =  overx_sin;
   overx(2,1) = -overx_sin;
 
-  MatrixLD rotateyz( overx * overy * overz );
+  MatrixLD rotatexyz( overx * overy * overz );
   PositionVector::iterator it  = positions_.begin(),
                            end = positions_.end();
   for(; it != end; ++it) {
-    MatrixLD rotated( rotateyz * MatrixLD(*it) );
+    MatrixLD rotated( rotatexyz * MatrixLD(*it) );
     *it = Vector3I( 0.5+rotated(0,0), 0.5+rotated(1,0), 0.5+rotated(2,0) );
     if( trajectory_final_.x() < trajectory_init_.x() ) it->x() *= -1;
   }
+
+  Vector3I init = trajectory_->initialOffset();
+  if( trajectory_final_.x() < trajectory_init_.x() ) init.x() *= -1;
+  MatrixLD irot = rotatexyz * MatrixLD( init );
+  trajectory_init_ += Vector3I( irot(0,0), irot(1,0), irot(2,0) );
 }
 
 //-----------------------------------------------------------------------------

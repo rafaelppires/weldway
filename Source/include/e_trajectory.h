@@ -22,6 +22,9 @@ public:
 
     Vector3D acc;
 
+    offset_.x() = 0.5*l;
+    offset_.y() = -k*hsqr2;
+
     add( Vector3D(  0.5*l,  k*hsqr2, 0 ), vr );
     add( Vector3D( -0.5*l,  k*hsqr2, 0 ), vr );
     add( Vector3D( -0.5*l, -k*hsqr2, 0 ), vr );
@@ -35,6 +38,13 @@ public:
     add( Vector3D(  0.5*l, -k*hsqr2, 0 ), vr );
     printf("T: %f l: %f d: %f k: %f Ts: %f\n", t, l, d, k, vr );
   }
+
+  Vector3I initialOffset() const {
+    return offset_;
+  }
+
+private:
+  Vector3I offset_;
 };
 
 #endif

@@ -72,6 +72,7 @@ bool MasterCommunicator::executeTrajectory( AbsTrajectoryPtr at ) {
   trajectory_executer_ = new TrajectoryExecuter( at, comm_ );
   trajectory_executer_->setCurrent( comm_->getLastSentPos() );
   trajectory_executer_->setLimits( trajectory_init_, trajectory_final_ );
+  trajectory_executer_->setAngularOffset( angular_offset_ );
   thread_executer_.reset( new boost::thread( boost::ref(*trajectory_executer_) ) );
   return true;
 }
@@ -94,6 +95,12 @@ void MasterCommunicator::setLimits(const Vector3I &init, const Vector3I &final )
   trajectory_init_ = init;
   trajectory_final_ = final;
 }
+
+//-----------------------------------------------------------------------------
+void MasterCommunicator::setAngularOffset( double angle ) {
+  angular_offset_ = angle * acos(-1) / 180;
+}
+
 //-----------------------------------------------------------------------------
 bool MasterCommunicator::sendAngularIncrement( AngularDirection dir, double spd, double inc ) {
   if( !comm_ || busy() ) return false;
@@ -102,7 +109,7 @@ bool MasterCommunicator::sendAngularIncrement( AngularDirection dir, double spd,
 }
 
 //-----------------------------------------------------------------------------
-bool MasterCommunicator::sendIncrement( uint8_t axis, double spd, double inc ) {
+bool MasterCommunicator::sendLinearIncrement( uint8_t axis, double spd, double inc ) {
   if( !comm_ || busy() ) return false;
   comm_->sendLinearIncrement(axis,spd,inc);
   return true;

@@ -27,7 +27,8 @@ public:
   bool executeTrajectory( AbsTrajectoryPtr );
   void cancel();
   bool sendAngularIncrement( AngularDirection, double spd, double inc );
-  bool sendIncrement( uint8_t axis, double spd, double inc );
+  bool sendLinearIncrement( uint8_t axis, double spd, double inc );
+  void setAngularOffset( double angle );
 
   // Setup
   void setupParallelPort( uint16_t addr );
@@ -45,6 +46,7 @@ private:
   TrajectoryExecuter *trajectory_executer_;
   boost::shared_ptr<boost::thread> thread_executer_;
   Vector3I trajectory_init_, trajectory_final_;
+  double angular_offset_;
 };
 
 #endif

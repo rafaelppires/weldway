@@ -18,6 +18,7 @@ public:
   void cancel();
   void setLimits(const Vector3I &init, const Vector3I &final );
   void setCurrent( const Vector3I &last );
+  void setAngularOffset( double );
   Vector3US getSpeedsAndInterval(const Vector3D &delta, uint16_t &interval, double res_spd);
 
 private:
@@ -41,6 +42,7 @@ private:
   SpeedVector speeds_;
   Vector3D acceleration_;
   Vector3US last_spd_;
+  double overx_angle_;
 };
 
 #endif

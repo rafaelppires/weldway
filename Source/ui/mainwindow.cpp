@@ -154,6 +154,7 @@ void MainWindow::on_executeButton_clicked() {
 
   Vector3I  init, final;
   setLimits( mc, init, final );
+  mc.setAngularOffset( ui->xangleSpinBox->value() );
   double length = init.distance( final );
   if( mc.busy() ) {
     mc.cancel();

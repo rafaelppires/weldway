@@ -17,6 +17,7 @@ public:
 
   virtual const PositionVector& positions() const { return positions_; }
   virtual const SpeedVector& speeds() const { return speeds_; }
+  virtual Vector3I initialOffset() const { return Vector3I(); }
 
 protected:
   void add( const Vector3D &delta, double spdmm ) {
