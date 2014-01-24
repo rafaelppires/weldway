@@ -36,6 +36,7 @@ public:
   void setupDebug();
   void setLimits(const Vector3I &init, const Vector3I &final );
   bool setMaxSpeed(uint16_t speed_rpm, uint8_t axis);
+  void setProgressCallback( boost::function<void(double)> cb );
   
 private:
   MasterCommunicator() {}
@@ -48,6 +49,7 @@ private:
   boost::shared_ptr<boost::thread> thread_executer_;
   Vector3I trajectory_init_, trajectory_final_;
   double angular_offset_;
+  boost::function<void(double)> progress_callback_;
 };
 
 #endif

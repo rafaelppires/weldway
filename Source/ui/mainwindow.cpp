@@ -12,7 +12,9 @@
 
 //-----------------------------------------------------------------------------
 MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent), ui(new Ui::MainWindow), keypress_manager_( MasterCommunicator::getInstance() ) {
+    QMainWindow(parent), ui(new Ui::MainWindow),
+    keypress_manager_(MasterCommunicator::getInstance()),
+    machine_(MasterCommunicator::getInstance()) {
   ui->setupUi(this);
   xsmotion = new SimpleMotion( "X_AXIS" );
   ysmotion = new SimpleMotion( "Y_AXIS" );
@@ -85,6 +87,8 @@ MainWindow::MainWindow(QWidget *parent) :
   b_statlabel_->setPixmap(QPixmap(QString::fromUtf8(":/imgs/imgs/red.png")));
   statusBar()->addWidget( b_statlabel_ );
   b_statlabel_->setScaledContents(true);
+
+  machine_.setProgressCallback( boost::bind( &MainWindow::progressUpdate, this, _1 ) );
 }
 
 //-----------------------------------------------------------------------------
@@ -122,11 +126,11 @@ void MainWindow::on_findZeroPushButton_clicked() {
   //zsmotion->startHoming();
 
   //MasterCommunicator::getInstance().startHoming( AXIS_ALL );
-  MasterCommunicator::getInstance().startHomingSequence( "X;YZ" );
+  machine_.startHomingSequence( "X;YZ" );
 }
 
 //-----------------------------------------------------------------------------
-void MainWindow::setLimits( MasterCommunicator &mc, Vector3I &init, Vector3I &final ) {
+void MainWindow::setLimits( Vector3I &init, Vector3I &final ) {
   double xv = ui->xinitSpinBox->value(),
          yv = ui->yinitSpinBox->value(),
          zv = ui->zinitSpinBox->value();
@@ -143,36 +147,35 @@ void MainWindow::setLimits( MasterCommunicator &mc, Vector3I &init, Vector3I &fi
   final = Vector3I( xconv->convertFromTo( ui->xfinalSpinBox->value() , cur_unit, unit ),
                     yconv->convertFromTo( ui->yfinalSpinBox->value(),  cur_unit, unit ),
                     zconv->convertFromTo( ui->zfinalSpinBox->value(),  cur_unit, unit ));
-  mc.setLimits( init, final );
+  machine_.setLimits( init, final );
 }
 
 //-----------------------------------------------------------------------------
 void MainWindow::on_executeButton_clicked() {
   std::string pos_unit("pulsos"), spd_unit("rpm");
-  MasterCommunicator &mc = MasterCommunicator::getInstance();
   int idx = ui->tabWidget->currentIndex();
 
   Vector3I  init, final;
-  setLimits( mc, init, final );
-  mc.setAngularOffset( ui->xangleSpinBox->value() );
+  setLimits( init, final );
+  machine_.setAngularOffset( ui->xangleSpinBox->value() );
   double length = init.distance( final );
-  if( mc.busy() ) {
-    mc.cancel();
+  if( machine_.busy() ) {
+    machine_.cancel();
     printf(">>> Cancelled <<<\n");
   } else if( idx == 2 ) {
-    mc.setMaxSpeed( speedSliderSpin->value( spd_unit ), AXIS_ALL );
+    machine_.setMaxSpeed( speedSliderSpin->value( spd_unit ), AXIS_ALL );
 
     AbstractProtocol::ConcurrentCmmd32 cmd;
     cmd[ X_AXIS ] =  xposSliderSpin->value( pos_unit );
     cmd[ Y_AXIS ] = -yposSliderSpin->value( pos_unit );
     cmd[ Z_AXIS ] =  zposSliderSpin->value( pos_unit );
 
-    mc.sendPosCmmds( cmd );
+    machine_.sendPosCmmds( cmd );
   } else if( idx == 3 ) { // Switch back
     int32_t fwlen = fwLengthSliderSpin->value( pos_unit ),
             weldspd = sbWeldSpeedSliderSpin->value( spd_unit );
     AbsTrajectoryPtr sb( new SwitchBackTrajectory(fwlen, weldspd, length) );
-    mc.executeTrajectory( sb );
+    machine_.executeTrajectory( sb );
   } else if( idx == 4 ) { // Triangular
     boost::shared_ptr<AbstractTrajectory> tr;
     double freq  = trFreqSliderSpin->value();
@@ -188,12 +191,12 @@ void MainWindow::on_executeButton_clicked() {
                inf_stop = ui->infSpinBox->value();
       tr.reset( new TriangularTrajectory( spd, freq, ampl, sup_stop, inf_stop, length ) );
     }
-    mc.executeTrajectory( tr );
+    machine_.executeTrajectory( tr );
   } else if( idx == 5 ) {
     int32_t spd  = sbtSpeedSliderSpin->value( spd_unit ),
             ampl = sbtAmplSliderSpin->value( pos_unit ),
             len  = sbtLenSliderSpin->value( pos_unit );
-    mc.executeTrajectory( AbsTrajectoryPtr(new Rhombus( ampl, len, ui->sbtOscCountSpinBox->value(), spd, length )));
+    machine_.executeTrajectory( AbsTrajectoryPtr(new Rhombus( ampl, len, ui->sbtOscCountSpinBox->value(), spd, length )));
   }
   fflush( stdout );
 }
@@ -218,12 +221,11 @@ QString MainWindow::stringAxis( uint32_t value ) {
 #include <granite/vsd_cmd.h>
 //-----------------------------------------------------------------------------
 void MainWindow::on_getValuesButton_clicked() {
-  MasterCommunicator &mc = MasterCommunicator::getInstance();
-  ui->xvalueLabel->setText( faultString( mc.getStatus( FaultBits, X_AXIS ) ).c_str() );
-  ui->yvalueLabel->setText( faultString( mc.getStatus( FaultBits, Y_AXIS ) ).c_str() );
-  ui->zvalueLabel->setText( faultString( mc.getStatus( FaultBits, Z_AXIS ) ).c_str() );
-  ui->avalueLabel->setText( faultString( mc.getStatus( FaultBits, A_AXIS ) ).c_str() );
-  ui->bvalueLabel->setText( faultString( mc.getStatus( FaultBits, B_AXIS ) ).c_str() );
+  ui->xvalueLabel->setText( faultString( machine_.getStatus( FaultBits, X_AXIS ) ).c_str() );
+  ui->yvalueLabel->setText( faultString( machine_.getStatus( FaultBits, Y_AXIS ) ).c_str() );
+  ui->zvalueLabel->setText( faultString( machine_.getStatus( FaultBits, Z_AXIS ) ).c_str() );
+  ui->avalueLabel->setText( faultString( machine_.getStatus( FaultBits, A_AXIS ) ).c_str() );
+  ui->bvalueLabel->setText( faultString( machine_.getStatus( FaultBits, B_AXIS ) ).c_str() );
 
   //ui->anotherLabel->setText( QString(mc.getStatus( RawPosition, X_AXIS )) );
   checkStatus();
@@ -243,12 +245,11 @@ void MainWindow::setStatus( int32_t status, QLabel *label ) {
 
 //-----------------------------------------------------------------------------
 void MainWindow::checkStatus() {
-  MasterCommunicator &mc = MasterCommunicator::getInstance();
-  setStatus( mc.getStatus( FaultBits, X_AXIS ), x_statlabel_ );
-  setStatus( mc.getStatus( FaultBits, Y_AXIS ), y_statlabel_ );
-  setStatus( mc.getStatus( FaultBits, Z_AXIS ), z_statlabel_ );
-  setStatus( mc.getStatus( FaultBits, A_AXIS ), a_statlabel_ );
-  setStatus( mc.getStatus( FaultBits, B_AXIS ), b_statlabel_ );
+  setStatus( machine_.getStatus( FaultBits, X_AXIS ), x_statlabel_ );
+  setStatus( machine_.getStatus( FaultBits, Y_AXIS ), y_statlabel_ );
+  setStatus( machine_.getStatus( FaultBits, Z_AXIS ), z_statlabel_ );
+  setStatus( machine_.getStatus( FaultBits, A_AXIS ), a_statlabel_ );
+  setStatus( machine_.getStatus( FaultBits, B_AXIS ), b_statlabel_ );
 }
 
 //-----------------------------------------------------------------------------
@@ -325,8 +326,7 @@ void MainWindow::on_invertDirectionButton_clicked() {
 
 //-----------------------------------------------------------------------------
 void MainWindow::on_markFinalPositionButton_clicked() {
-    MasterCommunicator &mc = MasterCommunicator::getInstance();
-    Vector3D pos = mc.currentPosition();
+    Vector3D pos = machine_.currentPosition();
     ui->xfinalSpinBox->setValue( pos.x() );
     ui->yfinalSpinBox->setValue( pos.y() );
     ui->zfinalSpinBox->setValue( pos.z() );
@@ -334,11 +334,19 @@ void MainWindow::on_markFinalPositionButton_clicked() {
 
 //-----------------------------------------------------------------------------
 void MainWindow::on_markInitPositionButton_clicked() {
-    MasterCommunicator &mc = MasterCommunicator::getInstance();
-    Vector3D pos = mc.currentPosition();
+    Vector3D pos = machine_.currentPosition();
     ui->xinitSpinBox->setValue( pos.x() );
     ui->yinitSpinBox->setValue( pos.y() );
     ui->zinitSpinBox->setValue( pos.z() );
+}
+
+//-----------------------------------------------------------------------------
+void MainWindow::progressUpdate( double p ) {
+  int percent = 100 * p;
+  QMetaObject::invokeMethod( ui->progressBar,
+                             "setValue",
+                             Qt::QueuedConnection,
+                             Q_ARG(int, percent) );
 }
 
 //-----------------------------------------------------------------------------

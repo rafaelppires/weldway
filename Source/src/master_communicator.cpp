@@ -73,6 +73,7 @@ bool MasterCommunicator::executeTrajectory( AbsTrajectoryPtr at ) {
   trajectory_executer_->setCurrent( comm_->getLastSentPos() );
   trajectory_executer_->setLimits( trajectory_init_, trajectory_final_ );
   trajectory_executer_->setAngularOffset( angular_offset_ );
+  trajectory_executer_->setProgressCallback( progress_callback_ );
   thread_executer_.reset( new boost::thread( boost::ref(*trajectory_executer_) ) );
   return true;
 }
@@ -94,6 +95,11 @@ void MasterCommunicator::cancel() {
 void MasterCommunicator::setLimits(const Vector3I &init, const Vector3I &final ) {
   trajectory_init_ = init;
   trajectory_final_ = final;
+}
+
+//-----------------------------------------------------------------------------
+void MasterCommunicator::setProgressCallback( boost::function<void(double)> cb ) {
+  progress_callback_ = cb;
 }
 
 //-----------------------------------------------------------------------------

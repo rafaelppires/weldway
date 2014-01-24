@@ -5,6 +5,7 @@
 #include <trajectory.h>
 #include <units.h>
 #include <boost/thread.hpp>
+#include <boost/function.hpp>
 
 class TrajectoryExecuter {
 public:
@@ -20,6 +21,7 @@ public:
   void setCurrent( const Vector3I &last );
   void setAngularOffset( double );
   Vector3US getSpeedsAndInterval(const Vector3D &delta, uint16_t &interval, double res_spd);
+  void setProgressCallback( boost::function<void(double)> cb ) { progress_callback_ = cb; }
 
 private:
   void waitFor( uint32_t ms );
@@ -43,6 +45,7 @@ private:
   Vector3D acceleration_;
   Vector3US last_spd_;
   double overx_angle_;
+  boost::function<void(double)> progress_callback_;
 };
 
 #endif

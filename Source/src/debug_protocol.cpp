@@ -1,4 +1,5 @@
 #include <debug_protocol.h>
+#include <granite/vsd_cmd.h>
 
 //-----------------------------------------------------------------------------
 DebugProtocol::DebugProtocol() : AbstractProtocol( DEBUG ), posfile_("pos.dat") {
@@ -13,12 +14,12 @@ DebugProtocol::~DebugProtocol() {
 
 //-----------------------------------------------------------------------------
 void DebugProtocol::startHoming( uint8_t ) {
-
+  homingFinished();
 }
   
 //-----------------------------------------------------------------------------
 void DebugProtocol::startHomingSequence( std::string ) {
-
+  homingFinished();
 }
   
 //-----------------------------------------------------------------------------
@@ -41,7 +42,7 @@ void DebugProtocol::sendSpdCmmds( const ConcurrentCmmd32 & ) {
   
 //-----------------------------------------------------------------------------
 int32_t DebugProtocol::getStatus( GraniteParams param, uint8_t axis ) {
-
+  return STAT_TARGET_REACHED;
 }
 
 //-----------------------------------------------------------------------------

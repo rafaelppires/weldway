@@ -15,7 +15,8 @@ void TrajectoryExecuter::operator()() {
   positions_ = trajectory_->positions();
   speeds_ = trajectory_->speeds();
   size_t spd_idx = 0,
-         spds_sz = speeds_.size();
+         spds_sz = speeds_.size(),
+         pos_sz = positions_.size();
 
   trajectoryRotate();
 
@@ -43,7 +44,12 @@ void TrajectoryExecuter::operator()() {
 
     waitFor( interval - boost::chrono::duration_cast<milliseconds>(now - start).count() );
     last_pos = *it;
-    if( finished() ) break;
+
+    if( progress_callback_ ) progress_callback_( double(count) / pos_sz );
+    if( finished() ) {
+      if( progress_callback_ ) progress_callback_( 1 );
+      break;
+    }
   }
   cancel();
 }
@@ -101,6 +107,7 @@ void TrajectoryExecuter::setAngularOffset( double angle ) {
 //-----------------------------------------------------------------------------
 void TrajectoryExecuter::trajectoryRotate() {
   Vector3I rotate_vector = trajectory_final_ - trajectory_init_;
+  int zdir = trajectory_final_.z() > trajectory_init_.z() ? 1 : -1;
   long double len = rotate_vector.length(),
               overx_sin = sin( overx_angle_ ),
               overx_cos = cos( overx_angle_ ),
@@ -115,8 +122,8 @@ void TrajectoryExecuter::trajectoryRotate() {
   overz(0,1) = -overz_sin;
 
   overy(0,0) = overy(2,2) = overy_cos;
-  overy(2,0) =  overy_sin;
-  overy(0,2) = -overy_sin;
+  overy(2,0) = zdir *  overy_sin;
+  overy(0,2) = zdir * -overy_sin;
 
   overx(1,1) = overx(2,2) = overx_cos;
   overx(1,2) =  overx_sin;
