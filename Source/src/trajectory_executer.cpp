@@ -38,7 +38,8 @@ void TrajectoryExecuter::operator()() {
     if( spd_idx >= spds_sz ) spd_idx = spds_sz - 1;
 
     deliverSpeedsAndPositions( delta, spds );
-    std::cout << "(" << ++count << ") "<< *it << " --- " << delta << " curpos: " << current_pos_ << " spd: " << spds << " inter: " << interval << "\n";
+    ++count;
+    //std::cout << "(" << count << ") "<< *it << " --- " << delta << " curpos: " << current_pos_ << " spd: " << spds << " inter: " << interval << "\n";
     fflush(stdout);
     now = high_resolution_clock::now();
 
@@ -46,10 +47,7 @@ void TrajectoryExecuter::operator()() {
     last_pos = *it;
 
     if( progress_callback_ ) progress_callback_( double(count) / pos_sz );
-    if( finished() ) {
-      if( progress_callback_ ) progress_callback_( 1 );
-      break;
-    }
+    if( finished() ) { break; }
   }
   cancel();
 }
@@ -77,7 +75,7 @@ void TrajectoryExecuter::deliverSpeedsAndPositions( const Vector3I &delta, const
 
 //-----------------------------------------------------------------------------
 void TrajectoryExecuter::waitFor( uint32_t ms ) {
-  std::cout << "Inter: " << ms << "\n";
+  //std::cout << "Inter: " << ms << "\n";
   boost::this_thread::sleep_for( boost::chrono::milliseconds( ms ) );
 }
 
@@ -107,34 +105,32 @@ void TrajectoryExecuter::setAngularOffset( double angle ) {
 //-----------------------------------------------------------------------------
 void TrajectoryExecuter::trajectoryRotate() {
   Vector3I rotate_vector = trajectory_final_ - trajectory_init_;
-  int zdir = trajectory_final_.z() > trajectory_init_.z() ? 1 : -1;
-  long double len = rotate_vector.length(),
-              overx_sin = sin( overx_angle_ ),
-              overx_cos = cos( overx_angle_ ),
-              overy_sin = rotate_vector.z() / len,
-              overy_cos = rotate_vector.x() / len,
-              overz_sin = rotate_vector.y() / len,
-              overz_cos = overy_cos;
+  Vector2D xyproj( rotate_vector.x(), rotate_vector.y() );
+  Vector3D yline( -rotate_vector.y()/xyproj.length(), 0, 0);
+  yline.y() = sqrt(1-yline.x()*yline.x());
+
+  long double alpha = atan2(-yline.x(),yline.y()),
+              beta  = atan2(rotate_vector.z(),xyproj.length());
 
   MatrixLD overx(3), overy(3), overz(3);
-  overz(0,0) = overz(1,1) = overz_cos;
-  overz(1,0) =  overz_sin;
-  overz(0,1) = -overz_sin;
+  overz(0,0) = overz(1,1) = cos( alpha );
+  overz(1,0) = sin(alpha);
+  overz(0,1) = -overz(1,0);
 
-  overy(0,0) = overy(2,2) = overy_cos;
-  overy(2,0) = zdir *  overy_sin;
-  overy(0,2) = zdir * -overy_sin;
+  overy(0,0) = overy(2,2) = cos( beta );
+  overy(2,0) = sin( beta );
+  overy(0,2) = -overy(2,0);
 
-  overx(1,1) = overx(2,2) = overx_cos;
-  overx(1,2) =  overx_sin;
-  overx(2,1) = -overx_sin;
+  overx(1,1) = overx(2,2) = cos( overx_angle_ );
+  overx(1,2) = sin( overx_angle_ );
+  overx(2,1) = -overx(1,2);
 
-  MatrixLD rotatexyz( overx * overy * overz );
+  MatrixLD rotatexyz( overz * overy * overx );
   PositionVector::iterator it  = positions_.begin(),
                            end = positions_.end();
   for(; it != end; ++it) {
     MatrixLD rotated( rotatexyz * MatrixLD(*it) );
-    *it = Vector3I( 0.5+rotated(0,0), 0.5+rotated(1,0), 0.5+rotated(2,0) );
+    *it = Vector3I( rotated(0,0), rotated(1,0), rotated(2,0) );
     if( trajectory_final_.x() < trajectory_init_.x() ) it->x() *= -1;
   }
 
@@ -190,6 +186,7 @@ void TrajectoryExecuter::cancel() {
   boost::lock_guard<boost::mutex> lock(finish_mutex_);
   comm_->stopTorch();
   finished_ = true;
+  if( progress_callback_ ) progress_callback_( 1 );
 }
 
 //-----------------------------------------------------------------------------
