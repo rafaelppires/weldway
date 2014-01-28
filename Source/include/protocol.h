@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <vectorxd.h>
 #include <granite_spi_interface.h>
+#include <boost/function.hpp>
 
 #define X_AXIS   0x01
 #define Y_AXIS   0x02
@@ -59,5 +60,7 @@ protected:
 private:
   CommType type_;
 };
+
+typedef boost::function< void(bool) > EmergencyCallbackType;
 
 #endif

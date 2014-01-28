@@ -150,7 +150,7 @@ public:
   ReadingThread( ParallelPort &p, uint8_t pin_idx, double ms, ReadCallbackType f );
   void iteration();
 private:
-  bool value_;
+  bool value_, once_;
   uint8_t pin_;
   double period_;
   ReadCallbackType callback_;

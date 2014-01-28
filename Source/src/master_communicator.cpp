@@ -12,8 +12,8 @@ void MasterCommunicator::setupParallelPort( uint16_t addr ) {
     comm_->finish();
 
   ParallelProtocol *p;
-  comm_.reset( p = new ParallelProtocol( addr ) );
-  p->setEmergencyCallback( boost::bind( &MasterCommunicator::emergencyCallback, this ) );
+  comm_.reset( p = new ParallelProtocol( addr,
+            boost::bind( &MasterCommunicator::emergencyCallback, this, _1 )) );
 }
 
 //-----------------------------------------------------------------------------
@@ -23,12 +23,15 @@ void MasterCommunicator::setupDebug() {
 
   comm_.reset( new DebugProtocol );
 }
+//-----------------------------------------------------------------------------
+void MasterCommunicator::setEmergencyCallback( EmergencyCallbackType cb ) {
+  emergency_callback_ = cb;
+}
 
 //-----------------------------------------------------------------------------
-void MasterCommunicator::emergencyCallback() {
-  printf("EMERGENCY! Run to the hills\n");
-  fflush(stdout);
-  cancel();
+void MasterCommunicator::emergencyCallback( bool state ) {
+  if( emergency_callback_ ) emergency_callback_(state);
+  if( state ) cancel();
 }
 
 //-----------------------------------------------------------------------------

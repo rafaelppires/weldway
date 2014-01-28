@@ -24,13 +24,12 @@ struct RetRawCmmd {
   uint8_t  crc_match;
 };
 
-typedef boost::function< void() > EmergencyCallbackType;
 typedef std::map< uint8_t, RetRawCmmd > RetAxis;
 
 //-----------------------------------------------------------------------------
 class ParallelProtocol : public AbstractProtocol {
 public:
-  ParallelProtocol( uint16_t addr );
+  ParallelProtocol( uint16_t addr, EmergencyCallbackType );
   virtual void startHoming( uint8_t );
   virtual void startHomingSequence( std::string );
   virtual void setMaxSpeed( uint16_t spd, uint8_t axis );

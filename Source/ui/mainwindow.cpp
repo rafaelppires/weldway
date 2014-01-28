@@ -89,6 +89,9 @@ MainWindow::MainWindow(QWidget *parent) :
   b_statlabel_->setScaledContents(true);
 
   machine_.setProgressCallback( boost::bind( &MainWindow::progressUpdate, this, _1 ) );
+  machine_.setEmergencyCallback( boost::bind( &MainWindow::emergencyUpdate, this, _1 ) );
+  ui->emergencyLabel->setText("<font style='background-color:red' size='10'>Emergência</font>");
+  ui->emergencyLabel->setVisible( false );
 }
 
 //-----------------------------------------------------------------------------
@@ -347,6 +350,21 @@ void MainWindow::progressUpdate( double p ) {
                              "setValue",
                              Qt::QueuedConnection,
                              Q_ARG(int, percent) );
+}
+
+//-----------------------------------------------------------------------------
+void MainWindow::emergencyUpdate( bool e ) {
+  QMetaObject::invokeMethod( this,
+                             "emergencyNotify",
+                             Qt::QueuedConnection,
+                             Q_ARG(bool, e) );
+}
+
+//-----------------------------------------------------------------------------
+void MainWindow::emergencyNotify( bool e ) {
+  ui->emergencyLabel->setVisible( e );
+  ui->tabWidget->setCurrentIndex( 0 );
+  QTimer::singleShot( 1000, this, SLOT(on_getValuesButton_clicked()) );
 }
 
 //-----------------------------------------------------------------------------

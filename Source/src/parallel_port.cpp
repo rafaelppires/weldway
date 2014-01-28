@@ -35,11 +35,11 @@ void MasterParallel::iteration() {
   out( addr_, decodeBase(current_) ); // base addres (write only pins)
   out( addr_ + 2, decodeBase2(current_) ); // base address + 2 (read/write pins)
 
-  if( log_ ) {
+  /*if( log_ ) {
     char out[1024];
     sprintf( out, "%d %d %d\n", (current_&0x10000)>>16, (current_&4) >> 2, (current_&8) >> 3  );
     logfile << out;
-  }
+  }*/
 
   data_ready_ = false;
 }
@@ -151,7 +151,7 @@ void SquareSigGen::iteration() {
 
 //=============================================================================
 ReadingThread::ReadingThread( ParallelPort &p, uint8_t pin_idx, double s, ReadCallbackType f ) :
-    pin_(pin_idx), period_(s*1e+6f), callback_(f), port_(p), value_(false) {
+    pin_(pin_idx), period_(s*1e+6f), callback_(f), port_(p), value_(false), once_(true) {
   callback_( false );
 }
 
@@ -159,10 +159,16 @@ ReadingThread::ReadingThread( ParallelPort &p, uint8_t pin_idx, double s, ReadCa
 void ReadingThread::iteration() {
   uint32_t mask = 1 << pin_;
   bool now = bool(mask & port_.readPins( mask ));
-  if( now != value_ ) {
+
+  if( once_ ) {
+    callback_( now );
+    value_ = now;
+    once_ = false;
+  } else if( now != value_ ) {
     callback_( now );
     value_ = now;
   }
+
   boost::this_thread::sleep_for( boost::chrono::microseconds(uint32_t(period_)) );
 }
 

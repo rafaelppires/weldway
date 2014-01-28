@@ -88,10 +88,11 @@ AbstractProtocol::ConcurrentCmmd ParallelProtocol::sendWord( uint16_t w[AXIS_CNT
 }
 
 //-----------------------------------------------------------------------------
-ParallelProtocol::ParallelProtocol( uint16_t addr ) :
-    AbstractProtocol( PARALLEL ), port_(addr), homing_thread_(0) {
+ParallelProtocol::ParallelProtocol(uint16_t addr , EmergencyCallbackType cb ) :
+    AbstractProtocol( PARALLEL ), port_(addr), homing_thread_(0),
+    emergency_callback_( cb ) {
   port_.startSquareSignal( MANIP_ENABL_PIN, 1000. ); // Pin 16 - 1kHz
-  port_.startReadingPin( MANIP_EMERG_PIN, 1./3 /*s*/,
+  port_.startReadingPin( MANIP_EMERG_PIN, 1./2 /*s*/,
                          std::bind1st( std::mem_fun(&ParallelProtocol::emergencyCallback), this ) );
 }
 
@@ -107,11 +108,10 @@ void ParallelProtocol::stopTorch() {
 
 //-----------------------------------------------------------------------------
 void ParallelProtocol::emergencyCallback( bool inactive ) {
-  std::cout << "emerg now " << int(inactive) << "\n";
-  if( inactive ) return;
-  homing_done_ = false;
+  if( !inactive )
+    homing_done_ = false;
   if( bool(emergency_callback_) )
-    emergency_callback_();
+    emergency_callback_( !inactive );
 }
 
 //-----------------------------------------------------------------------------

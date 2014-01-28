@@ -26,6 +26,7 @@ protected:
 
 public slots:
   void on_findZeroPushButton_clicked();
+  void emergencyNotify( bool );
     
 private slots:
   void on_executeButton_clicked();
@@ -42,6 +43,7 @@ private:
   void checkStatus();
   void setLimits(Vector3I &init, Vector3I &final);
   void progressUpdate( double );
+  void emergencyUpdate( bool );
 
   Ui::MainWindow *ui;
   QLabel *x_statlabel_, *y_statlabel_, *z_statlabel_, *a_statlabel_, *b_statlabel_;
