@@ -30,6 +30,7 @@ void TrajectoryExecuter::operator()() {
 
   high_resolution_clock::time_point now, start;
   uint16_t count = 0;
+  comm_->startTorch();
   for(; it != end; ++it) {
     start = high_resolution_clock::now();
     delta = *it - last_pos;

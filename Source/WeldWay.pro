@@ -16,8 +16,6 @@ SOURCES += src/main.cpp \
            src/parallel_protocol.cpp \
            src/granite/sm_consts.cpp \
            src/granite_spi_interface.cpp \
-           src/switch_back.cpp \
-           src/rhombus.cpp \
            src/granite/vsd_cmmd.cpp \
            src/keypress_manager.cpp \
            src/debug_protocol.cpp \
