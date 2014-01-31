@@ -165,41 +165,49 @@ void MainWindow::on_executeButton_clicked() {
   if( machine_.busy() ) {
     machine_.cancel();
     printf(">>> Cancelled <<<\n");
-  } else if( idx == 2 ) {
-    machine_.setMaxSpeed( speedSliderSpin->value( spd_unit ), AXIS_ALL );
+  } else {
+    if( idx == 2 ) {
+      machine_.setMaxSpeed( speedSliderSpin->value( spd_unit ), AXIS_ALL );
 
-    AbstractProtocol::ConcurrentCmmd32 cmd;
-    cmd[ X_AXIS ] =  xposSliderSpin->value( pos_unit );
-    cmd[ Y_AXIS ] = -yposSliderSpin->value( pos_unit );
-    cmd[ Z_AXIS ] =  zposSliderSpin->value( pos_unit );
+      AbstractProtocol::ConcurrentCmmd32 cmd;
+      cmd[ X_AXIS ] =  xposSliderSpin->value( pos_unit );
+      cmd[ Y_AXIS ] = -yposSliderSpin->value( pos_unit );
+      cmd[ Z_AXIS ] =  zposSliderSpin->value( pos_unit );
 
-    machine_.sendPosCmmds( cmd );
-  } else if( idx == 3 ) { // Switch back
-    int32_t fwlen = fwLengthSliderSpin->value( pos_unit ),
-            weldspd = sbWeldSpeedSliderSpin->value( spd_unit );
-    AbsTrajectoryPtr sb( new SwitchBackTrajectory(fwlen, weldspd, length) );
-    machine_.executeTrajectory( sb );
-  } else if( idx == 4 ) { // Triangular
-    boost::shared_ptr<AbstractTrajectory> tr;
-    double freq  = trFreqSliderSpin->value();
-    int32_t spd  = trSpeedSliderSpin->value( spd_unit ),
-            ampl = trAmplSliderSpin->value( pos_unit ),
-            tidx = ui->transvTrajectoryComboBox->currentIndex();
-    if( tidx == 1 ) {
-      tr.reset( new ETrajectory( spd, freq, ampl, length ) );
-    } else if( tidx == 2 ) {
-      tr.reset( new DoubleETrajectory( spd, freq, ampl, length ) );
-    } else {
-      uint32_t sup_stop = ui->supSpinBox->value(),
-               inf_stop = ui->infSpinBox->value();
-      tr.reset( new TriangularTrajectory( spd, freq, ampl, sup_stop, inf_stop, length ) );
+      machine_.sendPosCmmds( cmd );
+    } else if( idx == 3 ) { // Longitudinal
+      int32_t tidx = ui->longTrajectoryComboBox->currentIndex(),
+              weldspd = sbWeldSpeedSliderSpin->value( spd_unit );
+      if( tidx == 0 ) {
+        int32_t fwlen = fwLengthSliderSpin->value( pos_unit );
+        AbsTrajectoryPtr sb( new SwitchBackTrajectory(fwlen, weldspd, length) );
+        machine_.executeTrajectory( sb );
+      } else {
+        machine_.executeTrajectory( AbsTrajectoryPtr( new LinearTrajectory( weldspd, length ) ) );
+      }
+    } else if( idx == 4 ) { // Transversal
+      boost::shared_ptr<AbstractTrajectory> tr;
+      double freq  = trFreqSliderSpin->value();
+      int32_t spd  = trSpeedSliderSpin->value( spd_unit ),
+              ampl = trAmplSliderSpin->value( pos_unit ),
+              tidx = ui->transvTrajectoryComboBox->currentIndex();
+      if( tidx == 1 ) {
+        tr.reset( new ETrajectory( spd, freq, ampl, length ) );
+      } else if( tidx == 2 ) {
+        tr.reset( new DoubleETrajectory( spd, freq, ampl, length ) );
+      } else {
+        uint32_t sup_stop = ui->supSpinBox->value(),
+                 inf_stop = ui->infSpinBox->value();
+        tr.reset( new TriangularTrajectory( spd, freq, ampl, sup_stop, inf_stop, length ) );
+      }
+      machine_.executeTrajectory( tr );
+    } else if( idx == 5 ) {
+      int32_t spd  = sbtSpeedSliderSpin->value( spd_unit ),
+              ampl = sbtAmplSliderSpin->value( pos_unit ),
+              len  = sbtLenSliderSpin->value( pos_unit );
+      machine_.executeTrajectory( AbsTrajectoryPtr(new Rhombus( ampl, len, ui->sbtOscCountSpinBox->value(), spd, length )));
     }
-    machine_.executeTrajectory( tr );
-  } else if( idx == 5 ) {
-    int32_t spd  = sbtSpeedSliderSpin->value( spd_unit ),
-            ampl = sbtAmplSliderSpin->value( pos_unit ),
-            len  = sbtLenSliderSpin->value( pos_unit );
-    machine_.executeTrajectory( AbsTrajectoryPtr(new Rhombus( ampl, len, ui->sbtOscCountSpinBox->value(), spd, length )));
+    ui->executeButton->setText("Cancelar");
   }
   fflush( stdout );
 }
@@ -256,13 +264,21 @@ void MainWindow::checkStatus() {
 }
 
 //-----------------------------------------------------------------------------
+void MainWindow::on_longTrajectoryComboBox_currentTextChanged(const QString &arg1) {
+  if( arg1 == "Linear" )
+    ui->advanceRetreatWidget->setHidden(true);
+  else
+    ui->advanceRetreatWidget->setHidden(false);
+}
 
+//-----------------------------------------------------------------------------
 void MainWindow::on_transvTrajectoryComboBox_currentTextChanged(const QString &arg1) {
   if( arg1 == "Triangular" )
     ui->stopTimeWidget->setHidden(false);
   else
     ui->stopTimeWidget->setHidden(true);
 }
+
 //-----------------------------------------------------------------------------
 void MainWindow::keyPressEvent(QKeyEvent *event) {
   switch (event->key()) {
@@ -350,6 +366,10 @@ void MainWindow::progressUpdate( double p ) {
                              "setValue",
                              Qt::QueuedConnection,
                              Q_ARG(int, percent) );
+  if( percent == 100 )
+    QMetaObject::invokeMethod( this,
+                               "executionFinished",
+                               Qt::QueuedConnection );
 }
 
 //-----------------------------------------------------------------------------
@@ -368,3 +388,9 @@ void MainWindow::emergencyNotify( bool e ) {
 }
 
 //-----------------------------------------------------------------------------
+void MainWindow::executionFinished() {
+  ui->executeButton->setText( "Executar" );
+}
+
+//-----------------------------------------------------------------------------
+

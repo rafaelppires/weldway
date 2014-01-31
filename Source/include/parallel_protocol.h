@@ -58,6 +58,11 @@ private:
   uint32_t axisToPins( uint8_t axis );
   void delay( uint16_t ns );
   void updatePosition( const ConcurrentCmmd32 &cmmds );
+  int32_t checkAxisLimits( ConcurrentCmmd32::const_reference cmmd );
+
+  inline int32_t adjustToLimit( int32_t v, int32_t min, int32_t max ) {
+    return v < min ? min : ( v > max ? max : v );
+  }
 
   uint8_t reply_axis_;
   ParallelPort port_;

@@ -258,22 +258,28 @@ void ParallelProtocol::setMaxSpeed( uint16_t spd, uint8_t axis ) {
 }
 
 //-----------------------------------------------------------------------------
-void ParallelProtocol::sendPosCmmds( const ConcurrentCmmd32 &cmmds ) {
-  //uint32_t pins = axisToPins( axisMask( cmmds ) );
-  /*
-  ConcurrentCmmd ret = getParam( VelocityLimit, pins );
-  ConcurrentCmmd::iterator kt = ret.begin(), kend = ret.end();
-  for(; kt != kend; ++kt )
-    printf("[%X] = [%d]\n", kt->first, kt->second );*/
+int32_t ParallelProtocol::checkAxisLimits( ConcurrentCmmd32::const_reference cmmd ) {
+  int32_t ret = cmmd.second;
 
-  //setParam( ControlMode, CONTROLMODE_POSITON, pins ); // position mode
+  switch( cmmd.first ) {
+  case X_AXIS: ret = adjustToLimit(cmmd.second,     0, 35000); break;
+  case Y_AXIS: ret = adjustToLimit(cmmd.second, -7000,     0); break;
+  case Z_AXIS: ret = adjustToLimit(cmmd.second,     0,  4000); break;
+  default: break;
+  };
+
+  return ret;
+}
+
+//-----------------------------------------------------------------------------
+void ParallelProtocol::sendPosCmmds( const ConcurrentCmmd32 &cmmds ) {
   if( !homingDone() ) return;
   ConcurrentCmmd64 pos_cmmds;
   ConcurrentCmmd32::const_iterator it = cmmds.begin(), end = cmmds.end();
   for(; it != end; ++it) {
-    printf("p[%X] = [%d]\n", it->first, it->second );
-    pos_cmmds[ it->first ] = spi_.graniteAbsTarget( it->second );
-    lastcmmd_pos_[it->first] = it->second;
+    int32_t safecmmd = checkAxisLimits( *it );
+    pos_cmmds[ it->first ] = spi_.graniteAbsTarget( safecmmd );
+    lastcmmd_pos_[it->first] = safecmmd;
   }
 
   uint64_t nope = spi_.nope();
@@ -328,16 +334,9 @@ void ParallelProtocol::sendSpdCmmds(const ConcurrentCmmd32 &cmmds ) {
 
   ConcurrentCmmd64 cmmd;
   ConcurrentCmmd32::const_iterator it = cmmds.begin(), end = cmmds.end();
-#ifdef LOGPOS
-  for( int i = 1; i < AXIS_ALL; i <<= 1 ) {
-    ConcurrentCmmd32::const_iterator found;
-    if( (found = cmmds.find(i)) != end )
-      last_speed[i] = found->second / TO_RPM;
-  }
-#endif
+
   for(; it != end; ++it ) {
-    printf("v[%X] = [%d]\n", it->first, it->second );
-    cmmd[ it->first ] = spi_.graniteSetParam( VelocityLimit, it->second );
+    cmmd[ it->first ] = spi_.graniteSetParam( VelocityLimit, abs(it->second) );
   }
 
   uint64_t nope = spi_.nope();

@@ -27,6 +27,7 @@ protected:
 public slots:
   void on_findZeroPushButton_clicked();
   void emergencyNotify( bool );
+  void executionFinished();
     
 private slots:
   void on_executeButton_clicked();
@@ -36,6 +37,8 @@ private slots:
   void on_invertDirectionButton_clicked();
   void on_markFinalPositionButton_clicked();
   void on_markInitPositionButton_clicked();
+
+  void on_longTrajectoryComboBox_currentTextChanged(const QString &arg1);
 
 private:
   QString stringAxis(uint32_t value);
