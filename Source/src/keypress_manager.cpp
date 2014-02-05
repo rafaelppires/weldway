@@ -32,22 +32,36 @@ void KeyPressManager::xaxisRight() {
 
 //-----------------------------------------------------------------------------
 void KeyPressManager::yaxisFront() {
-  comm_.sendLinearIncrement( Y_AXIS, speed_, -linear_increment_ );
+  int32_t incr = -linear_increment_;
+  if( comm_.busy() )
+    comm_.sendLinearCorrection( Y_AXIS, incr );
+  else
+    comm_.sendLinearIncrement( Y_AXIS, speed_, incr );
 }
 
 //-----------------------------------------------------------------------------
 void KeyPressManager::yaxisBack() {
-  comm_.sendLinearIncrement( Y_AXIS, speed_, linear_increment_ );
+  if( comm_.busy() )
+    comm_.sendLinearCorrection( Y_AXIS, linear_increment_ );
+  else
+    comm_.sendLinearIncrement( Y_AXIS, speed_, linear_increment_ );
 }
 
 //-----------------------------------------------------------------------------
 void KeyPressManager::zaxisUp() {
-  comm_.sendLinearIncrement( Z_AXIS, speed_, linear_increment_ );
+  if( comm_.busy() )
+    comm_.sendLinearCorrection( Z_AXIS, linear_increment_ );
+  else
+    comm_.sendLinearIncrement( Z_AXIS, speed_, linear_increment_ );
 }
 
 //-----------------------------------------------------------------------------
 void KeyPressManager::zaxisDown() {
-  comm_.sendLinearIncrement( Z_AXIS, speed_, -linear_increment_ );
+  int32_t incr = -linear_increment_;
+  if( comm_.busy() )
+    comm_.sendLinearCorrection( Z_AXIS, incr );
+  else
+    comm_.sendLinearIncrement( Z_AXIS, speed_, incr );
 }
 
 //-----------------------------------------------------------------------------

@@ -31,6 +31,7 @@ public:
   bool sendAngularIncrement( AngularDirection, double spd, double inc );
   bool sendLinearIncrement( uint8_t axis, double spd, double inc );
   void setAngularOffset( double angle );
+  bool sendLinearCorrection( uint8_t axis, double inc );
 
   // Setup
   void setupParallelPort( uint16_t addr );

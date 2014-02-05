@@ -35,6 +35,14 @@ void TrajectoryExecuter::operator()() {
     start = high_resolution_clock::now();
     delta = *it - last_pos;
 
+    {
+      boost::lock_guard<boost::mutex> lock(correction_mutex_);
+      if( offset_updated_ ) {
+        delta += offset_;
+        offset_ = Vector3D();
+        offset_updated_ = false;
+      }
+    }
     Vector3US spds = getSpeedsAndInterval( delta, interval, speeds_[spd_idx++] );
     if( spd_idx >= spds_sz ) spd_idx = spds_sz - 1;
 
@@ -188,6 +196,14 @@ void TrajectoryExecuter::cancel() {
   comm_->stopTorch();
   finished_ = true;
   if( progress_callback_ ) progress_callback_( 1 );
+}
+
+//-----------------------------------------------------------------------------
+void TrajectoryExecuter::addLinearOffset( const Vector3D &offset ) {
+  boost::lock_guard<boost::mutex> lock(correction_mutex_);
+  offset_ = offset;
+  accumulated_offset_ += offset;
+  offset_updated_ = true;
 }
 
 //-----------------------------------------------------------------------------

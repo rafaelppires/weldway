@@ -10,7 +10,7 @@
 class TrajectoryExecuter {
 public:
   TrajectoryExecuter( AbsTrajectoryPtr t, boost::shared_ptr< AbstractProtocol > comm )
-      : trajectory_(t), comm_(comm), finished_(false) {
+      : trajectory_(t), comm_(comm), finished_(false), offset_updated_(false) {
     acceleration_.x() = acceleration_.y() = acceleration_.z() = 4000 / (0.025 * TO_RPM); // mm/s²
   }
 
@@ -22,6 +22,7 @@ public:
   void setAngularOffset( double );
   Vector3US getSpeedsAndInterval(const Vector3D &delta, uint16_t &interval, double res_spd);
   void setProgressCallback( boost::function<void(double)> cb ) { progress_callback_ = cb; }
+  void addLinearOffset( const Vector3D &offset );
 
 private:
   void waitFor( uint32_t ms );
@@ -37,12 +38,12 @@ private:
 
   AbsTrajectoryPtr trajectory_;
   boost::shared_ptr< AbstractProtocol > comm_;
-  boost::mutex finish_mutex_;
-  bool finished_;
+  boost::mutex finish_mutex_, correction_mutex_;
+  bool finished_, offset_updated_;
   Vector3I current_pos_, trajectory_init_, trajectory_final_;
   PositionVector positions_;
   SpeedVector speeds_;
-  Vector3D acceleration_;
+  Vector3D acceleration_, offset_, accumulated_offset_;
   Vector3US last_spd_;
   double overx_angle_;
   boost::function<void(double)> progress_callback_;

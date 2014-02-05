@@ -133,3 +133,12 @@ bool MasterCommunicator::sendLinearIncrement( uint8_t axis, double spd, double i
 }
 
 //-----------------------------------------------------------------------------
+bool MasterCommunicator::sendLinearCorrection( uint8_t axis, double inc ) {
+  if( trajectory_executer_ ) {
+    trajectory_executer_->addLinearOffset( Vector3D(0, axis==Y_AXIS ? inc : 0, axis == Z_AXIS ? inc : 0) );
+    return true;
+  }
+  return false;
+}
+
+//-----------------------------------------------------------------------------
