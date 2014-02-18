@@ -20,7 +20,8 @@ SOURCES += src/main.cpp \
            src/keypress_manager.cpp \
            src/debug_protocol.cpp \
            src/trajectory_executer.cpp \
-           src/protocol.cpp
+           src/protocol.cpp \
+    src/trajectory.cpp
 
 HEADERS += ui/mainwindow.h \
            include/simplemotion.h \

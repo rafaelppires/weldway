@@ -88,7 +88,7 @@ public:
   }
 
   template< typename T2 >
-  operator Matrix<T2>() {
+  operator Matrix<T2>() const {
     Matrix<T2> ret(N,1);
     for(unsigned int i = 0; i < N; ++i )
       ret(i,0) = v[i];

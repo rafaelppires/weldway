@@ -40,6 +40,8 @@ private slots:
 
   void on_longTrajectoryComboBox_currentTextChanged(const QString &arg1);
 
+  void on_correctButton_clicked();
+
 private:
   QString stringAxis(uint32_t value);
   void setStatus( int32_t status, QLabel *label );
@@ -57,6 +59,7 @@ private:
              *sbtSpeedSliderSpin, *sbtAmplSliderSpin, *sbtLenSliderSpin;
   KeyPressManager keypress_manager_;
   MasterCommunicator &machine_;
+  boost::shared_ptr<AbstractTrajectory> executing_trajectory_;
 };
 
 #endif // MAINWINDOW_H

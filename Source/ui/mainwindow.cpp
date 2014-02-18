@@ -161,11 +161,13 @@ void MainWindow::on_executeButton_clicked() {
   Vector3I  init, final;
   setLimits( init, final );
   machine_.setAngularOffset( ui->xangleSpinBox->value() );
-  double length = init.distance( final );
+  double xangle = ui->xangleSpinBox->value();
+  Vector3D rotate_vec = final - init;
   if( machine_.busy() ) {
     machine_.cancel();
     printf(">>> Cancelled <<<\n");
   } else {
+    executing_trajectory_.reset();
     if( idx == 2 ) {
       machine_.setMaxSpeed( speedSliderSpin->value( spd_unit ), AXIS_ALL );
 
@@ -180,34 +182,35 @@ void MainWindow::on_executeButton_clicked() {
               weldspd = sbWeldSpeedSliderSpin->value( spd_unit );
       if( tidx == 0 ) {
         int32_t fwlen = fwLengthSliderSpin->value( pos_unit );
-        AbsTrajectoryPtr sb( new SwitchBackTrajectory(fwlen, weldspd, length) );
-        machine_.executeTrajectory( sb );
+        executing_trajectory_.reset( new SwitchBackTrajectory(fwlen, weldspd, rotate_vec, xangle) );
       } else {
-        machine_.executeTrajectory( AbsTrajectoryPtr( new LinearTrajectory( weldspd, length ) ) );
+        executing_trajectory_.reset( new LinearTrajectory( weldspd, rotate_vec, xangle) );
       }
     } else if( idx == 4 ) { // Transversal
-      boost::shared_ptr<AbstractTrajectory> tr;
       double freq  = trFreqSliderSpin->value();
       int32_t spd  = trSpeedSliderSpin->value( spd_unit ),
               ampl = trAmplSliderSpin->value( pos_unit ),
               tidx = ui->transvTrajectoryComboBox->currentIndex();
       if( tidx == 1 ) {
-        tr.reset( new ETrajectory( spd, freq, ampl, length ) );
+        executing_trajectory_.reset( new ETrajectory( spd, freq, ampl, rotate_vec, xangle) );
       } else if( tidx == 2 ) {
-        tr.reset( new DoubleETrajectory( spd, freq, ampl, length ) );
+        executing_trajectory_.reset( new DoubleETrajectory( spd, freq, ampl, rotate_vec, xangle) );
       } else {
         uint32_t sup_stop = ui->supSpinBox->value(),
                  inf_stop = ui->infSpinBox->value();
-        tr.reset( new TriangularTrajectory( spd, freq, ampl, sup_stop, inf_stop, length ) );
+        executing_trajectory_.reset( new TriangularTrajectory( spd, freq, ampl, sup_stop, inf_stop, rotate_vec, xangle) );
       }
-      machine_.executeTrajectory( tr );
     } else if( idx == 5 ) {
       int32_t spd  = sbtSpeedSliderSpin->value( spd_unit ),
               ampl = sbtAmplSliderSpin->value( pos_unit ),
               len  = sbtLenSliderSpin->value( pos_unit );
-      machine_.executeTrajectory( AbsTrajectoryPtr(new Rhombus( ampl, len, ui->sbtOscCountSpinBox->value(), spd, length )));
+      executing_trajectory_.reset(new Rhombus( ampl, len, ui->sbtOscCountSpinBox->value(), spd, rotate_vec, xangle));
     }
-    ui->executeButton->setText("Cancelar");
+
+    if( executing_trajectory_ ) {
+      machine_.executeTrajectory( executing_trajectory_ );
+      ui->executeButton->setText("Cancelar");
+    }
   }
   fflush( stdout );
 }
@@ -393,4 +396,46 @@ void MainWindow::executionFinished() {
 }
 
 //-----------------------------------------------------------------------------
+void MainWindow::on_correctButton_clicked() {
+  std::string pos_unit("pulsos"), spd_unit("rpm");
+  int idx = ui->tabWidget->currentIndex();
+  Rhombus *rt = 0;
+  if( idx == 3 ) { // Longitudinal
+     int32_t tidx = ui->longTrajectoryComboBox->currentIndex(),
+             weldspd = sbWeldSpeedSliderSpin->value( spd_unit );
+     SwitchBackTrajectory *sb = 0;
+     if( tidx == 0 &&
+         (sb = dynamic_cast<SwitchBackTrajectory *>( executing_trajectory_.get() ))) {
+       int32_t fwlen = fwLengthSliderSpin->value( pos_unit );
+       sb->applyCorrection( fwlen, weldspd );
+     } else if(LinearTrajectory *l = dynamic_cast<LinearTrajectory*>( executing_trajectory_.get() )) {
+       l->applyCorrection( weldspd );
+     }
+   } else if( idx == 4 ) { // Transversal
+     double freq  = trFreqSliderSpin->value();
+     int32_t spd  = trSpeedSliderSpin->value( spd_unit ),
+             ampl = trAmplSliderSpin->value( pos_unit ),
+             tidx = ui->transvTrajectoryComboBox->currentIndex();
+     ETrajectory *et = 0;
+     DoubleETrajectory *de = 0;
+     if( tidx == 1 &&
+         (et = dynamic_cast<ETrajectory *>( executing_trajectory_.get() ))) {
+       et->applyCorrection( spd, freq, ampl );
+     } else if( tidx == 2 &&
+                (de = dynamic_cast<DoubleETrajectory *>( executing_trajectory_.get() ))) {
+       de->applyCorrection( spd, freq, ampl );
+     } else if( TriangularTrajectory *tt = dynamic_cast<TriangularTrajectory *>( executing_trajectory_.get() ) ) {
+       uint32_t sup_stop = ui->supSpinBox->value(),
+                inf_stop = ui->infSpinBox->value();
+       tt->applyCorrection( spd, freq, ampl, sup_stop, inf_stop );
+     }
+   } else if( idx == 5 &&
+              (rt = dynamic_cast<Rhombus *>( executing_trajectory_.get() )) ) {
+     int32_t spd  = sbtSpeedSliderSpin->value( spd_unit ),
+             ampl = sbtAmplSliderSpin->value( pos_unit ),
+             len  = sbtLenSliderSpin->value( pos_unit );
+     rt->applyCorrection( ampl, len, ui->sbtOscCountSpinBox->value(), spd );
+   }
+}
 
+//-----------------------------------------------------------------------------

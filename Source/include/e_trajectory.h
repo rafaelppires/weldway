@@ -6,7 +6,8 @@
 
 class ETrajectory : public AbstractTrajectory {
 public:
-  ETrajectory(int32_t spd, double freq, int32_t ampl, double total_length) {
+  ETrajectory(int32_t spd, double freq, int32_t ampl,  const Vector3D &rotate_vec, double deg_xang ) : AbstractTrajectory(rotate_vec, deg_xang)  {
+    double total_length = rotate_vec.length();
     double l = (TO_PULSES*spd) / (TO_RPM*freq);
     int period_count = 0.5 + total_length/l;
     double t = 1. / freq,                         // s
@@ -25,26 +26,33 @@ public:
     offset_.x() = 0.5*l;
     offset_.y() = -k*hsqr2;
 
-    add( Vector3D(  0.5*l,  k*hsqr2, 0 ), vr );
-    add( Vector3D( -0.5*l,  k*hsqr2, 0 ), vr );
-    add( Vector3D( -0.5*l, -k*hsqr2, 0 ), vr );
+    addR( Vector3D(  0.5*l,  k*hsqr2, 0 ), vr );
+    addR( Vector3D( -0.5*l,  k*hsqr2, 0 ), vr );
+    addR( Vector3D( -0.5*l, -k*hsqr2, 0 ), vr );
     for( uint32_t i = 0; i < period_count - 1; ++i ) {
-      add( Vector3D(  0.5*l, -k*hsqr2, 0 ), vr );
-      add( Vector3D(      l,        0, 0 ), vr );
-      add( Vector3D(  0.5*l,  k*hsqr2, 0 ), vr );
-      add( Vector3D( -0.5*l,  k*hsqr2, 0 ), vr );
-      add( Vector3D( -0.5*l, -k*hsqr2, 0 ), vr );
+      addR( Vector3D(  0.5*l, -k*hsqr2, 0 ), vr );
+      addR( Vector3D(      l,        0, 0 ), vr );
+      addR( Vector3D(  0.5*l,  k*hsqr2, 0 ), vr );
+      addR( Vector3D( -0.5*l,  k*hsqr2, 0 ), vr );
+      addR( Vector3D( -0.5*l, -k*hsqr2, 0 ), vr );
     }
-    add( Vector3D(  0.5*l, -k*hsqr2, 0 ), vr );
+    addR( Vector3D(  0.5*l, -k*hsqr2, 0 ), vr );
     printf("T: %f l: %f d: %f k: %f Ts: %f\n", t, l, d, k, vr );
+
+    rotate();
   }
 
   Vector3I initialOffset() const {
-    return offset_;
+    int sig = rotation_vec_.x() / fabs(rotation_vec_.x());
+    return rotate( Vector3D(offset_.x()*sig, offset_.y(), offset_.z()) );
+  }
+
+  void applyCorrection( int32_t spd, double freq, int32_t ampl ) {
+
   }
 
 private:
-  Vector3I offset_;
+  Vector3D offset_;
 };
 
 #endif

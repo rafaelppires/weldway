@@ -10,30 +10,20 @@ using boost::chrono::milliseconds;
 void TrajectoryExecuter::operator()() {
   if( !comm_->homingDone() ) { cancel(); return; }
 
-  positions_.clear();
-  speeds_.clear();
-  positions_ = trajectory_->positions();
-  speeds_ = trajectory_->speeds();
-  size_t spd_idx = 0,
-         spds_sz = speeds_.size(),
-         pos_sz = positions_.size();
-
-  trajectoryRotate();
-
   gotoInitial();
   waitFor( 200 );
 
-  PositionVector::iterator it = positions_.begin(),
-                           end = positions_.end();
   Vector3D last_pos(0,0,0), delta(0,0,0);
   uint16_t interval;
 
   high_resolution_clock::time_point now, start;
-  uint16_t count = 0;
+
+  Vector3D cur_point;
+  double cur_spd, progress;
   comm_->startTorch();
-  for(; it != end; ++it) {
+  while( trajectory_->getPoint(cur_point, cur_spd, progress) ) {
     start = high_resolution_clock::now();
-    delta = *it - last_pos;
+    delta = cur_point - last_pos;
 
     {
       boost::lock_guard<boost::mutex> lock(correction_mutex_);
@@ -43,19 +33,17 @@ void TrajectoryExecuter::operator()() {
         offset_updated_ = false;
       }
     }
-    Vector3US spds = getSpeedsAndInterval( delta, interval, speeds_[spd_idx++] );
-    if( spd_idx >= spds_sz ) spd_idx = spds_sz - 1;
-
+    Vector3US spds = getSpeedsAndInterval( delta, interval, cur_spd );
     deliverSpeedsAndPositions( delta, spds );
-    ++count;
-    //std::cout << "(" << count << ") "<< *it << " --- " << delta << " curpos: " << current_pos_ << " spd: " << spds << " inter: " << interval << "\n";
+
+
     fflush(stdout);
     now = high_resolution_clock::now();
 
     waitFor( interval - boost::chrono::duration_cast<milliseconds>(now - start).count() );
-    last_pos = *it;
+    last_pos = cur_point;
 
-    if( progress_callback_ ) progress_callback_( double(count) / pos_sz );
+    if( progress_callback_ ) progress_callback_( progress );
     if( finished() ) { break; }
   }
   cancel();
@@ -91,6 +79,7 @@ void TrajectoryExecuter::waitFor( uint32_t ms ) {
 //-----------------------------------------------------------------------------
 void TrajectoryExecuter::gotoInitial() {
   uint16_t ret;
+  trajectory_init_ += trajectory_->initialOffset();
   Vector3I delta = trajectory_init_ - current_pos_;
   deliverSpeedsAndPositions( delta, getSpeedsAndInterval( delta, ret, 650 ) );
   int status = -1;
@@ -109,44 +98,6 @@ void TrajectoryExecuter::gotoInitial() {
 //-----------------------------------------------------------------------------
 void TrajectoryExecuter::setAngularOffset( double angle ) {
   overx_angle_ = angle;
-}
-
-//-----------------------------------------------------------------------------
-void TrajectoryExecuter::trajectoryRotate() {
-  Vector3I rotate_vector = trajectory_final_ - trajectory_init_;
-  Vector2D xyproj( rotate_vector.x(), rotate_vector.y() );
-  Vector3D yline( -rotate_vector.y()/xyproj.length(), 0, 0);
-  yline.y() = sqrt(1-yline.x()*yline.x());
-
-  long double alpha = atan2(-yline.x(),yline.y()),
-              beta  = atan2(rotate_vector.z(),xyproj.length());
-
-  MatrixLD overx(3), overy(3), overz(3);
-  overz(0,0) = overz(1,1) = cos( alpha );
-  overz(1,0) = sin(alpha);
-  overz(0,1) = -overz(1,0);
-
-  overy(0,0) = overy(2,2) = cos( beta );
-  overy(2,0) = sin( beta );
-  overy(0,2) = -overy(2,0);
-
-  overx(1,1) = overx(2,2) = cos( overx_angle_ );
-  overx(1,2) = sin( overx_angle_ );
-  overx(2,1) = -overx(1,2);
-
-  MatrixLD rotatexyz( overz * overy * overx );
-  PositionVector::iterator it  = positions_.begin(),
-                           end = positions_.end();
-  for(; it != end; ++it) {
-    MatrixLD rotated( rotatexyz * MatrixLD(*it) );
-    *it = Vector3I( rotated(0,0), rotated(1,0), rotated(2,0) );
-    if( trajectory_final_.x() < trajectory_init_.x() ) it->x() *= -1;
-  }
-
-  Vector3I init = trajectory_->initialOffset();
-  if( trajectory_final_.x() < trajectory_init_.x() ) init.x() *= -1;
-  MatrixLD irot = rotatexyz * MatrixLD( init );
-  trajectory_init_ += Vector3I( irot(0,0), irot(1,0), irot(2,0) );
 }
 
 //-----------------------------------------------------------------------------

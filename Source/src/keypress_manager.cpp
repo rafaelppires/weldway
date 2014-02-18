@@ -22,12 +22,18 @@ void KeyPressManager::angularRight() {
 
 //-----------------------------------------------------------------------------
 void KeyPressManager::xaxisLeft() { // When looking the manipulator from behind
-  comm_.sendLinearIncrement( X_AXIS, speed_, -linear_increment_ );
+  if( comm_.busy() )
+    ;//comm_.sendWeldSpeedCorrection( /*new speed*/ );
+  else
+    comm_.sendLinearIncrement( X_AXIS, speed_, -linear_increment_ );
 }
 
 //-----------------------------------------------------------------------------
 void KeyPressManager::xaxisRight() {
-  comm_.sendLinearIncrement( X_AXIS, speed_, linear_increment_ );
+  if( comm_.busy() )
+    ;//comm_.sendWeldSpeedCorrection( /*new speed*/ );
+  else
+    comm_.sendLinearIncrement( X_AXIS, speed_, linear_increment_ );
 }
 
 //-----------------------------------------------------------------------------

@@ -27,7 +27,6 @@ public:
 private:
   void waitFor( uint32_t ms );
   void gotoInitial();
-  void trajectoryRotate();
   void deliverSpeedsAndPositions( const Vector3I &delta, const Vector3US &speeds );
 
   // all dimensions must be at the same base units
@@ -41,8 +40,6 @@ private:
   boost::mutex finish_mutex_, correction_mutex_;
   bool finished_, offset_updated_;
   Vector3I current_pos_, trajectory_init_, trajectory_final_;
-  PositionVector positions_;
-  SpeedVector speeds_;
   Vector3D acceleration_, offset_, accumulated_offset_;
   Vector3US last_spd_;
   double overx_angle_;

@@ -5,6 +5,7 @@
 #include <vector>
 #include <boost/shared_ptr.hpp>
 #include <units.h>
+#include <boost/thread.hpp>
 
 //-----------------------------------------------------------------------------
 typedef std::vector<Vector3D>  PositionVector;
@@ -13,22 +14,26 @@ typedef std::vector<double>    SpeedVector;
 //-----------------------------------------------------------------------------
 class AbstractTrajectory {
 public:
-  AbstractTrajectory() {}
+  AbstractTrajectory( const Vector3D &rotate_vec, double rad_xangle );
 
   virtual const PositionVector& positions() const { return positions_; }
   virtual const SpeedVector& speeds() const { return speeds_; }
   virtual Vector3I initialOffset() const { return Vector3I(); }
+  virtual bool getPoint( Vector3D &pos, double &spd, double &progress );
 
 protected:
-  void add( const Vector3D &delta, double spdmm ) {
-    accumulator_ += delta;
-    positions_.push_back( accumulator_ );
-    speeds_.push_back( spdmm * TO_RPM );
-  }
+  void addR( const Vector3D &delta, double spdmm ); // Relative
+  void addA( const Vector3D &pos, double spdmm );   // Absolute
+  void rotate();
+  Vector3D rotate( const Vector3D &vec ) const;
+  Vector3D unrotate( const Vector3D &vec ) const;
 
-  Vector3D accumulator_;
+  MatrixLD rotation_matrix_, unrotation_matrix_;
+  Vector3D accumulator_, rotation_vec_;
   PositionVector positions_;
   SpeedVector speeds_;
+  uint32_t index_;
+  boost::mutex data_mutex_;
 };
 
 //-----------------------------------------------------------------------------
