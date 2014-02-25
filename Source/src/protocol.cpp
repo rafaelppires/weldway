@@ -18,10 +18,10 @@ void AbstractProtocol::sendAngularIncrement( AngularDirection dir, double spd, d
   speeds[A_AXIS] = speeds[B_AXIS] = spd;
   if( dir == ANGULAR_VERTICAL ) {
     pos[A_AXIS] = apos + pulses;
-    pos[B_AXIS] = apos - pulses;
+    pos[B_AXIS] = bpos - pulses;
   } else if( dir == ANGULAR_HORIZONTAL ) {
     pos[A_AXIS] = apos + pulses;
-    pos[B_AXIS] = apos + pulses;
+    pos[B_AXIS] = bpos + pulses;
   }
 
   sendSpdCmmds( speeds );

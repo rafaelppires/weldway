@@ -55,7 +55,7 @@ private:
   SimpleMotion *xsmotion, *ysmotion, *zsmotion;
   SliderSpin *speedSliderSpin, *xposSliderSpin, *yposSliderSpin, *zposSliderSpin,
              *fwSpeedSliderSpin, *fwLengthSliderSpin, *bwSpeedSliderSpin, *bwLengthSliderSpin,
-             *sbWeldSpeedSliderSpin, *trSpeedSliderSpin, *trAmplSliderSpin, *trFreqSliderSpin,
+             *sbWeldSpeedSliderSpin, *trSpeedSliderSpin, *trAmplSliderSpin, *trLmbdSliderSpin,
              *sbtSpeedSliderSpin, *sbtAmplSliderSpin, *sbtLenSliderSpin;
   KeyPressManager keypress_manager_;
   MasterCommunicator &machine_;

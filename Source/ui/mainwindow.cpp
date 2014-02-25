@@ -45,7 +45,7 @@ MainWindow::MainWindow(QWidget *parent) :
   // Triangular
   trSpeedSliderSpin = new SliderSpin( this, ui->trWeldSpeedSlider, ui->trWeldSpeedSpinBox, ui->trWeldSpeedUnitComboBox, UnitConvPtr(new SpeedConv(0, 100)) );
   trAmplSliderSpin  = new SliderSpin( this, ui->trAmplitudeSlider, ui->trAmplitudeSpinBox, ui->trAmplitudeUnitComboBox, UnitConvPtr(new PositionConv(0, 50)) );
-  trFreqSliderSpin  = new SliderSpin( this, ui->trFrequencySlider, ui->trFrequencySpinBox, NULL, UnitConvPtr(new UnitConv(0.1, 10)) );
+  trLmbdSliderSpin  = new SliderSpin( this, ui->trLambdaSlider,    ui->trLambdaSpinBox, NULL, UnitConvPtr(new PositionConv(1, 5)) );
 
   // SB + Triang
   sbtSpeedSliderSpin = new SliderSpin( this, ui->sbtWeldSpeedSlider, ui->sbtWeldSpeedSpinBox, ui->sbtWeldSpeedUnitComboBox, UnitConvPtr(new SpeedConv(0,100)) );
@@ -115,7 +115,7 @@ MainWindow::~MainWindow() {
 
   delete trSpeedSliderSpin;
   delete trAmplSliderSpin;
-  delete trFreqSliderSpin;
+  delete trLmbdSliderSpin;
 
   delete sbtSpeedSliderSpin;
   delete sbtAmplSliderSpin;
@@ -187,18 +187,18 @@ void MainWindow::on_executeButton_clicked() {
         executing_trajectory_.reset( new LinearTrajectory( weldspd, rotate_vec, xangle) );
       }
     } else if( idx == 4 ) { // Transversal
-      double freq  = trFreqSliderSpin->value();
-      int32_t spd  = trSpeedSliderSpin->value( spd_unit ),
-              ampl = trAmplSliderSpin->value( pos_unit ),
-              tidx = ui->transvTrajectoryComboBox->currentIndex();
+      double lmbd = trLmbdSliderSpin->value( pos_unit ),
+             spd  = trSpeedSliderSpin->value( spd_unit ),
+             ampl = trAmplSliderSpin->value( pos_unit );
+      int32_t tidx = ui->transvTrajectoryComboBox->currentIndex();
       if( tidx == 1 ) {
-        executing_trajectory_.reset( new ETrajectory( spd, freq, ampl, rotate_vec, xangle) );
+        executing_trajectory_.reset( new ETrajectory( spd, lmbd, ampl, rotate_vec, xangle) );
       } else if( tidx == 2 ) {
-        executing_trajectory_.reset( new DoubleETrajectory( spd, freq, ampl, rotate_vec, xangle) );
+        executing_trajectory_.reset( new DoubleETrajectory( spd, lmbd, ampl, rotate_vec, xangle) );
       } else {
         uint32_t sup_stop = ui->supSpinBox->value(),
                  inf_stop = ui->infSpinBox->value();
-        executing_trajectory_.reset( new TriangularTrajectory( spd, freq, ampl, sup_stop, inf_stop, rotate_vec, xangle) );
+        executing_trajectory_.reset( new TriangularTrajectory( spd, lmbd, ampl, sup_stop, inf_stop, rotate_vec, xangle) );
       }
     } else if( idx == 5 ) {
       int32_t spd  = sbtSpeedSliderSpin->value( spd_unit ),
@@ -412,22 +412,22 @@ void MainWindow::on_correctButton_clicked() {
        l->applyCorrection( weldspd );
      }
    } else if( idx == 4 ) { // Transversal
-     double freq  = trFreqSliderSpin->value();
-     int32_t spd  = trSpeedSliderSpin->value( spd_unit ),
-             ampl = trAmplSliderSpin->value( pos_unit ),
-             tidx = ui->transvTrajectoryComboBox->currentIndex();
+     double lmbd = trLmbdSliderSpin->value( pos_unit ),
+            spd  = trSpeedSliderSpin->value( spd_unit ),
+            ampl = trAmplSliderSpin->value( pos_unit );
+     int32_t tidx = ui->transvTrajectoryComboBox->currentIndex();
      ETrajectory *et = 0;
      DoubleETrajectory *de = 0;
      if( tidx == 1 &&
          (et = dynamic_cast<ETrajectory *>( executing_trajectory_.get() ))) {
-       et->applyCorrection( spd, freq, ampl );
+       et->applyCorrection( spd, lmbd, ampl );
      } else if( tidx == 2 &&
                 (de = dynamic_cast<DoubleETrajectory *>( executing_trajectory_.get() ))) {
-       de->applyCorrection( spd, freq, ampl );
+       de->applyCorrection( spd, lmbd, ampl );
      } else if( TriangularTrajectory *tt = dynamic_cast<TriangularTrajectory *>( executing_trajectory_.get() ) ) {
        uint32_t sup_stop = ui->supSpinBox->value(),
                 inf_stop = ui->infSpinBox->value();
-       tt->applyCorrection( spd, freq, ampl, sup_stop, inf_stop );
+       tt->applyCorrection( spd, lmbd, ampl, sup_stop, inf_stop );
      }
    } else if( idx == 5 &&
               (rt = dynamic_cast<Rhombus *>( executing_trajectory_.get() )) ) {

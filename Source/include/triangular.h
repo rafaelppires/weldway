@@ -6,14 +6,14 @@
 
 class TriangularTrajectory : public AbstractTrajectory {
 public:
-  TriangularTrajectory(int32_t spd, double freq, int32_t ampl,
+  TriangularTrajectory(double spd, double lmbd, double ampl,
                        uint32_t sstop, uint32_t istop, const Vector3D &rotate_vec, double deg_xang );
 
-  void applyCorrection(int32_t spd, double freq, int32_t ampl,
+  void applyCorrection(double spd, double lmbd, double ampl,
                        uint32_t sstop, uint32_t istop);
 
-  void addRepeatable( int count, uint32_t sstop, uint32_t istop,
-                      double risexlen, int32_t ampl, double risespd, double xspeedmm );
+  void addRepeatable(int count, uint32_t sstop, uint32_t istop,
+                      double risexlen, double ampl, double risespd, double xspeedmm );
 };
 
 #endif

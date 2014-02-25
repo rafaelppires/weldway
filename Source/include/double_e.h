@@ -6,9 +6,9 @@
 
 class DoubleETrajectory : public AbstractTrajectory {
 public:
-  DoubleETrajectory(int32_t spd, double freq, int32_t ampl, const Vector3D &rotate_vec, double deg_xang ) : AbstractTrajectory(rotate_vec, deg_xang) {
+  DoubleETrajectory(int32_t spd, double lambda, int32_t ampl, const Vector3D &rotate_vec, double deg_xang ) : AbstractTrajectory(rotate_vec, deg_xang) {
     double total_length = rotate_vec.length();
-    double lambda = (TO_PULSES*spd) / (TO_RPM*freq);
+    double freq = (TO_PULSES*spd) / (TO_RPM*lambda);
     int period_count = 0.5 + total_length/lambda;
     double t = 1. / freq,                      // s
            hsqr2 = sqrt(2.) / 2.,

@@ -1,18 +1,18 @@
 #include <triangular.h>
 
 //-----------------------------------------------------------------------------
-TriangularTrajectory::TriangularTrajectory(int32_t spd, double freq, int32_t ampl,
+TriangularTrajectory::TriangularTrajectory(double spd, double lmbd, double ampl,
                      uint32_t sstop, uint32_t istop, const Vector3D &rotate_vec, double deg_xang ) : AbstractTrajectory(rotate_vec, deg_xang) {
   double total_length = rotate_vec.length();
-  double period = 1. / freq,
+  double
       xspeedmm  = double(spd) / TO_RPM,
-      lambda    = xspeedmm * period * TO_PULSES,
+      period    = lmbd / (xspeedmm * TO_PULSES),
       sstoplen  = xspeedmm * sstop * TO_PULSES / 1000.,
       istoplen  = xspeedmm * istop * TO_PULSES / 1000.,
-      risexlen  = (lambda - sstoplen - istoplen)/4.,
+      risexlen  = (lmbd - sstoplen - istoplen)/4.,
       yspeedmm  = 2. * (ampl/TO_PULSES)  / (period - (sstop+istop)/1000.),
       risespd   = Vector2D(xspeedmm, yspeedmm).length();
-   int period_count = 0.5 + total_length/lambda;
+   int period_count = 0.5 + total_length/lmbd;
 
    addR( Vector3D( risexlen, ampl/2., 0 ), risespd );
    addRepeatable( period_count - 1, sstop, istop, risexlen, ampl, risespd, xspeedmm );
@@ -21,19 +21,18 @@ TriangularTrajectory::TriangularTrajectory(int32_t spd, double freq, int32_t amp
 }
 
 //-----------------------------------------------------------------------------
-void TriangularTrajectory::applyCorrection(int32_t spd, double freq, int32_t ampl,
+void TriangularTrajectory::applyCorrection(double spd, double lmbd, double ampl,
                      uint32_t sstop, uint32_t istop) {
     boost::lock_guard<boost::mutex> lock(data_mutex_);
     if( index_ > positions_.size() - 2) return;
-    printf("Correction: spd: %d freq: %f amp: %d sstop: %u istop: %u\n",
-             spd, freq, ampl, sstop, istop );
+    printf("Correction: spd: %f lmbd: %f amp: %f sstop: %u istop: %u\n",
+             spd, lmbd, ampl, sstop, istop );
 
-    double period = 1. / freq,
-           xspeedmm  = double(spd) / TO_RPM,
-           lambda    = xspeedmm * period * TO_PULSES,
+    double xspeedmm  = double(spd) / TO_RPM,
+           period    = lmbd / (xspeedmm * TO_PULSES),
            sstoplen  = xspeedmm * sstop * TO_PULSES / 1000.,
            istoplen  = xspeedmm * istop * TO_PULSES / 1000.,
-           risexlen  = (lambda - sstoplen - istoplen)/4.,
+           risexlen  = (lmbd - sstoplen - istoplen)/4.,
            yspeedmm  = 2. * (ampl/TO_PULSES)  / (period - (sstop+istop)/1000.),
            risespd   = Vector2D(xspeedmm, yspeedmm).length();
 
@@ -54,7 +53,7 @@ void TriangularTrajectory::applyCorrection(int32_t spd, double freq, int32_t amp
     }
 
     double total_length = rotation_vec_.length() - accumulator_.x() + risexlen;
-    int period_count = 0.5 + total_length/lambda;
+    int period_count = 0.5 + total_length/lmbd;
     addRepeatable( period_count - 1, sstop, istop, risexlen, ampl, risespd, xspeedmm );
 
     for( int i = idx + 1; i < positions_.size(); ++i )
@@ -63,7 +62,7 @@ void TriangularTrajectory::applyCorrection(int32_t spd, double freq, int32_t amp
 
 //-----------------------------------------------------------------------------
 void TriangularTrajectory::addRepeatable( int count, uint32_t sstop, uint32_t istop,
-                    double risexlen, int32_t ampl, double risespd, double xspeedmm ) {
+                    double risexlen, double ampl, double risespd, double xspeedmm ) {
   double sstoplen  = xspeedmm * sstop * TO_PULSES / 1000.,
          istoplen  = xspeedmm * istop * TO_PULSES / 1000.;
   for( int i = 0; i < count; ++i ) {
