@@ -152,7 +152,10 @@ void TrajectoryExecuter::cancel() {
 //-----------------------------------------------------------------------------
 void TrajectoryExecuter::addLinearOffset( const Vector3D &offset ) {
   boost::lock_guard<boost::mutex> lock(correction_mutex_);
-  offset_ = offset;
+  if( offset_updated_ )
+    offset_ += offset;
+  else
+    offset_ = offset;
   accumulated_offset_ += offset;
   offset_updated_ = true;
 }

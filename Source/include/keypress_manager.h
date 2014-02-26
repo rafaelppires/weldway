@@ -3,7 +3,7 @@
 
 class KeyPressManager {
 public:
-  KeyPressManager( MasterCommunicator &mc ): comm_(mc), linear_increment_(40) /* 1 mm */, angular_increment_(90), speed_(200) {}
+  KeyPressManager( MasterCommunicator &mc ): comm_(mc), linear_increment_(40) /* 1 mm */, angular_increment_(0.5), speed_(200) {}
 
   void angularUp();
   void angularDown();
@@ -18,5 +18,6 @@ public:
 
 private:
   MasterCommunicator &comm_;
-  int32_t speed_, linear_increment_, angular_increment_;
+  int32_t speed_, linear_increment_;
+  double angular_increment_;
 };

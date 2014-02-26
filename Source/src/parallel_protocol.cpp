@@ -219,23 +219,29 @@ void ParallelProtocol::startHoming( uint8_t axis ) {
 
 //-----------------------------------------------------------------------------
 void HomingSequencer::operator()() {
-  protocol_.startHoming( /*A_AXIS |*/ X_AXIS | Y_AXIS | Z_AXIS );
+  protocol_.startHoming( A_AXIS | X_AXIS | Y_AXIS | Z_AXIS );
   int status = -1;
-  /*while( status ) {
-    //status = protocol_.getStatus( StatusBits, A_AXIS ) & STAT_HOMING;
-    status = 0;
+  while( status ) {
+    status = protocol_.getStatus( StatusBits, A_AXIS ) & STAT_HOMING;
+    //status = 0;
     boost::this_thread::sleep_for( boost::chrono::milliseconds( 500 ) );
   }
-  //protocol_.startHoming( B_AXIS );
-  */
+  protocol_.startHoming( B_AXIS );
+
   status = -1;
+  while( status ) {
+    status = protocol_.getStatus( StatusBits, B_AXIS ) & STAT_HOMING;
+    //status = 0;
+    boost::this_thread::sleep_for( boost::chrono::milliseconds( 500 ) );
+  }
+  /*
   while( status ) {
     status = 0;
     for( uint8_t i = 1; i < 8; i<<=1 ) {
       if( protocol_.getStatus( StatusBits, i) & STAT_HOMING ) { status = -1; break; }
     }
     boost::this_thread::sleep_for( boost::chrono::milliseconds( 500 ) );
-  }
+  }*/
   protocol_.homingFinished();
 }
 
