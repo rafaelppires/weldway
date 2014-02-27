@@ -10,11 +10,11 @@ using boost::chrono::milliseconds;
 void TrajectoryExecuter::operator()() {
   if( !comm_->homingDone() ) { cancel(); return; }
 
-  gotoInitial();
-  waitFor( 200 );
-
   Vector3D last_pos(0,0,0), delta(0,0,0);
   uint16_t interval;
+
+  last_pos = gotoInitial();
+  waitFor( 200 );
 
   high_resolution_clock::time_point now, start;
 
@@ -77,11 +77,12 @@ void TrajectoryExecuter::waitFor( uint32_t ms ) {
 }
 
 //-----------------------------------------------------------------------------
-void TrajectoryExecuter::gotoInitial() {
-  uint16_t ret;
-  trajectory_init_ += trajectory_->initialOffset();
+Vector3D TrajectoryExecuter::gotoInitial() {
+  Vector3D ret = trajectory_->initialOffset();
+  uint16_t interv;
+  trajectory_init_ += ret;
   Vector3I delta = trajectory_init_ - current_pos_;
-  deliverSpeedsAndPositions( delta, getSpeedsAndInterval( delta, ret, 650 ) );
+  deliverSpeedsAndPositions( delta, getSpeedsAndInterval( delta, interv, 650 ) );
   int status = -1;
   while( status ) {
     status = 0;
@@ -93,6 +94,7 @@ void TrajectoryExecuter::gotoInitial() {
     if( status )
     boost::this_thread::sleep_for( boost::chrono::milliseconds( 100 ) );
   }
+  return ret;
 }
 
 //-----------------------------------------------------------------------------

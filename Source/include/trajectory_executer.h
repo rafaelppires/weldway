@@ -26,7 +26,7 @@ public:
 
 private:
   void waitFor( uint32_t ms );
-  void gotoInitial();
+  Vector3D gotoInitial();
   void deliverSpeedsAndPositions( const Vector3I &delta, const Vector3US &speeds );
 
   // all dimensions must be at the same base units

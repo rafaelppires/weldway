@@ -22,7 +22,8 @@ SOURCES += src/main.cpp \
            src/trajectory_executer.cpp \
            src/protocol.cpp \
            src/trajectory.cpp \
-           src/triangular.cpp
+           src/triangular.cpp \
+           src/e_trajectory.cpp
 
 HEADERS += ui/mainwindow.h \
            include/simplemotion.h \

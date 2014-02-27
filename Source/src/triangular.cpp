@@ -41,8 +41,7 @@ void TriangularTrajectory::applyCorrection(double spd, double lmbd, double ampl,
              nxt = unrotate( positions_[idx+1] );
     if( fabs(nxt.y() - cur.y()) < 1e-5 ) { ++idx; cur = nxt; }
 
-    positions_.erase( positions_.begin()+idx+1, positions_.end() );
-    speeds_.erase( speeds_.begin()+idx+1, speeds_.end() );
+    eraseFrom( idx+1 );
 
     if( cur.y() > 0 ) {
       addA( Vector3D( cur.x() + 2*risexlen, -ampl/2., 0), risespd );

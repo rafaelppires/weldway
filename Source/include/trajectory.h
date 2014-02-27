@@ -22,8 +22,10 @@ public:
   virtual bool getPoint( Vector3D &pos, double &spd, double &progress );
 
 protected:
+  void setReference(); // set last point as reference for future relative adds
   void addR( const Vector3D &delta, double spdmm ); // Relative
   void addA( const Vector3D &pos, double spdmm );   // Absolute
+  void eraseFrom( uint32_t idx );
   void rotate();
   Vector3D rotate( const Vector3D &vec ) const;
   Vector3D unrotate( const Vector3D &vec ) const;

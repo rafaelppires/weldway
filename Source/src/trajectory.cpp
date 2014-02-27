@@ -74,3 +74,14 @@ void AbstractTrajectory::addA( const Vector3D &pos, double spdmm ) { // Absolute
 }
 
 //-----------------------------------------------------------------------------
+void AbstractTrajectory::setReference() {
+  accumulator_ = positions_.back();
+}
+
+//-----------------------------------------------------------------------------
+void AbstractTrajectory::eraseFrom(uint32_t idx ) {
+  positions_.erase( positions_.begin() + idx, positions_.end() );
+  speeds_.erase( speeds_.begin() + idx, speeds_.end() );
+}
+
+//-----------------------------------------------------------------------------
