@@ -21,8 +21,10 @@ FormConnection::FormConnection(QWidget *parent) :
 
   if( devlist_.size() )
     ui->parallelRadioButton->setChecked( true );
-  else
+  else {
     ui->parallelRadioButton->setEnabled( false );
+    ui->debugRadioButton->setChecked(true);
+  }
 }
 //-----------------------------------------------------------------------------
 void FormConnection::onAccept() {

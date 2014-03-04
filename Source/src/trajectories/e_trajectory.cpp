@@ -28,7 +28,6 @@ Vector3I ETrajectory::initialOffset() const {
 void ETrajectory::applyCorrection( double spd, double l, double ampl ) {
   boost::lock_guard<boost::mutex> lock(data_mutex_);
   if( index_ < 1 || index_ > positions_.size() - 2 ) return;
-
   Vector3D diff, cur, prev;
   uint32_t idx = index_;
 

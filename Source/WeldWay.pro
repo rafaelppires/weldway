@@ -19,11 +19,12 @@ SOURCES += src/main.cpp \
            src/granite/vsd_cmmd.cpp \
            src/keypress_manager.cpp \
            src/debug_protocol.cpp \
-           src/trajectory_executer.cpp \
            src/protocol.cpp \
-           src/trajectory.cpp \
-           src/triangular.cpp \
-           src/e_trajectory.cpp
+           src/trajectories/trajectory_executer.cpp \
+           src/trajectories/trajectory.cpp \
+           src/trajectories/triangular.cpp \
+           src/trajectories/e_trajectory.cpp \
+           src/trajectories/double_e.cpp
 
 HEADERS += ui/mainwindow.h \
            include/simplemotion.h \
@@ -38,18 +39,18 @@ HEADERS += ui/mainwindow.h \
            include/granite/simplemotion_private.h \
            include/ftdi/ftd2xx.h \
            include/granite_spi_interface.h \
-           include/trajectory.h \
-           include/switch_back.h \
            include/protocol.h \
-           include/triangular.h \
-           include/e_trajectory.h \
-           include/double_e.h \
            include/vectorxd.h \
-           include/rhombus.h \
            include/keypress_manager.h \
            include/debug_protocol.h \
-           include/trajectory_executer.h \
-           include/Matrix.h
+           include/Matrix.h \
+           include/trajectories/trajectory.h \
+           include/trajectories/trajectory_executer.h \
+           include/trajectories/switch_back.h \
+           include/trajectories/triangular.h \
+           include/trajectories/e_trajectory.h \
+           include/trajectories/double_e.h \
+           include/trajectories/rhombus.h
 
 FORMS    += ui/mainwindow.ui \
             ui/formconnection.ui
@@ -60,7 +61,7 @@ LIBS += -L$$(DEV_DEPS)/boost_1_54_0/stage/lib \
         -lboost_thread-mgw48-mt-1_54 \
         -lboost_chrono-mgw48-mt-1_54
 
-INCLUDEPATH += $$(DEV_DEPS)/boost_1_54_0 include ui
+INCLUDEPATH += $$(DEV_DEPS)/boost_1_54_0 include include/trajectories ui
 
 RESOURCES += \
     resources.qrc

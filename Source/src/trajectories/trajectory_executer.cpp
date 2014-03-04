@@ -72,7 +72,8 @@ void TrajectoryExecuter::deliverSpeedsAndPositions( const Vector3I &delta, const
 
 //-----------------------------------------------------------------------------
 void TrajectoryExecuter::waitFor( uint32_t ms ) {
-  //std::cout << "Inter: " << ms << "\n";
+  static uint32_t min = 1000;
+  if( ms < min ) std::cout << "Inter: " << (min=ms) << "\n";
   boost::this_thread::sleep_for( boost::chrono::milliseconds( ms ) );
 }
 
