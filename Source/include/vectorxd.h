@@ -55,6 +55,10 @@ public:
     return ret;
   }
 
+  Vector<N,T> operator-() const {
+    return *this * -1;
+  }
+  
   template <typename T2>
   Vector<N,T> operator-( const Vector<N,T2> &v2 ) const {
     Vector<N,T> ret;
