@@ -20,6 +20,12 @@ class Matrix {
 public:
   Matrix() : m_(0), n_(0) {}
 
+  Matrix( const Matrix &m ) : m_(m.m_), n_(m.n_), latex_(m.latex_) {
+    size_t n = m_*n_;
+    data_.reset( new T[n] );
+    for(int i=0; i<n; i++) data_[i] = m.data_[i];;
+  }
+
   Matrix(unsigned int n) : m_(n), n_(n){
     data_.reset( new T[n*n] );
     for(int i=0; i<n; i++)
@@ -33,6 +39,15 @@ public:
   }
 
   ~Matrix() {}
+
+
+  Matrix& operator=(const Matrix &M) {
+    m_ = M.m_; n_ = M.n_; latex_ = M.latex_;
+    size_t n = m_*n_;
+    data_.reset( new T[n] );
+    for(int i=0; i<n; i++) data_[i] = M.data_[i];
+    return *this;
+  }
   
   T& operator() (unsigned int i, unsigned int j) const{
     return data_[index(i,j)];
@@ -99,13 +114,6 @@ public:
 #endif
   }
 
-  Matrix& operator=(const Matrix &M) {
-    m_ = M.m_; n_ = M.n_;
-    data_.reset( new T[n_*m_] );
-    for(int i=0; i<m_*n_; i++) data_[i] = M.data_[i];
-    return *this;
-  }
-
   Matrix operator*(const Matrix &M) const{
     if(n_ != M.lines()){
       stringstream ss;
@@ -127,6 +135,7 @@ public:
 
   Matrix operator~() const{
     Matrix<T> R(n_,m_);
+    R.latex_ = latex_;
     for(int i=0; i<m_; i++)
       for(int j=0; j<n_; j++)
         R(j,i) = (*this)(i,j);
@@ -151,14 +160,18 @@ public:
   }
 
   friend ostream& operator << (ostream& o, const Matrix &m){
+    if( m.latex_.size() ) o << "\\begin{" << m.latex_ << "}\n";
     for(int i=0; i<m.m_; i++){
       for(int j=0; j<m.n_; j++){
         T x = m(i,j);
         if(fabs(x)<1e-13) x=0;
         o << x << "\t";
+        if( m.latex_.size() && j != m.n_-1 ) o << "&";
       }
+      if( m.latex_.size() ) o << "\\\\";
       o << "\n";
     }
+    if( m.latex_.size() ) o << "\\end{" << m.latex_ << "}\n";
     return o;
   }
 
@@ -240,6 +253,10 @@ public:
     return b_;
   }
 
+  void latex( std::string keyword ) {
+    latex_ = keyword;
+  }
+
 private:
   inline unsigned int index(unsigned int i, unsigned int j) const{
     return i*n_+j;
@@ -248,6 +265,7 @@ private:
   unsigned int m_;
   unsigned int n_;
   boost::shared_array<T> data_;
+  std::string latex_;
 };
 
 typedef Matrix<long double> MatrixLD;
