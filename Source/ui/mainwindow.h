@@ -37,10 +37,9 @@ private slots:
   void on_invertDirectionButton_clicked();
   void on_markFinalPositionButton_clicked();
   void on_markInitPositionButton_clicked();
-
   void on_longTrajectoryComboBox_currentTextChanged(const QString &arg1);
-
   void on_correctButton_clicked();
+  void on_frequency_changed();
 
 private:
   QString stringAxis(uint32_t value);

@@ -47,6 +47,9 @@ MainWindow::MainWindow(QWidget *parent) :
   trAmplSliderSpin  = new SliderSpin( this, ui->trAmplitudeSlider, ui->trAmplitudeSpinBox, ui->trAmplitudeUnitComboBox, UnitConvPtr(new PositionConv(0, 50)) );
   trLmbdSliderSpin  = new SliderSpin( this, ui->trLambdaSlider,    ui->trLambdaSpinBox, NULL, UnitConvPtr(new PositionConv(1, 5)) );
 
+  connect( trSpeedSliderSpin, SIGNAL(valueChanged()), this, SLOT(on_frequency_changed()) );
+  connect( trLmbdSliderSpin,  SIGNAL(valueChanged()), this, SLOT(on_frequency_changed()) );
+
   // SB + Triang
   sbtSpeedSliderSpin = new SliderSpin( this, ui->sbtWeldSpeedSlider, ui->sbtWeldSpeedSpinBox, ui->sbtWeldSpeedUnitComboBox, UnitConvPtr(new SpeedConv(0,100)) );
   sbtAmplSliderSpin  = new SliderSpin( this, ui->sbtAmplitudeSlider, ui->sbtAmplitudeSpinBox, ui->sbtAmplitudeUnitComboBox, UnitConvPtr(new PositionConv(0,50)) );
@@ -93,8 +96,8 @@ MainWindow::MainWindow(QWidget *parent) :
   ui->emergencyLabel->setText("<font style='background-color:red' size='10'>Emergência</font>");
   ui->emergencyLabel->setVisible( false );
 }
-
 //-----------------------------------------------------------------------------
+
 MainWindow::~MainWindow() {
   delete ui;
 
@@ -120,6 +123,14 @@ MainWindow::~MainWindow() {
   delete sbtSpeedSliderSpin;
   delete sbtAmplSliderSpin;
   delete sbtLenSliderSpin;
+}
+
+//-----------------------------------------------------------------------------
+void MainWindow::on_frequency_changed() {
+  double f = trSpeedSliderSpin->value("mm/s") / trLmbdSliderSpin->value("mm");
+  char value[64];
+  sprintf( value, "%.1f", f );
+  ui->frLabel->setText( value );
 }
 
 //-----------------------------------------------------------------------------

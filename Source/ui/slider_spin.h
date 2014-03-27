@@ -22,6 +22,9 @@ private slots:
   void onSpinValueChanged();
   void onUnitComboCurrentTextChanged(const QString&);
 
+signals:
+  void valueChanged();
+
 private:
   typedef std::map<SliderSpin*,double> MultiplierMap;
   double toCurrent( double value );

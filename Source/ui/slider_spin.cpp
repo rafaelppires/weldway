@@ -50,6 +50,8 @@ void SliderSpin::onSpinValueChanged() {
   for(; it != end; ++it ) {
     it->first->setValue( it->second * fromCurrent( spinbox_->value() ) );
   }
+
+  emit valueChanged();
 }
 
 //-----------------------------------------------------------------------------
