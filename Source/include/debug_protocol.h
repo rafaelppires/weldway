@@ -10,7 +10,7 @@ public:
   DebugProtocol();
   ~DebugProtocol();
   virtual void startHoming( uint8_t );
-  virtual void startHomingSequence( std::string );
+  virtual void startHomingSequence();
   virtual void setMaxSpeed( uint16_t spd, uint8_t axis );
   virtual void sendPosCmmds(const ConcurrentCmmd32 & cmmds);
   virtual void sendSpdCmmds( const ConcurrentCmmd32 & );

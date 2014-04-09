@@ -95,6 +95,9 @@ MainWindow::MainWindow(QWidget *parent) :
   machine_.setEmergencyCallback( boost::bind( &MainWindow::emergencyUpdate, this, _1 ) );
   ui->emergencyLabel->setText("<font style='background-color:red' size='10'>Emergência</font>");
   ui->emergencyLabel->setVisible( false );
+
+  scene_ = new QGraphicsScene ;
+  ui->graphicsView->setScene( scene_ );
 }
 //-----------------------------------------------------------------------------
 
@@ -140,7 +143,7 @@ void MainWindow::on_findZeroPushButton_clicked() {
   //zsmotion->startHoming();
 
   //MasterCommunicator::getInstance().startHoming( AXIS_ALL );
-  machine_.startHomingSequence( "X;YZ" );
+  machine_.startHomingSequence();
 }
 
 //-----------------------------------------------------------------------------
@@ -447,6 +450,32 @@ void MainWindow::on_correctButton_clicked() {
              len  = sbtLenSliderSpin->value( pos_unit );
      rt->applyCorrection( ampl, len, ui->sbtOscCountSpinBox->value(), spd );
    }
+}
+
+//-----------------------------------------------------------------------------
+void MainWindow::render( PositionVector &v ) {
+  scene_->clear();
+  PositionVector::iterator it = v.begin(), end = v.end(), n = it;
+  for(; it != end; ++it ) {
+   ++n;
+   if( n != end ) scene_->addLine( it->x(), -it->y(), n->x(), -n->y() );
+  }
+}
+
+//-----------------------------------------------------------------------------
+void MainWindow::on_tabWidget_currentChanged( int index ) {
+  if( index == 4 ) {
+    int32_t tidx = ui->transvTrajectoryComboBox->currentIndex();
+    std::string pos_unit("pulsos"), spd_unit("rpm");
+    double lmbd = trLmbdSliderSpin->value( pos_unit ),
+           spd  = trSpeedSliderSpin->value( spd_unit ),
+           ampl = trAmplSliderSpin->value( pos_unit );
+    if( tidx == 1 ) {
+      PositionVector v;
+      ETrajectory::draft( v, spd, lmbd, ampl );
+      render( v );
+    }
+  }
 }
 
 //-----------------------------------------------------------------------------

@@ -24,7 +24,7 @@ public:
 
   // Actions
   bool startHoming( uint8_t axis );
-  bool startHomingSequence( std::string sequence );
+  bool startHomingSequence();
   bool sendPosCmmds(AbstractProtocol::ConcurrentCmmd32 &cmmds);
   bool executeTrajectory( AbsTrajectoryPtr );
   void cancel();

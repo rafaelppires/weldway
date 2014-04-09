@@ -9,6 +9,7 @@
 #include <stdint.h>
 #include <protocol.h>
 #include <keypress_manager.h>
+#include <QtWidgets/QGraphicsScene>
 
 namespace Ui {
 class MainWindow;
@@ -41,13 +42,17 @@ private slots:
   void on_correctButton_clicked();
   void on_frequency_changed();
 
+  void on_tabWidget_currentChanged(int index);
+
 private:
+  QGraphicsScene *scene_;
   QString stringAxis(uint32_t value);
   void setStatus( int32_t status, QLabel *label );
   void checkStatus();
   void setLimits(Vector3I &init, Vector3I &final);
   void progressUpdate( double );
   void emergencyUpdate( bool );
+  void render(PositionVector &v);
 
   Ui::MainWindow *ui;
   QLabel *x_statlabel_, *y_statlabel_, *z_statlabel_, *a_statlabel_, *b_statlabel_;

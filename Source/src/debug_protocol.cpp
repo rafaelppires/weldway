@@ -18,7 +18,7 @@ void DebugProtocol::startHoming( uint8_t ) {
 }
   
 //-----------------------------------------------------------------------------
-void DebugProtocol::startHomingSequence( std::string ) {
+void DebugProtocol::startHomingSequence() {
   homingFinished();
 }
   

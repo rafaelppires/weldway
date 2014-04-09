@@ -251,8 +251,8 @@ void ParallelProtocol::homingFinished() {
 }
 
 //-----------------------------------------------------------------------------
-void ParallelProtocol::startHomingSequence( std::string sequence ) {
-  homing_thread_ = new boost::thread( HomingSequencer( sequence, *this ) );
+void ParallelProtocol::startHomingSequence() {
+  homing_thread_ = new boost::thread( HomingSequencer( *this ) );
 }
 
 //-----------------------------------------------------------------------------

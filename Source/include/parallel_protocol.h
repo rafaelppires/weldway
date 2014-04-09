@@ -31,7 +31,7 @@ class ParallelProtocol : public AbstractProtocol {
 public:
   ParallelProtocol( uint16_t addr, EmergencyCallbackType );
   virtual void startHoming( uint8_t );
-  virtual void startHomingSequence( std::string );
+  virtual void startHomingSequence();
   virtual void setMaxSpeed( uint16_t spd, uint8_t axis );
   virtual void sendPosCmmds( const ConcurrentCmmd32 & );
   virtual void sendSpdCmmds( const ConcurrentCmmd32 & );
@@ -74,7 +74,7 @@ private:
 //-----------------------------------------------------------------------------
 class HomingSequencer {
 public:
-  HomingSequencer( std::string, ParallelProtocol &p ) : protocol_(p) {}
+  HomingSequencer( ParallelProtocol &p ) : protocol_(p) {}
 
   void operator()();
 private:

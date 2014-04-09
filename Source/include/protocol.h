@@ -38,7 +38,7 @@ public:
 
   AbstractProtocol( CommType t ) : type_(t), homing_done_(false) {}
   virtual void startHoming( uint8_t ) {}
-  virtual void startHomingSequence( std::string ) {}
+  virtual void startHomingSequence() {}
   virtual void setMaxSpeed( uint16_t, uint8_t ) {}
   virtual void sendPosCmmds( const ConcurrentCmmd32 & ) {}
   virtual void sendSpdCmmds( const ConcurrentCmmd32 & ) {}

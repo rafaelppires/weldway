@@ -42,9 +42,9 @@ bool MasterCommunicator::startHoming( uint8_t axis ) {
 }
 
 //-----------------------------------------------------------------------------
-bool MasterCommunicator::startHomingSequence( std::string sequence ) {
+bool MasterCommunicator::startHomingSequence() {
   if( !comm_ ) return false;
-  comm_->startHomingSequence( sequence );
+  comm_->startHomingSequence();
   return true;
 }
 

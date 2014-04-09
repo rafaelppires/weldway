@@ -11,6 +11,7 @@ public:
   void applyCorrection( double spd, double l, double ampl );
   void addRepeatable( uint16_t count, double l, double yoff, double vr );
 
+  static void draft( PositionVector &out, double spd, double l, double ampl );
 private:
   Vector3D offset_;
 };
