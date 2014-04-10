@@ -206,7 +206,7 @@ void MainWindow::on_executeButton_clicked() {
              ampl = trAmplSliderSpin->value( pos_unit );
       int32_t tidx = ui->transvTrajectoryComboBox->currentIndex();
       if( tidx == 1 ) {
-        executing_trajectory_.reset( new ETrajectory( spd, lmbd, ampl, rotate_vec, xangle) );
+        executing_trajectory_.reset( new ETrajectory( spd, lmbd, ampl, 1./3., rotate_vec, xangle) );
       } else if( tidx == 2 ) {
         executing_trajectory_.reset( new DoubleETrajectory( spd, lmbd, ampl, rotate_vec, xangle) );
       } else {
@@ -458,7 +458,7 @@ void MainWindow::render( PositionVector &v ) {
   PositionVector::iterator it = v.begin(), end = v.end(), n = it;
   for(; it != end; ++it ) {
    ++n;
-   if( n != end ) scene_->addLine( it->x(), -it->y(), n->x(), -n->y() );
+   if( n != end ) { scene_->addLine( it->x(), -it->y(), n->x(), -n->y() ); }
   }
 }
 

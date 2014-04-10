@@ -72,6 +72,10 @@ void AbstractTrajectory::addA( const Vector3D &pos, double spdmm ) { // Absolute
   positions_.push_back( accumulator_ );
   speeds_.push_back( spdmm * TO_RPM );
 }
+//-----------------------------------------------------------------------------
+void AbstractTrajectory::setReference( const Vector3D &v ) {
+  accumulator_ = v;
+}
 
 //-----------------------------------------------------------------------------
 void AbstractTrajectory::setReference() {
