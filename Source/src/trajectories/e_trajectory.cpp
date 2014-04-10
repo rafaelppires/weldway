@@ -106,7 +106,6 @@ void ETrajectory::addRepeatable( uint16_t count/*, double l, double yoff, double
     size_t sz = psingle_.size();
     for( size_t j = 0; j < sz; ++j ) {
       addR( psingle_[j], ssingle_[j] );
-      std::cout << "Point: " << psingle_[j] << " Spd: " << ssingle_[j] << "\n";
     }
   }
 }

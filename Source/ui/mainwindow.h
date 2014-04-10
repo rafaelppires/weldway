@@ -41,8 +41,8 @@ private slots:
   void on_longTrajectoryComboBox_currentTextChanged(const QString &arg1);
   void on_correctButton_clicked();
   void on_frequency_changed();
-
   void on_tabWidget_currentChanged(int index);
+  void redraw();
 
 private:
   QGraphicsScene *scene_;

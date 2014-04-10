@@ -49,6 +49,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
   connect( trSpeedSliderSpin, SIGNAL(valueChanged()), this, SLOT(on_frequency_changed()) );
   connect( trLmbdSliderSpin,  SIGNAL(valueChanged()), this, SLOT(on_frequency_changed()) );
+  connect( trAmplSliderSpin,  SIGNAL(valueChanged()), this, SLOT(redraw()));
 
   // SB + Triang
   sbtSpeedSliderSpin = new SliderSpin( this, ui->sbtWeldSpeedSlider, ui->sbtWeldSpeedSpinBox, ui->sbtWeldSpeedUnitComboBox, UnitConvPtr(new SpeedConv(0,100)) );
@@ -134,6 +135,7 @@ void MainWindow::on_frequency_changed() {
   char value[64];
   sprintf( value, "%.1f", f );
   ui->frLabel->setText( value );
+  redraw();
 }
 
 //-----------------------------------------------------------------------------
@@ -460,10 +462,14 @@ void MainWindow::render( PositionVector &v ) {
    ++n;
    if( n != end ) { scene_->addLine( it->x(), -it->y(), n->x(), -n->y() ); }
   }
+  //scene_->setBackgroundBrush(QBrush(Qt::lightGray, Qt::CrossPattern));
+  QRectF rec = scene_->itemsBoundingRect();
+  scene_->addLine( rec.x(), 0, rec.x()+rec.width(),0 );
 }
 
 //-----------------------------------------------------------------------------
-void MainWindow::on_tabWidget_currentChanged( int index ) {
+void MainWindow::redraw() {
+  int index = ui->tabWidget->currentIndex();
   if( index == 4 ) {
     int32_t tidx = ui->transvTrajectoryComboBox->currentIndex();
     std::string pos_unit("pulsos"), spd_unit("rpm");
@@ -476,6 +482,11 @@ void MainWindow::on_tabWidget_currentChanged( int index ) {
       render( v );
     }
   }
+}
+
+//-----------------------------------------------------------------------------
+void MainWindow::on_tabWidget_currentChanged( int index ) {
+  redraw();
 }
 
 //-----------------------------------------------------------------------------
