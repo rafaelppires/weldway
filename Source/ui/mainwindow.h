@@ -15,6 +15,10 @@ namespace Ui {
 class MainWindow;
 }
 
+class TrajectoryScene : public QGraphicsScene {
+  void drawBackground ( QPainter * painter, const QRectF & rect );
+};
+
 class MainWindow : public QMainWindow {
     Q_OBJECT
     
@@ -45,7 +49,7 @@ private slots:
   void redraw();
 
 private:
-  QGraphicsScene *scene_;
+  TrajectoryScene *scene_;
   QString stringAxis(uint32_t value);
   void setStatus( int32_t status, QLabel *label );
   void checkStatus();

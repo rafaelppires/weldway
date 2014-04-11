@@ -74,5 +74,12 @@ void DoubleETrajectory::addRepeatable( uint32_t period_count, double lmb,
     addR( Vector3D(  xoff,  yoff, 0 ), spd );
   }
 }
+//-----------------------------------------------------------------------------
+void DoubleETrajectory::draft( PositionVector &out, double spd, double l, double ampl ) {
+  DoubleETrajectory e( spd, l, ampl, Vector3D(4*l,0,0), 0);
+  out.clear();
+  out.push_back( e.initialOffset() );
+  out.insert( out.end(), e.positions_.begin(), e.positions_.end() );
+}
 
 //-----------------------------------------------------------------------------

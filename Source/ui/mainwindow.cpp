@@ -97,8 +97,9 @@ MainWindow::MainWindow(QWidget *parent) :
   ui->emergencyLabel->setText("<font style='background-color:red' size='10'>Emergência</font>");
   ui->emergencyLabel->setVisible( false );
 
-  scene_ = new QGraphicsScene ;
+  scene_ = new TrajectoryScene;
   ui->graphicsView->setScene( scene_ );
+  //ui->graphicsView->setViewportUpdateMode( QGraphicsView::FullViewportUpdate );
 }
 //-----------------------------------------------------------------------------
 
@@ -455,21 +456,27 @@ void MainWindow::on_correctButton_clicked() {
 }
 
 //-----------------------------------------------------------------------------
+void TrajectoryScene::drawBackground ( QPainter * painter, const QRectF & rect ) {
+  painter->setPen( Qt::lightGray );
+  double x = int(rect.x() / 40) * 40, x0 = x;
+  for(; fabs(x-x0) < rect.width(); x += 40 )
+    painter->drawLine( x, rect.y(), x, rect.y()+rect.height() );
+  double y = int(rect.y() / 40) * 40, y0 = y;
+  for(; fabs(y-y0) < rect.height(); y += 40 )
+    painter->drawLine( rect.x(), y, rect.x()+rect.width(), y );
+}
+
+//-----------------------------------------------------------------------------
 void MainWindow::render( PositionVector &v ) {
   scene_->clear();
   PositionVector::iterator it = v.begin(), end = v.end(), n = it;
+  QPen pen;
+  pen.setWidth(2);
   for(; it != end; ++it ) {
    ++n;
-   if( n != end ) { scene_->addLine( it->x(), -it->y(), n->x(), -n->y() ); }
+   if( n != end ) { scene_->addLine( it->x(), -it->y(), n->x(), -n->y(), pen ); }
   }
-  //scene_->setBackgroundBrush(QBrush(Qt::lightGray, Qt::CrossPattern));
-  QRectF rec = scene_->itemsBoundingRect();
-  double y = int(0.5 + rec.y() / 40.0 ) * 40, y0 = y;
-  for(; fabs(y-y0) < rec.height(); y += 40 )
-    scene_->addLine( rec.x(), y, rec.x()+rec.width(), y, QPen(Qt::lightGray) );
-  double x = int(0.5 + rec.x() / 40.0 ) * 40, x0 = x;
-  for(; fabs(x-x0) < rec.width(); x += 40 )
-    scene_->addLine( x, rec.y(), x, rec.y()+rec.height(), QPen(Qt::lightGray) );
+  ui->graphicsView->fitInView( scene_->itemsBoundingRect(), Qt::KeepAspectRatio );
 }
 
 //-----------------------------------------------------------------------------
@@ -481,11 +488,17 @@ void MainWindow::redraw() {
     double lmbd = trLmbdSliderSpin->value( pos_unit ),
            spd  = trSpeedSliderSpin->value( spd_unit ),
            ampl = trAmplSliderSpin->value( pos_unit );
-    if( tidx == 1 ) {
-      PositionVector v;
+    PositionVector v;
+    if( tidx == 0 ) {
+      uint32_t sup_stop = ui->supSpinBox->value(),
+               inf_stop = ui->infSpinBox->value();
+      TriangularTrajectory::draft( v, spd, lmbd, ampl, sup_stop, inf_stop );
+    } else if( tidx == 1 ) {
       ETrajectory::draft( v, spd, lmbd, ampl );
-      render( v );
+    } else if( tidx == 2 ) {
+      DoubleETrajectory::draft( v, spd, lmbd, ampl );
     }
+    render(v);
   }
 }
 

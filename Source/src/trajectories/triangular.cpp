@@ -75,3 +75,13 @@ void TriangularTrajectory::addRepeatable( int count, uint32_t sstop, uint32_t is
   if( istop ) addR( Vector3D( istoplen,          0, 0 ), xspeedmm );
   addR( Vector3D( risexlen,    ampl/2., 0 ), risespd  );
 }
+
+//-----------------------------------------------------------------------------
+void TriangularTrajectory::draft( PositionVector &out, double spd, double l, double ampl, uint32_t sstop, uint32_t istop ) {
+  TriangularTrajectory e( spd, l, ampl, sstop, istop, Vector3D(4*l,0,0), 0);
+  out.clear();
+  out.push_back( e.initialOffset() );
+  out.insert( out.end(), e.positions_.begin(), e.positions_.end() );
+}
+
+//-----------------------------------------------------------------------------

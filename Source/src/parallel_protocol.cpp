@@ -94,6 +94,7 @@ ParallelProtocol::ParallelProtocol(uint16_t addr , EmergencyCallbackType cb ) :
   port_.startSquareSignal( MANIP_ENABL_PIN, 1000. ); // Pin 16 - 1kHz
   port_.startReadingPin( MANIP_EMERG_PIN, 1./2 /*s*/,
                          std::bind1st( std::mem_fun(&ParallelProtocol::emergencyCallback), this ) );
+  stopTorch();
 }
 
 //-----------------------------------------------------------------------------
