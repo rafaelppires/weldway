@@ -14,13 +14,13 @@ void TrajectoryExecuter::operator()() {
   uint16_t interval;
 
   last_pos = gotoInitial();
-  waitFor( 200 );
 
   high_resolution_clock::time_point now, start;
 
   Vector3D cur_point;
   double cur_spd, progress;
   comm_->startTorch();
+  waitFor( 2000 );
   while( trajectory_->getPoint(cur_point, cur_spd, progress) ) {
     start = high_resolution_clock::now();
     delta = cur_point - last_pos;

@@ -464,7 +464,12 @@ void MainWindow::render( PositionVector &v ) {
   }
   //scene_->setBackgroundBrush(QBrush(Qt::lightGray, Qt::CrossPattern));
   QRectF rec = scene_->itemsBoundingRect();
-  scene_->addLine( rec.x(), 0, rec.x()+rec.width(),0 );
+  double y = int(0.5 + rec.y() / 40.0 ) * 40, y0 = y;
+  for(; fabs(y-y0) < rec.height(); y += 40 )
+    scene_->addLine( rec.x(), y, rec.x()+rec.width(), y, QPen(Qt::lightGray) );
+  double x = int(0.5 + rec.x() / 40.0 ) * 40, x0 = x;
+  for(; fabs(x-x0) < rec.width(); x += 40 )
+    scene_->addLine( x, rec.y(), x, rec.y()+rec.height(), QPen(Qt::lightGray) );
 }
 
 //-----------------------------------------------------------------------------

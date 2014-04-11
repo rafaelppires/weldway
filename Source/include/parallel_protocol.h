@@ -5,6 +5,7 @@
 #include <parallel_port.h>
 #include <granite_spi_interface.h>
 
+#define MANIP_TORCHFEEDBACK_PIN 11
 #define MANIP_EMERG_PIN   12
 #define MANIP_ENABL_PIN   16
 #define SPIWRITE_CLK_PIN  2       // SPI Write/Read clock pin
@@ -16,7 +17,7 @@
 #define SPIREAD_DATA_PIN  15      // SPI Read data pin
 #define SPIREAD_DATA_MSK  0x8000  // SPI Read data pin mask
 
-#define TORCH_ENABLE_PIN  1
+#define TORCH_ENABLE_PIN  14
 
 struct RetRawCmmd {
   uint8_t  stat;

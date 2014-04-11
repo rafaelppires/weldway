@@ -98,12 +98,12 @@ ParallelProtocol::ParallelProtocol(uint16_t addr , EmergencyCallbackType cb ) :
 
 //-----------------------------------------------------------------------------
 void ParallelProtocol::startTorch() {
-  port_.setHighPinSync( TORCH_ENABLE_PIN );
+  port_.setLowPinSync( TORCH_ENABLE_PIN );
 }
 
 //-----------------------------------------------------------------------------
 void ParallelProtocol::stopTorch() {
-  port_.setLowPinSync( TORCH_ENABLE_PIN );
+  port_.setHighPinSync( TORCH_ENABLE_PIN );
 }
 
 //-----------------------------------------------------------------------------
