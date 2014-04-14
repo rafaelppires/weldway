@@ -6,16 +6,16 @@ ETrajectory::ETrajectory( double spd, double l, double ampl, double rho,
         AbstractTrajectory(rotate_vec, deg_xang), l_(l), rho_(rho), A_(ampl)  {
   double total_length = rotate_vec.length();
   int period_count = 0.5 + total_length/l;
-  /*double yoff = ampl / 3.,
-         vr = spd*(2*Vector2D(l,2*yoff).length()+2*Vector2D(l/2.,yoff).length()) / (TO_RPM*l);
 
-  offset_.x() = 0;
-  offset_.y() = -ampl / 2.;
+  defineSingle( spd, l );
+  addRepeatable( period_count );
+  rotate();
+}
 
-  accumulator_ = offset_;
-
-  addRepeatable( period_count, l, yoff, vr );
-  rotate();*/
+//-----------------------------------------------------------------------------
+void ETrajectory::defineSingle( double spd, double l ) {
+  psingle_.clear();
+  ssingle_.clear();
 
   double pi = acos(-1), arc = 3*pi/2,
          domain = 7 * pi / 2. + 0.01,
@@ -43,9 +43,6 @@ ETrajectory::ETrajectory( double spd, double l, double ampl, double rho,
          lspd = (llen) / (TO_PULSES*hper);      // lower spd in mm/s
   SpeedVector::iterator it = ssingle_.begin(), end = ssingle_.end();
   for(;it!=end;++it ) *it = *it < 0 ? lspd : uspd;
-
-  addRepeatable( period_count );
-  rotate();
 }
 
 //-----------------------------------------------------------------------------
@@ -62,8 +59,8 @@ Vector3I ETrajectory::initialOffset() const {
 }
 
 //-----------------------------------------------------------------------------
-void ETrajectory::applyCorrection( double spd, double l, double ampl ) {
-  /*boost::lock_guard<boost::mutex> lock(data_mutex_);
+void ETrajectory::applyCorrection( double spd, double l, double ampl, double rho ) {
+  boost::lock_guard<boost::mutex> lock(data_mutex_);
   if( index_ < 1 || index_ > positions_.size() - 2 ) return;
   Vector3D diff, cur, prev;
   uint32_t idx = index_;
@@ -72,13 +69,23 @@ void ETrajectory::applyCorrection( double spd, double l, double ampl ) {
   do {
     cur = unrotate( positions_[idx++] );
     diff = cur - prev;
-    if( fabs(diff.x())<1e-5 ) diff.x() = 0;
-    if( fabs(diff.y())<1e-5 ) diff.y() = 0;
     prev = cur;
-  } while( idx < positions_.size() && (diff.x() <= 0 || diff.y() >= 0) );
+  } while( idx < positions_.size() && (diff.y() > 0 || Vector3D(unrotate(positions_[idx])-prev).y() < 0) );
 
-  eraseFrom( idx );
+  eraseFrom( idx+1 );
+  A_ = ampl;
+  rho_ = rho;
+  defineSingle( spd, l );
 
+  positions_[idx].y() = 0;
+  positions_[idx] += offset_;
+  setReference();
+
+  int period_count = 0.5 + (rotation_vec_.length() - positions_[idx].x())/l;
+  addRepeatable( period_count );
+  for( int i = idx; i < positions_.size(); ++i )
+    positions_[i] = rotate(positions_[i]);
+/*
   double yoff = ampl / 3.,
          vr = spd*(2*Vector2D(l,2*yoff).length()+2*Vector2D(l/2.,yoff).length()) / (TO_RPM*l);
 
@@ -94,14 +101,7 @@ void ETrajectory::applyCorrection( double spd, double l, double ampl ) {
 }
 
 //-----------------------------------------------------------------------------
-void ETrajectory::addRepeatable( uint16_t count/*, double l, double yoff, double vr*/ ) {
-  /*for( uint32_t i = 0; i < count; ++i ) {
-    addR( Vector3D(      l,  2*yoff, 0 ), vr );
-    addR( Vector3D(  -l/2.,    yoff, 0 ), vr );
-    addR( Vector3D(  -l/2.,   -yoff, 0 ), vr );
-    addR( Vector3D(      l, -2*yoff, 0 ), vr );
-  }*/
-
+void ETrajectory::addRepeatable( uint16_t count ) {
   for( uint32_t i = 0; i < count; ++i ) {
     size_t sz = psingle_.size();
     for( size_t j = 0; j < sz; ++j ) {
@@ -111,8 +111,8 @@ void ETrajectory::addRepeatable( uint16_t count/*, double l, double yoff, double
 }
 
 //-----------------------------------------------------------------------------
-void ETrajectory::draft( PositionVector &out, double spd, double l, double ampl ) {
-  ETrajectory e( spd, l, ampl, 1./3, Vector3D(4*l,0,0), 0);
+void ETrajectory::draft( PositionVector &out, double spd, double l, double ampl, double rho ) {
+  ETrajectory e( spd, l, ampl, rho, Vector3D(4*l,0,0), 0);
   out.clear();
   out.push_back( e.initialOffset() );
   out.insert( out.end(), e.positions_.begin(), e.positions_.end() );

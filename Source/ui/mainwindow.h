@@ -64,7 +64,7 @@ private:
   SliderSpin *speedSliderSpin, *xposSliderSpin, *yposSliderSpin, *zposSliderSpin,
              *fwSpeedSliderSpin, *fwLengthSliderSpin, *bwSpeedSliderSpin, *bwLengthSliderSpin,
              *sbWeldSpeedSliderSpin, *trSpeedSliderSpin, *trAmplSliderSpin, *trLmbdSliderSpin,
-             *sbtSpeedSliderSpin, *sbtAmplSliderSpin, *sbtLenSliderSpin;
+             *sbtSpeedSliderSpin, *sbtAmplSliderSpin, *sbtLenSliderSpin, *eRhoSliderSpin;
   KeyPressManager keypress_manager_;
   MasterCommunicator &machine_;
   boost::shared_ptr<AbstractTrajectory> executing_trajectory_;

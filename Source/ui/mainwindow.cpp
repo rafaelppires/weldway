@@ -43,13 +43,16 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
   // Triangular
-  trSpeedSliderSpin = new SliderSpin( this, ui->trWeldSpeedSlider, ui->trWeldSpeedSpinBox, ui->trWeldSpeedUnitComboBox, UnitConvPtr(new SpeedConv(0, 100)) );
+  trSpeedSliderSpin = new SliderSpin( this, ui->trWeldSpeedSlider, ui->trWeldSpeedSpinBox, ui->trWeldSpeedUnitComboBox, UnitConvPtr(new SpeedConv(0, 30)) );
   trAmplSliderSpin  = new SliderSpin( this, ui->trAmplitudeSlider, ui->trAmplitudeSpinBox, ui->trAmplitudeUnitComboBox, UnitConvPtr(new PositionConv(0, 50)) );
-  trLmbdSliderSpin  = new SliderSpin( this, ui->trLambdaSlider,    ui->trLambdaSpinBox, NULL, UnitConvPtr(new PositionConv(1, 5)) );
+  trLmbdSliderSpin  = new SliderSpin( this, ui->trLambdaSlider,    ui->trLambdaSpinBox,    ui->trLambdaUnitComboBox,    UnitConvPtr(new PositionConv(1, 5)) );
 
   connect( trSpeedSliderSpin, SIGNAL(valueChanged()), this, SLOT(on_frequency_changed()) );
   connect( trLmbdSliderSpin,  SIGNAL(valueChanged()), this, SLOT(on_frequency_changed()) );
   connect( trAmplSliderSpin,  SIGNAL(valueChanged()), this, SLOT(redraw()));
+
+  eRhoSliderSpin = new SliderSpin( this, ui->rhoSlider, ui->rhoSpinBox, NULL, UnitConvPtr(new UnitConv(0,0.99)) );
+  connect( eRhoSliderSpin,  SIGNAL(valueChanged()), this, SLOT(redraw()));
 
   // SB + Triang
   sbtSpeedSliderSpin = new SliderSpin( this, ui->sbtWeldSpeedSlider, ui->sbtWeldSpeedSpinBox, ui->sbtWeldSpeedUnitComboBox, UnitConvPtr(new SpeedConv(0,100)) );
@@ -99,7 +102,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
   scene_ = new TrajectoryScene;
   ui->graphicsView->setScene( scene_ );
-  //ui->graphicsView->setViewportUpdateMode( QGraphicsView::FullViewportUpdate );
+
+  on_transvTrajectoryComboBox_currentTextChanged( ui->transvTrajectoryComboBox->currentText() );
 }
 //-----------------------------------------------------------------------------
 
@@ -128,6 +132,8 @@ MainWindow::~MainWindow() {
   delete sbtSpeedSliderSpin;
   delete sbtAmplSliderSpin;
   delete sbtLenSliderSpin;
+
+  delete eRhoSliderSpin;
 }
 
 //-----------------------------------------------------------------------------
@@ -209,7 +215,8 @@ void MainWindow::on_executeButton_clicked() {
              ampl = trAmplSliderSpin->value( pos_unit );
       int32_t tidx = ui->transvTrajectoryComboBox->currentIndex();
       if( tidx == 1 ) {
-        executing_trajectory_.reset( new ETrajectory( spd, lmbd, ampl, 1./3., rotate_vec, xangle) );
+        double rho = eRhoSliderSpin->value();
+        executing_trajectory_.reset( new ETrajectory( spd, lmbd, ampl, rho, rotate_vec, xangle) );
       } else if( tidx == 2 ) {
         executing_trajectory_.reset( new DoubleETrajectory( spd, lmbd, ampl, rotate_vec, xangle) );
       } else {
@@ -293,10 +300,14 @@ void MainWindow::on_longTrajectoryComboBox_currentTextChanged(const QString &arg
 
 //-----------------------------------------------------------------------------
 void MainWindow::on_transvTrajectoryComboBox_currentTextChanged(const QString &arg1) {
-  if( arg1 == "Triangular" )
+  if( arg1 == "Triangular" ) {
     ui->stopTimeWidget->setHidden(false);
-  else
+    ui->rhoWidget->setHidden(true);
+  } else {
+    ui->rhoWidget->setHidden(false);
     ui->stopTimeWidget->setHidden(true);
+  }
+  redraw();
 }
 
 //-----------------------------------------------------------------------------
@@ -437,7 +448,8 @@ void MainWindow::on_correctButton_clicked() {
      DoubleETrajectory *de = 0;
      if( tidx == 1 &&
          (et = dynamic_cast<ETrajectory *>( executing_trajectory_.get() ))) {
-       et->applyCorrection( spd, lmbd, ampl );
+       double rho = eRhoSliderSpin->value();
+       et->applyCorrection( spd, lmbd, ampl, rho );
      } else if( tidx == 2 &&
                 (de = dynamic_cast<DoubleETrajectory *>( executing_trajectory_.get() ))) {
        de->applyCorrection( spd, lmbd, ampl );
@@ -494,7 +506,8 @@ void MainWindow::redraw() {
                inf_stop = ui->infSpinBox->value();
       TriangularTrajectory::draft( v, spd, lmbd, ampl, sup_stop, inf_stop );
     } else if( tidx == 1 ) {
-      ETrajectory::draft( v, spd, lmbd, ampl );
+      double rho = eRhoSliderSpin->value();
+      ETrajectory::draft( v, spd, lmbd, ampl, rho );
     } else if( tidx == 2 ) {
       DoubleETrajectory::draft( v, spd, lmbd, ampl );
     }

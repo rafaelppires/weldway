@@ -8,11 +8,12 @@ class ETrajectory : public AbstractTrajectory {
 public:
   ETrajectory(double spd, double l, double ampl, double rho,  const Vector3D &rotate_vec, double deg_xang );
   Vector3I initialOffset() const;
-  void applyCorrection( double spd, double l, double ampl );
+  void applyCorrection(double spd, double l, double ampl , double rho);
   void addRepeatable( uint16_t count/*, double l, double yoff, double vr*/ );
 
-  static void draft( PositionVector &out, double spd, double l, double ampl );
+  static void draft(PositionVector &out, double spd, double l, double ampl , double rho);
 private:
+  void defineSingle( double spd, double l );
   Vector3D f( double arc );
   double l_, rho_, A_;
   PositionVector psingle_;
