@@ -9,7 +9,8 @@ public:
   ETrajectory(double spd, double l, double ampl, double rho,  const Vector3D &rotate_vec, double deg_xang );
   Vector3I initialOffset() const;
   void applyCorrection(double spd, double l, double ampl , double rho);
-  void addRepeatable( uint16_t count/*, double l, double yoff, double vr*/ );
+  void addRepeatable( uint16_t count );
+  void getSingle( PositionVector&p, SpeedVector&s );
 
   static void draft(PositionVector &out, double spd, double l, double ampl , double rho);
 private:

@@ -8,6 +8,7 @@
 #include <triangular.h>
 #include <double_e.h>
 #include <e_trajectory.h>
+#include <double8.h>
 #include <rhombus.h>
 
 //-----------------------------------------------------------------------------
@@ -304,7 +305,7 @@ void MainWindow::on_transvTrajectoryComboBox_currentTextChanged(const QString &a
     ui->stopTimeWidget->setHidden(false);
     ui->rhoWidget->setHidden(true);
   } else {
-    ui->rhoWidget->setHidden(false);
+    if( arg1 != "Duplo e" ) ui->rhoWidget->setHidden(false);
     ui->stopTimeWidget->setHidden(true);
   }
   redraw();
@@ -510,6 +511,9 @@ void MainWindow::redraw() {
       ETrajectory::draft( v, spd, lmbd, ampl, rho );
     } else if( tidx == 2 ) {
       DoubleETrajectory::draft( v, spd, lmbd, ampl );
+    } else if( tidx == 3 ) {
+      double rho = eRhoSliderSpin->value();
+      Double8Trajectory::draft(v,spd,lmbd,ampl,rho);
     }
     render(v);
   }

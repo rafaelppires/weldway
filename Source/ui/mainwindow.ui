@@ -1132,6 +1132,11 @@
                 <string>Duplo E</string>
                </property>
               </item>
+              <item>
+               <property name="text">
+                <string>Duplo 8</string>
+               </property>
+              </item>
              </widget>
             </item>
            </layout>

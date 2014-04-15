@@ -72,32 +72,19 @@ void ETrajectory::applyCorrection( double spd, double l, double ampl, double rho
     prev = cur;
   } while( idx < positions_.size() && (diff.y() > 0 || Vector3D(unrotate(positions_[idx])-prev).y() < 0) );
 
-  eraseFrom( idx+1 );
+  eraseFrom( idx );
   A_ = ampl;
   rho_ = rho;
   defineSingle( spd, l );
 
-  positions_[idx].y() = 0;
-  positions_[idx] += offset_;
+  positions_.back().y() = 0;
+  positions_.back() += offset_;
   setReference();
 
   int period_count = 0.5 + (rotation_vec_.length() - positions_[idx].x())/l;
   addRepeatable( period_count );
   for( int i = idx; i < positions_.size(); ++i )
     positions_[i] = rotate(positions_[i]);
-/*
-  double yoff = ampl / 3.,
-         vr = spd*(2*Vector2D(l,2*yoff).length()+2*Vector2D(l/2.,yoff).length()) / (TO_RPM*l);
-
-  int period_count = 0.5 + (rotation_vec_.length() - cur.x())/l;
-  PositionVector::reference last = positions_.back();
-  last = cur;
-  last.y() = -ampl / 2.;
-  setReference();
-  addRepeatable( period_count, l, yoff, vr );
-
-  for( int i = idx-1; i < positions_.size(); ++i )
-    positions_[i] = rotate(positions_[i]);*/
 }
 
 //-----------------------------------------------------------------------------
@@ -117,4 +104,10 @@ void ETrajectory::draft( PositionVector &out, double spd, double l, double ampl,
   out.push_back( e.initialOffset() );
   out.insert( out.end(), e.positions_.begin(), e.positions_.end() );
 }
+
+//-----------------------------------------------------------------------------
+void ETrajectory::getSingle( PositionVector&p, SpeedVector&s ) {
+  p = psingle_; s = ssingle_;
+}
+
 //-----------------------------------------------------------------------------
