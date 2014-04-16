@@ -136,6 +136,11 @@ public:
   T& x() { return s::v[0]; }
   T& y() { return s::v[1]; }
   T& z() { return s::v[2]; }
+  Vector3 cross( const Vector3 &v ) const {
+    return Vector3( y()*v.z()-v.y()*z(),
+                    v.x()*z()-x()*v.z(),
+                    x()*v.y()-v.x()*y() );
+  }
 
   const T& x() const { return s::v[0]; }
   const T& y() const { return s::v[1]; }

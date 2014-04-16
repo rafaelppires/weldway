@@ -64,6 +64,20 @@ void AbstractTrajectory::addR( const Vector3D &delta, double spdmm ) { // Relati
   accumulator_ += delta;
   positions_.push_back( accumulator_ );
   speeds_.push_back( spdmm * TO_RPM );
+
+  //Eliminate collinear points when speeds of both segments are equal
+  size_t psz = positions_.size();
+  if( psz > 2 && speeds_.back() == speeds_[ speeds_.size()-2 ] ) {
+    Vector3D A  = positions_.back(),
+             B  = positions_[ psz-2 ],
+             C  = positions_[ psz-3 ],
+             AC = C - A,
+             AB = B - A;
+    if( AC.cross( AB ).length() < 1e-5 ) {
+      positions_.erase( positions_.begin()+psz-2 );
+      speeds_.pop_back();
+    }
+  }
 }
 
 //-----------------------------------------------------------------------------

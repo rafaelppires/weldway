@@ -220,6 +220,9 @@ void MainWindow::on_executeButton_clicked() {
         executing_trajectory_.reset( new ETrajectory( spd, lmbd, ampl, rho, rotate_vec, xangle) );
       } else if( tidx == 2 ) {
         executing_trajectory_.reset( new DoubleETrajectory( spd, lmbd, ampl, rotate_vec, xangle) );
+      } else if( tidx == 3 ) {
+        double rho = eRhoSliderSpin->value();
+        executing_trajectory_.reset( new Double8Trajectory( spd, lmbd, ampl, rho, rotate_vec, xangle) );
       } else {
         uint32_t sup_stop = ui->supSpinBox->value(),
                  inf_stop = ui->infSpinBox->value();
