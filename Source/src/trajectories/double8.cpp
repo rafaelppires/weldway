@@ -8,7 +8,7 @@ Double8Trajectory::Double8Trajectory( double spd, double lambda, double ampl,
   double total_length = rotate_vec.length();
   int period_count = 0.5 + total_length/lambda;
  
-  ETrajectory e( spd, lambda, ampl, rho,  rotate_vec, deg_xang );
+  ETrajectory e( spd, lambda/2., ampl/2., rho,  rotate_vec, deg_xang );
   e.getSingle(psingle_, ssingle_);
  
   addRepeatable( period_count );
@@ -31,7 +31,7 @@ void Double8Trajectory::addRepeatable( uint32_t period_count ) {
     }
     setReference();
     for( size_t j = 0; j < sz; ++j ) {
-      addR( -psingle_[j], ssingle_[j] );
+      addR( Vector3D(psingle_[j].x(),-psingle_[j].y(),0), ssingle_[j] );
     }
   }
 }
