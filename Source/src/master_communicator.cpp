@@ -75,7 +75,7 @@ bool MasterCommunicator::executeTrajectory( AbsTrajectoryPtr at ) {
   trajectory_executer_ = new TrajectoryExecuter( at, comm_ );
   trajectory_executer_->setCurrent( comm_->getLastSentPos() );
   trajectory_executer_->setLimits( trajectory_init_, trajectory_final_ );
-  trajectory_executer_->setAngularOffset( angular_offset_ );
+  trajectory_executer_->setAngularOffset( overx_angoff_ );
   trajectory_executer_->setProgressCallback( progress_callback_ );
   thread_executer_.reset( new boost::thread( boost::ref(*trajectory_executer_) ) );
   return true;
@@ -114,8 +114,16 @@ Vector3D MasterCommunicator::currentPosition() {
 }
 
 //-----------------------------------------------------------------------------
+Vector2I MasterCommunicator::angularOffset( AngularDirection dir, double ang ) {
+  Vector2I ret;
+  if( comm_ )
+    ret = comm_->angularPulsesOffset( dir, ang );
+  return ret;
+}
+
+//-----------------------------------------------------------------------------
 void MasterCommunicator::setAngularOffset( double angle ) {
-  angular_offset_ = angle * acos(-1) / 180;
+  overx_angoff_ = angle * acos(-1) / 180;
 }
 
 //-----------------------------------------------------------------------------

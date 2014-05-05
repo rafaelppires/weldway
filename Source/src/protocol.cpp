@@ -4,25 +4,31 @@
 Vector3I AbstractProtocol::getLastSentPos() {
   return Vector3I( lastcmmd_pos_[X_AXIS], -lastcmmd_pos_[Y_AXIS], lastcmmd_pos_[Z_AXIS] );
 }
+//-----------------------------------------------------------------------------
+Vector2I AbstractProtocol::angularPulsesOffset( AngularDirection dir, double inc ) {
+  Vector2I ret;
+  while( inc >  360 ) inc -= 360;
+  while( inc < -360 ) inc += 360;
+  int32_t pulses = 36.*400. * inc/360.;
+  if( dir == ANGULAR_VERTICAL ) {
+    ret = Vector2I( pulses, -pulses );
+  } else if( dir == ANGULAR_HORIZONTAL ) {
+    ret = Vector2I( pulses, pulses );
+  }
+  return ret;
+}
 
 //-----------------------------------------------------------------------------
 void AbstractProtocol::sendAngularIncrement( AngularDirection dir, double spd, double inc ) {
   if( !homing_done_ ) return;
 
   ConcurrentCmmd32 speeds, pos;
-  while( inc >  360 ) inc -= 360;
-  while( inc < -360 ) inc += 360;
-  int32_t pulses = 36*400 * inc/360,
-          apos = lastcmmd_pos_[A_AXIS],
-          bpos = lastcmmd_pos_[B_AXIS];
+  Vector2I angpos( lastcmmd_pos_[A_AXIS], lastcmmd_pos_[B_AXIS] );
+  angpos += angularPulsesOffset(dir,inc);
   speeds[A_AXIS] = speeds[B_AXIS] = spd;
-  if( dir == ANGULAR_VERTICAL ) {
-    pos[A_AXIS] = apos + pulses;
-    pos[B_AXIS] = bpos - pulses;
-  } else if( dir == ANGULAR_HORIZONTAL ) {
-    pos[A_AXIS] = apos + pulses;
-    pos[B_AXIS] = bpos + pulses;
-  }
+
+  pos[A_AXIS] = angpos.x();
+  pos[B_AXIS] = angpos.y();
 
   sendSpdCmmds( speeds );
   sendPosCmmds( pos );

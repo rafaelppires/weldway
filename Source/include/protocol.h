@@ -49,6 +49,7 @@ public:
   virtual void sendAngularIncrement( AngularDirection dir, double spd, double inc );
   virtual void sendLinearIncrement( uint8_t axis, int32_t spd, int32_t inc );
   virtual void finish() {}
+  Vector2I angularPulsesOffset( AngularDirection dir, double inc );
   bool homingDone() { return homing_done_; }
 
 protected:

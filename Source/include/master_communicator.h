@@ -20,6 +20,7 @@ public:
   // Queries
   bool busy();
   int32_t getStatus( GraniteParams, uint8_t );
+  Vector2I angularOffset(AngularDirection dir, double ang);
   Vector3D currentPosition();
 
   // Actions
@@ -51,7 +52,7 @@ private:
   TrajectoryExecuter *trajectory_executer_;
   boost::shared_ptr<boost::thread> thread_executer_;
   Vector3I trajectory_init_, trajectory_final_;
-  double angular_offset_;
+  double overx_angoff_;
   boost::function<void(double)> progress_callback_;
   EmergencyCallbackType emergency_callback_;
 };

@@ -48,6 +48,10 @@ private slots:
   void on_tabWidget_currentChanged(int index);
   void redraw();
 
+  void on_initPosButton_clicked();
+
+  void on_finalPosButton_clicked();
+
 private:
   TrajectoryScene *scene_;
   QString stringAxis(uint32_t value);
@@ -64,7 +68,8 @@ private:
   SliderSpin *speedSliderSpin, *xposSliderSpin, *yposSliderSpin, *zposSliderSpin,
              *fwSpeedSliderSpin, *fwLengthSliderSpin, *bwSpeedSliderSpin, *bwLengthSliderSpin,
              *sbWeldSpeedSliderSpin, *trSpeedSliderSpin, *trAmplSliderSpin, *trLmbdSliderSpin,
-             *sbtSpeedSliderSpin, *sbtAmplSliderSpin, *sbtLenSliderSpin, *eRhoSliderSpin;
+             *sbtSpeedSliderSpin, *sbtAmplSliderSpin, *sbtLenSliderSpin, *eRhoSliderSpin,
+             *vOrSliderSpin, *hOrSliderSpin;
   KeyPressManager keypress_manager_;
   MasterCommunicator &machine_;
   boost::shared_ptr<AbstractTrajectory> executing_trajectory_;

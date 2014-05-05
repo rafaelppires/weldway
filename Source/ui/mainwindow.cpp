@@ -28,6 +28,8 @@ MainWindow::MainWindow(QWidget *parent) :
   xposSliderSpin  = new SliderSpin( this, ui->xpositionSlider, ui->xpositionSpinBox, ui->xposUnitComboBox, UnitConvPtr(new PositionConv(0, 875)) );
   yposSliderSpin  = new SliderSpin( this, ui->ypositionSlider, ui->ypositionSpinBox, ui->yposUnitComboBox, UnitConvPtr(new PositionConv(0, 175)) );
   zposSliderSpin  = new SliderSpin( this, ui->zpositionSlider, ui->zpositionSpinBox, ui->zposUnitComboBox, UnitConvPtr(new PositionConv(0, 100)) );
+  vOrSliderSpin = new SliderSpin( this, ui->vorientationSlider, ui->vorientationSpinBox, NULL, UnitConvPtr(new UnitConv(-90,90)) );
+  hOrSliderSpin = new SliderSpin( this, ui->horientationSlider, ui->horientationSpinBox, NULL, UnitConvPtr(new UnitConv(-90,90)) );
 
   // Switch Back
   sbWeldSpeedSliderSpin = new SliderSpin( this, ui->sbWeldSpeedSlider, ui->sbWeldSpeedSpinBox, ui->sbWeldSpeedUnitComboBox, UnitConvPtr(new SpeedConv(1, 50)) );
@@ -199,6 +201,11 @@ void MainWindow::on_executeButton_clicked() {
       cmd[ X_AXIS ] =  xposSliderSpin->value( pos_unit );
       cmd[ Y_AXIS ] = -yposSliderSpin->value( pos_unit );
       cmd[ Z_AXIS ] =  zposSliderSpin->value( pos_unit );
+
+      Vector2I angpos = machine_.angularOffset( ANGULAR_VERTICAL,   vOrSliderSpin->value("") ) +
+                        machine_.angularOffset( ANGULAR_HORIZONTAL, hOrSliderSpin->value("") );
+      cmd[ A_AXIS ] = angpos.x();
+      cmd[ B_AXIS ] = angpos.y();
 
       machine_.sendPosCmmds( cmd );
     } else if( idx == 3 ) { // Longitudinal
@@ -525,6 +532,40 @@ void MainWindow::redraw() {
 //-----------------------------------------------------------------------------
 void MainWindow::on_tabWidget_currentChanged( int index ) {
   redraw();
+}
+
+//-----------------------------------------------------------------------------
+void MainWindow::on_initPosButton_clicked() {
+  machine_.setMaxSpeed( 650, AXIS_ALL );
+
+  AbstractProtocol::ConcurrentCmmd32 cmd;
+  cmd[ X_AXIS ] =  ui->xinitSpinBox->value() * TO_PULSES;
+  cmd[ Y_AXIS ] = -ui->yinitSpinBox->value() * TO_PULSES;
+  cmd[ Z_AXIS ] =  ui->zinitSpinBox->value() * TO_PULSES;
+
+  Vector2I angpos = machine_.angularOffset( ANGULAR_VERTICAL,   ui->vAngleSpinBox->value() ) +
+                    machine_.angularOffset( ANGULAR_HORIZONTAL, ui->hAngleSpinBox->value() );
+  cmd[ A_AXIS ] = angpos.x();
+  cmd[ B_AXIS ] = angpos.y();
+
+  machine_.sendPosCmmds( cmd );
+}
+
+//-----------------------------------------------------------------------------
+void MainWindow::on_finalPosButton_clicked() {
+  machine_.setMaxSpeed( 650, AXIS_ALL );
+
+  AbstractProtocol::ConcurrentCmmd32 cmd;
+  cmd[ X_AXIS ] =  ui->xfinalSpinBox->value() * TO_PULSES;
+  cmd[ Y_AXIS ] = -ui->yfinalSpinBox->value() * TO_PULSES;
+  cmd[ Z_AXIS ] =  ui->zfinalSpinBox->value() * TO_PULSES;
+
+  Vector2I angpos = machine_.angularOffset( ANGULAR_VERTICAL,   ui->vAngleSpinBox->value() ) +
+                    machine_.angularOffset( ANGULAR_HORIZONTAL, ui->hAngleSpinBox->value() );
+  cmd[ A_AXIS ] = angpos.x();
+  cmd[ B_AXIS ] = angpos.y();
+
+  machine_.sendPosCmmds( cmd );
 }
 
 //-----------------------------------------------------------------------------

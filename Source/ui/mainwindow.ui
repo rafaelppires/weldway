@@ -7,16 +7,16 @@
     <x>0</x>
     <y>0</y>
     <width>945</width>
-    <height>626</height>
+    <height>636</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>IF-SC WeldWay</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QHBoxLayout" name="horizontalLayout">
-    <item>
-     <layout class="QVBoxLayout" name="verticalLayout">
+   <layout class="QGridLayout" name="gridLayout_18">
+    <item row="0" column="0">
+     <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
        <widget class="QPushButton" name="findZeroPushButton">
         <property name="minimumSize">
@@ -31,290 +31,1326 @@
        </widget>
       </item>
       <item>
-       <widget class="QTabWidget" name="tabWidget">
-        <property name="currentIndex">
-         <number>4</number>
+       <widget class="QPushButton" name="initPosButton">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>40</height>
+         </size>
         </property>
-        <widget class="QWidget" name="tab_5">
-         <attribute name="title">
-          <string>Status</string>
-         </attribute>
-         <widget class="QWidget" name="formLayoutWidget">
-          <property name="geometry">
-           <rect>
-            <x>20</x>
-            <y>120</y>
-            <width>170</width>
-            <height>101</height>
-           </rect>
-          </property>
-          <layout class="QFormLayout" name="formLayout">
-           <property name="fieldGrowthPolicy">
-            <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+        <property name="text">
+         <string>Mover Posição Inicial</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="finalPosButton">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>40</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Mover Posição Final</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item row="3" column="0">
+     <widget class="QPushButton" name="correctButton">
+      <property name="text">
+       <string>Corrigir</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="0">
+     <widget class="QProgressBar" name="progressBar">
+      <property name="value">
+       <number>0</number>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1" rowspan="5">
+     <widget class="QGraphicsView" name="graphicsView">
+      <property name="verticalScrollBarPolicy">
+       <enum>Qt::ScrollBarAlwaysOff</enum>
+      </property>
+      <property name="horizontalScrollBarPolicy">
+       <enum>Qt::ScrollBarAlwaysOff</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QPushButton" name="executeButton">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>40</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Executar</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="currentIndex">
+       <number>2</number>
+      </property>
+      <widget class="QWidget" name="statusTab">
+       <attribute name="title">
+        <string>Status</string>
+       </attribute>
+       <widget class="QWidget" name="formLayoutWidget">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>120</y>
+          <width>170</width>
+          <height>101</height>
+         </rect>
+        </property>
+        <layout class="QFormLayout" name="formLayout">
+         <property name="fieldGrowthPolicy">
+          <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+         </property>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_16">
+           <property name="text">
+            <string>Eixo X:</string>
            </property>
-           <item row="0" column="0">
-            <widget class="QLabel" name="label_16">
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QLabel" name="xvalueLabel">
+           <property name="text">
+            <string>.</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_17">
+           <property name="text">
+            <string>Eixo Y:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QLabel" name="yvalueLabel">
+           <property name="text">
+            <string>.</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_18">
+           <property name="text">
+            <string>Eixo Z:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QLabel" name="zvalueLabel">
+           <property name="text">
+            <string>.</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="label_19">
+           <property name="text">
+            <string>Eixo A:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QLabel" name="avalueLabel">
+           <property name="text">
+            <string>.</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QLabel" name="label_20">
+           <property name="text">
+            <string>Eixo B:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="QLabel" name="bvalueLabel">
+           <property name="text">
+            <string>.</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QPushButton" name="getValuesButton">
+        <property name="geometry">
+         <rect>
+          <x>60</x>
+          <y>80</y>
+          <width>75</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Get</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="anotherLabel">
+        <property name="geometry">
+         <rect>
+          <x>140</x>
+          <y>250</y>
+          <width>46</width>
+          <height>13</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>...</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="emergencyLabel">
+        <property name="geometry">
+         <rect>
+          <x>200</x>
+          <y>90</y>
+          <width>251</width>
+          <height>171</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Emergência</string>
+        </property>
+        <property name="textFormat">
+         <enum>Qt::RichText</enum>
+        </property>
+        <property name="scaledContents">
+         <bool>false</bool>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="trajectoryTab">
+       <attribute name="title">
+        <string>Trajetória</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_25">
+        <item row="0" column="0">
+         <widget class="QPushButton" name="markInitPositionButton">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>30</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Marcar Posição Inicial</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <layout class="QGridLayout" name="gridLayout">
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_27">
+            <property name="text">
+             <string>Z:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_26">
+            <property name="text">
+             <string>Y:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QDoubleSpinBox" name="xinitSpinBox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximum">
+             <double>850.000000000000000</double>
+            </property>
+            <property name="value">
+             <double>200.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_25">
+            <property name="text">
+             <string>X:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QDoubleSpinBox" name="yinitSpinBox">
+            <property name="maximum">
+             <double>750.000000000000000</double>
+            </property>
+            <property name="value">
+             <double>60.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QDoubleSpinBox" name="zinitSpinBox"/>
+          </item>
+         </layout>
+        </item>
+        <item row="1" column="1">
+         <widget class="QPushButton" name="invertDirectionButton">
+          <property name="text">
+           <string>Inverter Sentido</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QPushButton" name="markFinalPositionButton">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>30</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Marcar Posição Final</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <layout class="QGridLayout" name="gridLayout_21">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_28">
+            <property name="text">
+             <string>X:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QDoubleSpinBox" name="xfinalSpinBox">
+            <property name="maximum">
+             <double>850.000000000000000</double>
+            </property>
+            <property name="value">
+             <double>500.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_30">
+            <property name="text">
+             <string>Y:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QDoubleSpinBox" name="yfinalSpinBox">
+            <property name="maximum">
+             <double>750.000000000000000</double>
+            </property>
+            <property name="value">
+             <double>60.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_31">
+            <property name="text">
+             <string>Z:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QDoubleSpinBox" name="zfinalSpinBox"/>
+          </item>
+         </layout>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="label_29">
+          <property name="text">
+           <string>Unidade:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QComboBox" name="initFinalPosUnitComboBox">
+          <property name="sizeIncrement">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+          <item>
+           <property name="text">
+            <string>mm</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>cm</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>m</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>pulsos</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>&quot;</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="4" column="0">
+         <widget class="QLabel" name="label_32">
+          <property name="text">
+           <string>Ângulo ao redor do eixo X:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <layout class="QGridLayout" name="gridLayout_22">
+          <item row="0" column="0">
+           <widget class="QDoubleSpinBox" name="xangleSpinBox"/>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLabel" name="label_45">
+            <property name="text">
+             <string>º</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="5" column="0">
+         <widget class="QLabel" name="label_48">
+          <property name="text">
+           <string>Orientação horizontal da tocha:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="1">
+         <layout class="QGridLayout" name="gridLayout_23">
+          <item row="0" column="0">
+           <widget class="QDoubleSpinBox" name="hAngleSpinBox"/>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLabel" name="label_46">
+            <property name="text">
+             <string>º</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="6" column="0">
+         <widget class="QLabel" name="label_49">
+          <property name="text">
+           <string>Orientação vertical da tocha:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="1">
+         <layout class="QGridLayout" name="gridLayout_24">
+          <item row="0" column="0">
+           <widget class="QDoubleSpinBox" name="vAngleSpinBox"/>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLabel" name="label_47">
+            <property name="text">
+             <string>º</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="positonTab">
+       <attribute name="title">
+        <string>Posição Fixa</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>14</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <layout class="QGridLayout" name="gridLayout_3">
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_3">
+            <property name="text">
+             <string>Eixo Y:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="2">
+           <widget class="QComboBox" name="yposUnitComboBox">
+            <item>
              <property name="text">
-              <string>Eixo X:</string>
+              <string>mm</string>
              </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QLabel" name="xvalueLabel">
+            </item>
+            <item>
              <property name="text">
-              <string>.</string>
+              <string>cm</string>
              </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="label_17">
+            </item>
+            <item>
              <property name="text">
-              <string>Eixo Y:</string>
+              <string>m</string>
              </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QLabel" name="yvalueLabel">
+            </item>
+            <item>
              <property name="text">
-              <string>.</string>
+              <string>pulsos</string>
              </property>
-            </widget>
-           </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="label_18">
+            </item>
+            <item>
              <property name="text">
-              <string>Eixo Z:</string>
+              <string>&quot;</string>
              </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="QLabel" name="zvalueLabel">
+            </item>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QDoubleSpinBox" name="ypositionSpinBox"/>
+          </item>
+          <item row="3" column="0">
+           <widget class="QSlider" name="ypositionSlider">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1">
+           <widget class="QDoubleSpinBox" name="zpositionSpinBox"/>
+          </item>
+          <item row="5" column="0">
+           <widget class="QSlider" name="zpositionSlider">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="2">
+           <widget class="QComboBox" name="zposUnitComboBox">
+            <item>
              <property name="text">
-              <string>.</string>
+              <string>mm</string>
              </property>
-            </widget>
-           </item>
-           <item row="3" column="0">
-            <widget class="QLabel" name="label_19">
+            </item>
+            <item>
              <property name="text">
-              <string>Eixo A:</string>
+              <string>cm</string>
              </property>
-            </widget>
-           </item>
-           <item row="3" column="1">
-            <widget class="QLabel" name="avalueLabel">
+            </item>
+            <item>
              <property name="text">
-              <string>.</string>
+              <string>m</string>
              </property>
-            </widget>
-           </item>
-           <item row="4" column="0">
-            <widget class="QLabel" name="label_20">
+            </item>
+            <item>
              <property name="text">
-              <string>Eixo B:</string>
+              <string>pulsos</string>
              </property>
-            </widget>
-           </item>
-           <item row="4" column="1">
-            <widget class="QLabel" name="bvalueLabel">
+            </item>
+            <item>
              <property name="text">
-              <string>.</string>
+              <string>&quot;</string>
              </property>
-            </widget>
+            </item>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QSlider" name="xpositionSlider">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QDoubleSpinBox" name="xpositionSpinBox">
+            <property name="minimumSize">
+             <size>
+              <width>70</width>
+              <height>0</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QComboBox" name="xposUnitComboBox">
+            <item>
+             <property name="text">
+              <string>mm</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>cm</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>m</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>pulsos</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>&quot;</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>Eixo X:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>Eixo Z:</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <spacer name="verticalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>15</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <layout class="QGridLayout" name="gridLayout_13">
+          <item row="3" column="1">
+           <widget class="QDoubleSpinBox" name="vorientationSpinBox"/>
+          </item>
+          <item row="3" column="0">
+           <widget class="QSlider" name="vorientationSlider">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QDoubleSpinBox" name="horientationSpinBox">
+            <property name="minimumSize">
+             <size>
+              <width>70</width>
+              <height>0</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QSlider" name="horientationSlider">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_34">
+            <property name="text">
+             <string>Orientação vertical:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_42">
+            <property name="text">
+             <string>Orientação horizontal:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QLabel" name="label_43">
+            <property name="text">
+             <string>º</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="2">
+           <widget class="QLabel" name="label_44">
+            <property name="text">
+             <string>º</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <spacer name="verticalSpacer_13">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>14</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <layout class="QGridLayout" name="gridLayout_2">
+          <item row="1" column="0">
+           <widget class="QSlider" name="speedSlider">
+            <property name="maximum">
+             <number>300</number>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>Velocidade:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QComboBox" name="speedUnitComboBox">
+            <item>
+             <property name="text">
+              <string>m/min</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>mm/s</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>rpm</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>rps</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QDoubleSpinBox" name="speedSpinBox">
+            <property name="minimumSize">
+             <size>
+              <width>70</width>
+              <height>0</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <spacer name="verticalSpacer_6">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="longTab">
+       <attribute name="title">
+        <string>Longitudinal</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_5">
+        <item>
+         <widget class="QComboBox" name="longTrajectoryComboBox">
+          <item>
+           <property name="text">
+            <string>Switch Back</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Linear</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer_11">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <layout class="QGridLayout" name="gridLayout_11">
+          <item row="2" column="1">
+           <widget class="QDoubleSpinBox" name="sbWeldSpeedSpinBox">
+            <property name="minimumSize">
+             <size>
+              <width>70</width>
+              <height>0</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_13">
+            <property name="text">
+             <string>Velocidade de Soldagem</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QSlider" name="sbWeldSpeedSlider">
+            <property name="maximum">
+             <number>300</number>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="2">
+           <widget class="QComboBox" name="sbWeldSpeedUnitComboBox">
+            <item>
+             <property name="text">
+              <string>m/min</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>mm/s</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>rpm</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>rps</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <spacer name="verticalSpacer_10">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>6</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QWidget" name="advanceRetreatWidget" native="true">
+          <layout class="QVBoxLayout" name="verticalLayout_4">
+           <item>
+            <layout class="QGridLayout" name="gridLayout_9">
+             <item row="1" column="0">
+              <widget class="QLabel" name="label_5">
+               <property name="text">
+                <string>Avanço:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="1">
+              <layout class="QGridLayout" name="gridLayout_7">
+               <item row="1" column="0">
+                <widget class="QSlider" name="bwLengthSlider">
+                 <property name="maximum">
+                  <number>300</number>
+                 </property>
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0">
+                <widget class="QLabel" name="label_10">
+                 <property name="text">
+                  <string>Comprimento:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QDoubleSpinBox" name="bwLengthSpinBox">
+                 <property name="minimumSize">
+                  <size>
+                   <width>70</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="2">
+                <widget class="QComboBox" name="bwLengthUnitComboBox">
+                 <property name="sizeIncrement">
+                  <size>
+                   <width>0</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <item>
+                  <property name="text">
+                   <string>mm</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>cm</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>m</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>pulsos</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>&quot;</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item row="6" column="1">
+              <layout class="QGridLayout" name="gridLayout_4">
+               <item row="1" column="0">
+                <widget class="QSlider" name="bwSpeedSlider">
+                 <property name="maximum">
+                  <number>300</number>
+                 </property>
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="2">
+                <widget class="QComboBox" name="bwSpeedUnitComboBox">
+                 <item>
+                  <property name="text">
+                   <string>m/min</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>mm/s</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>rpm</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>rps</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QDoubleSpinBox" name="bwSpeedSpinBox">
+                 <property name="minimumSize">
+                  <size>
+                   <width>70</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0">
+                <widget class="QLabel" name="label_7">
+                 <property name="text">
+                  <string>Velocidade:</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item row="2" column="1">
+              <layout class="QGridLayout" name="gridLayout_5">
+               <item row="1" column="0">
+                <widget class="QSlider" name="fwLengthSlider">
+                 <property name="maximum">
+                  <number>300</number>
+                 </property>
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QDoubleSpinBox" name="fwLengthSpinBox">
+                 <property name="minimumSize">
+                  <size>
+                   <width>70</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="2">
+                <widget class="QComboBox" name="fwLengthUnitComboBox">
+                 <property name="sizeIncrement">
+                  <size>
+                   <width>0</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <item>
+                  <property name="text">
+                   <string>mm</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>cm</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>m</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>pulsos</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>&quot;</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item row="0" column="0">
+                <widget class="QLabel" name="label_8">
+                 <property name="text">
+                  <string>Comprimento:</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item row="4" column="0">
+              <widget class="QLabel" name="label_6">
+               <property name="text">
+                <string>Recuo:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1">
+              <layout class="QGridLayout" name="gridLayout_8">
+               <item row="1" column="1">
+                <widget class="QDoubleSpinBox" name="fwSpeedSpinBox">
+                 <property name="minimumSize">
+                  <size>
+                   <width>70</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0">
+                <widget class="QLabel" name="label_11">
+                 <property name="text">
+                  <string>Velocidade:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QSlider" name="fwSpeedSlider">
+                 <property name="maximum">
+                  <number>300</number>
+                 </property>
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="2">
+                <widget class="QComboBox" name="fwSpeedUnitComboBox">
+                 <item>
+                  <property name="text">
+                   <string>m/min</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>mm/s</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>rpm</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>rps</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item row="0" column="1">
+              <layout class="QGridLayout" name="gridLayout_19">
+               <item row="1" column="1">
+                <widget class="QDoubleSpinBox" name="speedRatioSpinBox">
+                 <property name="minimumSize">
+                  <size>
+                   <width>70</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QSlider" name="speedRatioSlider">
+                 <property name="maximum">
+                  <number>300</number>
+                 </property>
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0" colspan="3">
+                <widget class="QLabel" name="label_36">
+                 <property name="text">
+                  <string>Razão entre Velocidades (Recuo/Avanço)</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
            </item>
           </layout>
          </widget>
-         <widget class="QPushButton" name="getValuesButton">
-          <property name="geometry">
-           <rect>
-            <x>60</x>
-            <y>80</y>
-            <width>75</width>
-            <height>23</height>
-           </rect>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="transTab">
+       <attribute name="title">
+        <string>Transversal</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_8">
+        <item>
+         <spacer name="verticalSpacer_7">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
           </property>
-          <property name="text">
-           <string>Get</string>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
           </property>
-         </widget>
-         <widget class="QLabel" name="anotherLabel">
-          <property name="geometry">
-           <rect>
-            <x>140</x>
-            <y>250</y>
-            <width>46</width>
-            <height>13</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>...</string>
-          </property>
-         </widget>
-         <widget class="QLabel" name="emergencyLabel">
-          <property name="geometry">
-           <rect>
-            <x>200</x>
-            <y>90</y>
-            <width>251</width>
-            <height>171</height>
-           </rect>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>12</pointsize>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>Emergência</string>
-          </property>
-          <property name="textFormat">
-           <enum>Qt::RichText</enum>
-          </property>
-          <property name="scaledContents">
-           <bool>false</bool>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </widget>
-        <widget class="QWidget" name="tab">
-         <attribute name="title">
-          <string>Trajetória</string>
-         </attribute>
-         <layout class="QGridLayout" name="gridLayout_22">
-          <item row="0" column="1">
-           <layout class="QGridLayout" name="gridLayout">
-            <item row="2" column="0">
-             <widget class="QLabel" name="label_27">
-              <property name="text">
-               <string>Z:</string>
-              </property>
-             </widget>
+         </spacer>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <item>
+           <widget class="QComboBox" name="transvTrajectoryComboBox">
+            <item>
+             <property name="text">
+              <string>Triangular</string>
+             </property>
             </item>
-            <item row="1" column="0">
-             <widget class="QLabel" name="label_26">
-              <property name="text">
-               <string>Y:</string>
-              </property>
-             </widget>
+            <item>
+             <property name="text">
+              <string>E</string>
+             </property>
             </item>
-            <item row="0" column="1">
-             <widget class="QDoubleSpinBox" name="xinitSpinBox">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="maximum">
-               <double>850.000000000000000</double>
-              </property>
-              <property name="value">
-               <double>200.000000000000000</double>
-              </property>
-             </widget>
+            <item>
+             <property name="text">
+              <string>Duplo E</string>
+             </property>
             </item>
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_25">
-              <property name="text">
-               <string>X:</string>
-              </property>
-             </widget>
+            <item>
+             <property name="text">
+              <string>Duplo 8</string>
+             </property>
             </item>
-            <item row="1" column="1">
-             <widget class="QDoubleSpinBox" name="yinitSpinBox">
-              <property name="maximum">
-               <double>750.000000000000000</double>
-              </property>
-              <property name="value">
-               <double>60.000000000000000</double>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1">
-             <widget class="QDoubleSpinBox" name="zinitSpinBox"/>
-            </item>
-           </layout>
+           </widget>
           </item>
-          <item row="3" column="1">
-           <layout class="QGridLayout" name="gridLayout_21">
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_28">
-              <property name="text">
-               <string>X:</string>
-              </property>
-             </widget>
+         </layout>
+        </item>
+        <item>
+         <spacer name="verticalSpacer_9">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <layout class="QGridLayout" name="gridLayout_12">
+          <item row="1" column="0">
+           <widget class="QSlider" name="trWeldSpeedSlider">
+            <property name="maximum">
+             <number>300</number>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QComboBox" name="trWeldSpeedUnitComboBox">
+            <item>
+             <property name="text">
+              <string>m/min</string>
+             </property>
             </item>
-            <item row="0" column="1">
-             <widget class="QDoubleSpinBox" name="xfinalSpinBox">
-              <property name="maximum">
-               <double>850.000000000000000</double>
-              </property>
-              <property name="value">
-               <double>500.000000000000000</double>
-              </property>
-             </widget>
+            <item>
+             <property name="text">
+              <string>mm/s</string>
+             </property>
             </item>
-            <item row="1" column="0">
-             <widget class="QLabel" name="label_30">
-              <property name="text">
-               <string>Y:</string>
-              </property>
-             </widget>
+            <item>
+             <property name="text">
+              <string>rpm</string>
+             </property>
             </item>
-            <item row="1" column="1">
-             <widget class="QDoubleSpinBox" name="yfinalSpinBox">
-              <property name="maximum">
-               <double>750.000000000000000</double>
-              </property>
-              <property name="value">
-               <double>60.000000000000000</double>
-              </property>
-             </widget>
+            <item>
+             <property name="text">
+              <string>rps</string>
+             </property>
             </item>
-            <item row="2" column="0">
-             <widget class="QLabel" name="label_31">
-              <property name="text">
-               <string>Z:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1">
-             <widget class="QDoubleSpinBox" name="zfinalSpinBox"/>
-            </item>
-           </layout>
+           </widget>
           </item>
           <item row="0" column="0">
-           <widget class="QPushButton" name="markInitPositionButton">
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>30</height>
-             </size>
-            </property>
+           <widget class="QLabel" name="label_14">
             <property name="text">
-             <string>Marcar Posição Inicial</string>
+             <string>Velocidade de Soldagem</string>
             </property>
            </widget>
           </item>
-          <item row="3" column="0">
-           <widget class="QPushButton" name="markFinalPositionButton">
+          <item row="1" column="1">
+           <widget class="QDoubleSpinBox" name="trWeldSpeedSpinBox">
             <property name="minimumSize">
              <size>
-              <width>0</width>
-              <height>30</height>
+              <width>70</width>
+              <height>0</height>
              </size>
-            </property>
-            <property name="text">
-             <string>Marcar Posição Final</string>
             </property>
            </widget>
           </item>
-          <item row="4" column="1">
-           <widget class="QComboBox" name="initFinalPosUnitComboBox">
+         </layout>
+        </item>
+        <item>
+         <layout class="QGridLayout" name="gridLayout_6">
+          <item row="1" column="0">
+           <widget class="QSlider" name="trAmplitudeSlider">
+            <property name="maximum">
+             <number>300</number>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QDoubleSpinBox" name="trAmplitudeSpinBox">
+            <property name="minimumSize">
+             <size>
+              <width>70</width>
+              <height>0</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QComboBox" name="trAmplitudeUnitComboBox">
             <property name="sizeIncrement">
              <size>
               <width>0</width>
@@ -348,1546 +1384,589 @@
             </item>
            </widget>
           </item>
-          <item row="4" column="0">
-           <widget class="QLabel" name="label_29">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_9">
             <property name="text">
-             <string>Unidade:</string>
+             <string>Amplitude:</string>
             </property>
            </widget>
           </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QGridLayout" name="gridLayout_10">
           <item row="1" column="1">
-           <widget class="QPushButton" name="invertDirectionButton">
-            <property name="text">
-             <string>Inverter Sentido</string>
+           <widget class="QDoubleSpinBox" name="trLambdaSpinBox">
+            <property name="minimumSize">
+             <size>
+              <width>70</width>
+              <height>0</height>
+             </size>
             </property>
            </widget>
           </item>
-          <item row="5" column="0">
-           <widget class="QLabel" name="label_32">
-            <property name="text">
-             <string>Ângulo X (graus):</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="1">
-           <widget class="QDoubleSpinBox" name="xangleSpinBox"/>
-          </item>
-         </layout>
-        </widget>
-        <widget class="QWidget" name="tab_2">
-         <attribute name="title">
-          <string>Posição Fixa</string>
-         </attribute>
-         <layout class="QVBoxLayout" name="verticalLayout_2">
-          <item>
-           <spacer name="verticalSpacer">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
+          <item row="1" column="2">
+           <widget class="QComboBox" name="trLambdaUnitComboBox">
+            <property name="sizeIncrement">
              <size>
-              <width>20</width>
-              <height>14</height>
+              <width>0</width>
+              <height>0</height>
              </size>
             </property>
-           </spacer>
-          </item>
-          <item>
-           <layout class="QGridLayout" name="gridLayout_3">
-            <item row="2" column="0">
-             <widget class="QLabel" name="label_3">
-              <property name="text">
-               <string>Eixo Y:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="2">
-             <widget class="QComboBox" name="yposUnitComboBox">
-              <item>
-               <property name="text">
-                <string>mm</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>cm</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>m</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>pulsos</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>&quot;</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-            <item row="3" column="1">
-             <widget class="QDoubleSpinBox" name="ypositionSpinBox"/>
-            </item>
-            <item row="3" column="0">
-             <widget class="QSlider" name="ypositionSlider">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="1">
-             <widget class="QDoubleSpinBox" name="zpositionSpinBox"/>
-            </item>
-            <item row="5" column="0">
-             <widget class="QSlider" name="zpositionSlider">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="2">
-             <widget class="QComboBox" name="zposUnitComboBox">
-              <item>
-               <property name="text">
-                <string>mm</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>cm</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>m</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>pulsos</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>&quot;</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QSlider" name="xpositionSlider">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QDoubleSpinBox" name="xpositionSpinBox">
-              <property name="minimumSize">
-               <size>
-                <width>70</width>
-                <height>0</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="2">
-             <widget class="QComboBox" name="xposUnitComboBox">
-              <item>
-               <property name="text">
-                <string>mm</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>cm</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>m</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>pulsos</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>&quot;</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_2">
-              <property name="text">
-               <string>Eixo X:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="0">
-             <widget class="QLabel" name="label_4">
-              <property name="text">
-               <string>Eixo Z:</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <spacer name="verticalSpacer_2">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>15</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <layout class="QGridLayout" name="gridLayout_13">
-            <item row="3" column="1">
-             <widget class="QDoubleSpinBox" name="ypositionSpinBox_2"/>
-            </item>
-            <item row="3" column="0">
-             <widget class="QSlider" name="ypositionSlider_2">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QDoubleSpinBox" name="xpositionSpinBox_2">
-              <property name="minimumSize">
-               <size>
-                <width>70</width>
-                <height>0</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QSlider" name="xpositionSlider_2">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0">
-             <widget class="QLabel" name="label_34">
-              <property name="text">
-               <string>Orientação vertical:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_42">
-              <property name="text">
-               <string>Orientação horizontal:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="2">
-             <widget class="QLabel" name="label_43">
-              <property name="text">
-               <string>º</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="2">
-             <widget class="QLabel" name="label_44">
-              <property name="text">
-               <string>º</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <spacer name="verticalSpacer_13">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>14</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <layout class="QGridLayout" name="gridLayout_2">
-            <item row="1" column="0">
-             <widget class="QSlider" name="speedSlider">
-              <property name="maximum">
-               <number>300</number>
-              </property>
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0">
-             <widget class="QLabel" name="label">
-              <property name="text">
-               <string>Velocidade:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="2">
-             <widget class="QComboBox" name="speedUnitComboBox">
-              <item>
-               <property name="text">
-                <string>m/min</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>mm/s</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>rpm</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>rps</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QDoubleSpinBox" name="speedSpinBox">
-              <property name="minimumSize">
-               <size>
-                <width>70</width>
-                <height>0</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <spacer name="verticalSpacer_6">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>40</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </widget>
-        <widget class="QWidget" name="tab_3">
-         <attribute name="title">
-          <string>Longitudinal</string>
-         </attribute>
-         <layout class="QVBoxLayout" name="verticalLayout_5">
-          <item>
-           <widget class="QComboBox" name="longTrajectoryComboBox">
             <item>
              <property name="text">
-              <string>Switch Back</string>
+              <string>mm</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>Linear</string>
+              <string>cm</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>m</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>pulsos</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>&quot;</string>
              </property>
             </item>
            </widget>
           </item>
-          <item>
-           <spacer name="verticalSpacer_11">
+          <item row="1" column="0">
+           <widget class="QSlider" name="trLambdaSlider">
+            <property name="maximum">
+             <number>300</number>
+            </property>
             <property name="orientation">
-             <enum>Qt::Vertical</enum>
+             <enum>Qt::Horizontal</enum>
             </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>40</height>
-             </size>
-            </property>
-           </spacer>
+           </widget>
           </item>
-          <item>
-           <layout class="QGridLayout" name="gridLayout_11">
-            <item row="2" column="1">
-             <widget class="QDoubleSpinBox" name="sbWeldSpeedSpinBox">
-              <property name="minimumSize">
-               <size>
-                <width>70</width>
-                <height>0</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QLabel" name="label_13">
-              <property name="text">
-               <string>Velocidade de Soldagem</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0">
-             <widget class="QSlider" name="sbWeldSpeedSlider">
-              <property name="maximum">
-               <number>300</number>
-              </property>
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="2">
-             <widget class="QComboBox" name="sbWeldSpeedUnitComboBox">
-              <item>
-               <property name="text">
-                <string>m/min</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>mm/s</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>rpm</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>rps</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <spacer name="verticalSpacer_10">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_33">
+            <property name="text">
+             <string>Lambda:</string>
             </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>6</height>
-             </size>
-            </property>
-           </spacer>
+           </widget>
           </item>
-          <item>
-           <widget class="QWidget" name="advanceRetreatWidget" native="true">
-            <layout class="QVBoxLayout" name="verticalLayout_4">
+          <item row="1" column="5">
+           <widget class="QLabel" name="label_15">
+            <property name="text">
+             <string>Hz)</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="4">
+           <widget class="QLabel" name="frLabel">
+            <property name="text">
+             <string>0,00</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="3">
+           <widget class="QLabel" name="label_12">
+            <property name="text">
+             <string>(</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <spacer name="verticalSpacer_8">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QWidget" name="rhoWidget" native="true">
+          <layout class="QVBoxLayout" name="verticalLayout_3">
+           <item>
+            <widget class="QLabel" name="label_41">
+             <property name="text">
+              <string>Razão entre sobreposição e largura:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_7">
              <item>
-              <layout class="QGridLayout" name="gridLayout_9">
-               <item row="1" column="0">
-                <widget class="QLabel" name="label_5">
-                 <property name="text">
-                  <string>Avanço:</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="5" column="1">
-                <layout class="QGridLayout" name="gridLayout_7">
-                 <item row="1" column="0">
-                  <widget class="QSlider" name="bwLengthSlider">
-                   <property name="maximum">
-                    <number>300</number>
-                   </property>
-                   <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="0" column="0">
-                  <widget class="QLabel" name="label_10">
-                   <property name="text">
-                    <string>Comprimento:</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="1">
-                  <widget class="QDoubleSpinBox" name="bwLengthSpinBox">
-                   <property name="minimumSize">
-                    <size>
-                     <width>70</width>
-                     <height>0</height>
-                    </size>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="2">
-                  <widget class="QComboBox" name="bwLengthUnitComboBox">
-                   <property name="sizeIncrement">
-                    <size>
-                     <width>0</width>
-                     <height>0</height>
-                    </size>
-                   </property>
-                   <item>
-                    <property name="text">
-                     <string>mm</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>cm</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>m</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>pulsos</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>&quot;</string>
-                    </property>
-                   </item>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-               <item row="6" column="1">
-                <layout class="QGridLayout" name="gridLayout_4">
-                 <item row="1" column="0">
-                  <widget class="QSlider" name="bwSpeedSlider">
-                   <property name="maximum">
-                    <number>300</number>
-                   </property>
-                   <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="2">
-                  <widget class="QComboBox" name="bwSpeedUnitComboBox">
-                   <item>
-                    <property name="text">
-                     <string>m/min</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>mm/s</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>rpm</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>rps</string>
-                    </property>
-                   </item>
-                  </widget>
-                 </item>
-                 <item row="1" column="1">
-                  <widget class="QDoubleSpinBox" name="bwSpeedSpinBox">
-                   <property name="minimumSize">
-                    <size>
-                     <width>70</width>
-                     <height>0</height>
-                    </size>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="0" column="0">
-                  <widget class="QLabel" name="label_7">
-                   <property name="text">
-                    <string>Velocidade:</string>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-               <item row="2" column="1">
-                <layout class="QGridLayout" name="gridLayout_5">
-                 <item row="1" column="0">
-                  <widget class="QSlider" name="fwLengthSlider">
-                   <property name="maximum">
-                    <number>300</number>
-                   </property>
-                   <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="1">
-                  <widget class="QDoubleSpinBox" name="fwLengthSpinBox">
-                   <property name="minimumSize">
-                    <size>
-                     <width>70</width>
-                     <height>0</height>
-                    </size>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="2">
-                  <widget class="QComboBox" name="fwLengthUnitComboBox">
-                   <property name="sizeIncrement">
-                    <size>
-                     <width>0</width>
-                     <height>0</height>
-                    </size>
-                   </property>
-                   <item>
-                    <property name="text">
-                     <string>mm</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>cm</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>m</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>pulsos</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>&quot;</string>
-                    </property>
-                   </item>
-                  </widget>
-                 </item>
-                 <item row="0" column="0">
-                  <widget class="QLabel" name="label_8">
-                   <property name="text">
-                    <string>Comprimento:</string>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-               <item row="4" column="0">
-                <widget class="QLabel" name="label_6">
-                 <property name="text">
-                  <string>Recuo:</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="1">
-                <layout class="QGridLayout" name="gridLayout_8">
-                 <item row="1" column="1">
-                  <widget class="QDoubleSpinBox" name="fwSpeedSpinBox">
-                   <property name="minimumSize">
-                    <size>
-                     <width>70</width>
-                     <height>0</height>
-                    </size>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="0" column="0">
-                  <widget class="QLabel" name="label_11">
-                   <property name="text">
-                    <string>Velocidade:</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="0">
-                  <widget class="QSlider" name="fwSpeedSlider">
-                   <property name="maximum">
-                    <number>300</number>
-                   </property>
-                   <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="2">
-                  <widget class="QComboBox" name="fwSpeedUnitComboBox">
-                   <item>
-                    <property name="text">
-                     <string>m/min</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>mm/s</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>rpm</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>rps</string>
-                    </property>
-                   </item>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-               <item row="0" column="1">
-                <layout class="QGridLayout" name="gridLayout_19">
-                 <item row="1" column="1">
-                  <widget class="QDoubleSpinBox" name="speedRatioSpinBox">
-                   <property name="minimumSize">
-                    <size>
-                     <width>70</width>
-                     <height>0</height>
-                    </size>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="0">
-                  <widget class="QSlider" name="speedRatioSlider">
-                   <property name="maximum">
-                    <number>300</number>
-                   </property>
-                   <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="0" column="0" colspan="3">
-                  <widget class="QLabel" name="label_36">
-                   <property name="text">
-                    <string>Razão entre Velocidades (Recuo/Avanço)</string>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-              </layout>
+              <spacer name="horizontalSpacer_8">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
              </item>
-            </layout>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-        <widget class="QWidget" name="tab_4">
-         <attribute name="title">
-          <string>Transversal</string>
-         </attribute>
-         <layout class="QVBoxLayout" name="verticalLayout_8">
-          <item>
-           <spacer name="verticalSpacer_7">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>40</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_4">
-            <item>
-             <widget class="QComboBox" name="transvTrajectoryComboBox">
-              <item>
-               <property name="text">
-                <string>Triangular</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>E</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Duplo E</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Duplo 8</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <spacer name="verticalSpacer_9">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>40</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <layout class="QGridLayout" name="gridLayout_12">
-            <item row="1" column="0">
-             <widget class="QSlider" name="trWeldSpeedSlider">
-              <property name="maximum">
-               <number>300</number>
-              </property>
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="2">
-             <widget class="QComboBox" name="trWeldSpeedUnitComboBox">
-              <item>
-               <property name="text">
-                <string>m/min</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>mm/s</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>rpm</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>rps</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_14">
-              <property name="text">
-               <string>Velocidade de Soldagem</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QDoubleSpinBox" name="trWeldSpeedSpinBox">
-              <property name="minimumSize">
-               <size>
-                <width>70</width>
-                <height>0</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QGridLayout" name="gridLayout_6">
-            <item row="1" column="0">
-             <widget class="QSlider" name="trAmplitudeSlider">
-              <property name="maximum">
-               <number>300</number>
-              </property>
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QDoubleSpinBox" name="trAmplitudeSpinBox">
-              <property name="minimumSize">
-               <size>
-                <width>70</width>
-                <height>0</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="2">
-             <widget class="QComboBox" name="trAmplitudeUnitComboBox">
-              <property name="sizeIncrement">
-               <size>
-                <width>0</width>
-                <height>0</height>
-               </size>
-              </property>
-              <item>
-               <property name="text">
-                <string>mm</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>cm</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>m</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>pulsos</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>&quot;</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_9">
-              <property name="text">
-               <string>Amplitude:</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QGridLayout" name="gridLayout_10">
-            <item row="1" column="1">
-             <widget class="QDoubleSpinBox" name="trLambdaSpinBox">
-              <property name="minimumSize">
-               <size>
-                <width>70</width>
-                <height>0</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="2">
-             <widget class="QComboBox" name="trLambdaUnitComboBox">
-              <property name="sizeIncrement">
-               <size>
-                <width>0</width>
-                <height>0</height>
-               </size>
-              </property>
-              <item>
-               <property name="text">
-                <string>mm</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>cm</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>m</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>pulsos</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>&quot;</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QSlider" name="trLambdaSlider">
-              <property name="maximum">
-               <number>300</number>
-              </property>
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_33">
-              <property name="text">
-               <string>Lambda:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="5">
-             <widget class="QLabel" name="label_15">
-              <property name="text">
-               <string>Hz)</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="4">
-             <widget class="QLabel" name="frLabel">
-              <property name="text">
-               <string>0,00</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="3">
-             <widget class="QLabel" name="label_12">
-              <property name="text">
-               <string>(</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <spacer name="verticalSpacer_8">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>40</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QWidget" name="rhoWidget" native="true">
-            <layout class="QVBoxLayout" name="verticalLayout_3">
              <item>
-              <widget class="QLabel" name="label_41">
-               <property name="text">
-                <string>Razão entre sobreposição e largura:</string>
+              <widget class="QSlider" name="rhoSlider">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
                </property>
               </widget>
              </item>
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_7">
-               <item>
-                <spacer name="horizontalSpacer_8">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>40</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-               <item>
-                <widget class="QSlider" name="rhoSlider">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QDoubleSpinBox" name="rhoSpinBox">
-                 <property name="maximum">
-                  <double>0.990000000000000</double>
-                 </property>
-                 <property name="singleStep">
-                  <double>0.100000000000000</double>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <spacer name="horizontalSpacer_10">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>40</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-              </layout>
+              <widget class="QDoubleSpinBox" name="rhoSpinBox">
+               <property name="maximum">
+                <double>0.990000000000000</double>
+               </property>
+               <property name="singleStep">
+                <double>0.100000000000000</double>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_10">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
              </item>
             </layout>
-           </widget>
-          </item>
-          <item>
-           <widget class="QWidget" name="stopTimeWidget" native="true">
-            <layout class="QGridLayout" name="gridLayout_14">
-             <property name="leftMargin">
-              <number>1</number>
-             </property>
-             <property name="topMargin">
-              <number>1</number>
-             </property>
-             <property name="rightMargin">
-              <number>1</number>
-             </property>
-             <property name="bottomMargin">
-              <number>1</number>
-             </property>
-             <item row="0" column="0">
-              <layout class="QVBoxLayout" name="verticalLayout_6">
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="stopTimeWidget" native="true">
+          <layout class="QGridLayout" name="gridLayout_14">
+           <property name="leftMargin">
+            <number>1</number>
+           </property>
+           <property name="topMargin">
+            <number>1</number>
+           </property>
+           <property name="rightMargin">
+            <number>1</number>
+           </property>
+           <property name="bottomMargin">
+            <number>1</number>
+           </property>
+           <item row="0" column="0">
+            <layout class="QVBoxLayout" name="verticalLayout_6">
+             <item>
+              <widget class="QLabel" name="label_35">
+               <property name="text">
+                <string>Tempo de Parada</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_6">
                <item>
-                <widget class="QLabel" name="label_35">
+                <spacer name="horizontalSpacer_5">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QLabel" name="stopTimeLabel">
                  <property name="text">
-                  <string>Tempo de Parada</string>
+                  <string>Superior:</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <layout class="QHBoxLayout" name="horizontalLayout_6">
-                 <item>
-                  <spacer name="horizontalSpacer_5">
-                   <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0">
-                    <size>
-                     <width>40</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                 <item>
-                  <widget class="QLabel" name="stopTimeLabel">
-                   <property name="text">
-                    <string>Superior:</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QSpinBox" name="supSpinBox">
-                   <property name="maximum">
-                    <number>1500</number>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QLabel" name="label_37">
-                   <property name="text">
-                    <string>ms</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <spacer name="horizontalSpacer_6">
-                   <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0">
-                    <size>
-                     <width>40</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                 <item>
-                  <widget class="QLabel" name="label_38">
-                   <property name="text">
-                    <string>Inferior:</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QSpinBox" name="infSpinBox">
-                   <property name="maximum">
-                    <number>1500</number>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QLabel" name="label_39">
-                   <property name="text">
-                    <string>ms</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <spacer name="horizontalSpacer_7">
-                   <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0">
-                    <size>
-                     <width>40</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                </layout>
+                <widget class="QSpinBox" name="supSpinBox">
+                 <property name="maximum">
+                  <number>1500</number>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="label_37">
+                 <property name="text">
+                  <string>ms</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_6">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QLabel" name="label_38">
+                 <property name="text">
+                  <string>Inferior:</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QSpinBox" name="infSpinBox">
+                 <property name="maximum">
+                  <number>1500</number>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="label_39">
+                 <property name="text">
+                  <string>ms</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_7">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
                </item>
               </layout>
              </item>
             </layout>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="sbtriTab">
+       <attribute name="title">
+        <string>SB+Triang</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_7">
+        <item>
+         <spacer name="verticalSpacer_5">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <layout class="QGridLayout" name="gridLayout_16">
+          <item row="1" column="0">
+           <widget class="QSlider" name="sbtWeldSpeedSlider">
+            <property name="maximum">
+             <number>300</number>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QComboBox" name="sbtWeldSpeedUnitComboBox">
+            <item>
+             <property name="text">
+              <string>m/min</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>mm/s</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>rpm</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>rps</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_23">
+            <property name="text">
+             <string>Velocidade de Soldagem</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QDoubleSpinBox" name="sbtWeldSpeedSpinBox">
+            <property name="minimumSize">
+             <size>
+              <width>70</width>
+              <height>0</height>
+             </size>
+            </property>
            </widget>
           </item>
          </layout>
-        </widget>
-        <widget class="QWidget" name="tab_6">
-         <attribute name="title">
-          <string>SB+Triang</string>
-         </attribute>
-         <layout class="QVBoxLayout" name="verticalLayout_7">
-          <item>
-           <spacer name="verticalSpacer_5">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
+        </item>
+        <item>
+         <layout class="QGridLayout" name="gridLayout_15">
+          <item row="1" column="2">
+           <widget class="QComboBox" name="sbtAmplitudeUnitComboBox">
+            <property name="sizeIncrement">
              <size>
-              <width>20</width>
-              <height>40</height>
+              <width>0</width>
+              <height>0</height>
              </size>
             </property>
-           </spacer>
+            <item>
+             <property name="text">
+              <string>mm</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>cm</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>m</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>pulsos</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>&quot;</string>
+             </property>
+            </item>
+           </widget>
           </item>
-          <item>
-           <layout class="QGridLayout" name="gridLayout_16">
-            <item row="1" column="0">
-             <widget class="QSlider" name="sbtWeldSpeedSlider">
-              <property name="maximum">
-               <number>300</number>
-              </property>
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="2">
-             <widget class="QComboBox" name="sbtWeldSpeedUnitComboBox">
-              <item>
-               <property name="text">
-                <string>m/min</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>mm/s</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>rpm</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>rps</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_23">
-              <property name="text">
-               <string>Velocidade de Soldagem</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QDoubleSpinBox" name="sbtWeldSpeedSpinBox">
-              <property name="minimumSize">
-               <size>
-                <width>70</width>
-                <height>0</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QGridLayout" name="gridLayout_15">
-            <item row="1" column="2">
-             <widget class="QComboBox" name="sbtAmplitudeUnitComboBox">
-              <property name="sizeIncrement">
-               <size>
-                <width>0</width>
-                <height>0</height>
-               </size>
-              </property>
-              <item>
-               <property name="text">
-                <string>mm</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>cm</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>m</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>pulsos</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>&quot;</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QSlider" name="sbtAmplitudeSlider">
-              <property name="maximum">
-               <number>300</number>
-              </property>
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QDoubleSpinBox" name="sbtAmplitudeSpinBox">
-              <property name="minimumSize">
-               <size>
-                <width>70</width>
-                <height>0</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_22">
-              <property name="text">
-               <string>Amplitude:</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QGridLayout" name="gridLayout_17">
-            <item row="1" column="2">
-             <widget class="QComboBox" name="sbtForwardLenUnitComboBox">
-              <property name="sizeIncrement">
-               <size>
-                <width>0</width>
-                <height>0</height>
-               </size>
-              </property>
-              <item>
-               <property name="text">
-                <string>mm</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>cm</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>m</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>pulsos</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>&quot;</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QSlider" name="sbtForwardLenSlider">
-              <property name="maximum">
-               <number>300</number>
-              </property>
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QDoubleSpinBox" name="sbtForwardLenSpinBox">
-              <property name="minimumSize">
-               <size>
-                <width>70</width>
-                <height>0</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_24">
-              <property name="text">
-               <string>Comprimento de Avanço:</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <spacer name="verticalSpacer_3">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
+          <item row="1" column="0">
+           <widget class="QSlider" name="sbtAmplitudeSlider">
+            <property name="maximum">
+             <number>300</number>
             </property>
-            <property name="sizeHint" stdset="0">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QDoubleSpinBox" name="sbtAmplitudeSpinBox">
+            <property name="minimumSize">
              <size>
-              <width>20</width>
-              <height>40</height>
+              <width>70</width>
+              <height>0</height>
              </size>
             </property>
-           </spacer>
+           </widget>
           </item>
-          <item>
-           <layout class="QFormLayout" name="formLayout_2">
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_21">
-              <property name="text">
-               <string>Oscilações tranversais por ciclo:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="QSpinBox" name="sbtOscCountSpinBox">
-              <property name="minimum">
-               <number>1</number>
-              </property>
-              <property name="maximum">
-               <number>10</number>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <spacer name="verticalSpacer_12">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_22">
+            <property name="text">
+             <string>Amplitude:</string>
             </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>30</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <layout class="QGridLayout" name="gridLayout_20">
-            <item row="1" column="1">
-             <widget class="QDoubleSpinBox" name="speedRatioSpinBox_2">
-              <property name="minimumSize">
-               <size>
-                <width>70</width>
-                <height>0</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QSlider" name="speedRatioSlider_2">
-              <property name="maximum">
-               <number>300</number>
-              </property>
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0" colspan="3">
-             <widget class="QLabel" name="label_40">
-              <property name="text">
-               <string>Razão entre Velocidades (Recuo/Avanço)</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <spacer name="verticalSpacer_4">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>40</height>
-             </size>
-            </property>
-           </spacer>
+           </widget>
           </item>
          </layout>
-        </widget>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="executeButton">
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>40</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>Executar</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="correctButton">
-        <property name="text">
-         <string>Corrigir</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QProgressBar" name="progressBar">
-        <property name="value">
-         <number>0</number>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <widget class="QGraphicsView" name="graphicsView">
-      <property name="verticalScrollBarPolicy">
-       <enum>Qt::ScrollBarAlwaysOff</enum>
-      </property>
-      <property name="horizontalScrollBarPolicy">
-       <enum>Qt::ScrollBarAlwaysOff</enum>
-      </property>
+        </item>
+        <item>
+         <layout class="QGridLayout" name="gridLayout_17">
+          <item row="1" column="2">
+           <widget class="QComboBox" name="sbtForwardLenUnitComboBox">
+            <property name="sizeIncrement">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
+            <item>
+             <property name="text">
+              <string>mm</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>cm</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>m</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>pulsos</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>&quot;</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QSlider" name="sbtForwardLenSlider">
+            <property name="maximum">
+             <number>300</number>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QDoubleSpinBox" name="sbtForwardLenSpinBox">
+            <property name="minimumSize">
+             <size>
+              <width>70</width>
+              <height>0</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_24">
+            <property name="text">
+             <string>Comprimento de Avanço:</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <spacer name="verticalSpacer_3">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <layout class="QFormLayout" name="formLayout_2">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_21">
+            <property name="text">
+             <string>Oscilações tranversais por ciclo:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QSpinBox" name="sbtOscCountSpinBox">
+            <property name="minimum">
+             <number>1</number>
+            </property>
+            <property name="maximum">
+             <number>10</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <spacer name="verticalSpacer_12">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>30</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <layout class="QGridLayout" name="gridLayout_20">
+          <item row="1" column="1">
+           <widget class="QDoubleSpinBox" name="speedRatioSpinBox_2">
+            <property name="minimumSize">
+             <size>
+              <width>70</width>
+              <height>0</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QSlider" name="speedRatioSlider_2">
+            <property name="maximum">
+             <number>300</number>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0" colspan="3">
+           <widget class="QLabel" name="label_40">
+            <property name="text">
+             <string>Razão entre Velocidades (Recuo/Avanço)</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <spacer name="verticalSpacer_4">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
      </widget>
     </item>
    </layout>
