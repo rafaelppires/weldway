@@ -71,9 +71,9 @@ void AbstractTrajectory::addR( const Vector3D &delta, double spdmm ) { // Relati
     Vector3D A  = positions_.back(),
              B  = positions_[ psz-2 ],
              C  = positions_[ psz-3 ],
-             AC = C - A,
-             AB = B - A;
-    if( AC.cross( AB ).length() < 1e-5 ) {
+             BA = A - B,
+             BC = C - B;
+    if( BA.cross( BC ).length() < 1e-5 && BA.dot( BC ) < 0 ) {
       positions_.erase( positions_.begin()+psz-2 );
       speeds_.pop_back();
     }

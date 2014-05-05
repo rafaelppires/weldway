@@ -22,6 +22,14 @@ public:
     return sqrt( ret );
   }
 
+  template <typename T2>
+  long double dot( const Vector<N,T2> &v2 ) const {
+    long double ret = 0;
+    for(unsigned int i = 0; i < N; ++i)
+      ret += v[i] * v2(i);
+    return ret;
+  }
+
   long double length() const {
     long double ret = 0;
     for(unsigned int i = 0; i < N; ++i)
@@ -136,6 +144,7 @@ public:
   T& x() { return s::v[0]; }
   T& y() { return s::v[1]; }
   T& z() { return s::v[2]; }
+
   Vector3 cross( const Vector3 &v ) const {
     return Vector3( y()*v.z()-v.y()*z(),
                     v.x()*z()-x()*v.z(),
