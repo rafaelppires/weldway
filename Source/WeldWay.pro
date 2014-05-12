@@ -25,7 +25,8 @@ SOURCES += src/main.cpp \
            src/trajectories/triangular.cpp \
            src/trajectories/e_trajectory.cpp \
            src/trajectories/double_e.cpp \
-           src/trajectories/double8.cpp
+           src/trajectories/double8.cpp \
+           src/trajectories/bricks.cpp
 
 HEADERS += ui/mainwindow.h \
            include/simplemotion.h \
@@ -52,7 +53,8 @@ HEADERS += ui/mainwindow.h \
            include/trajectories/e_trajectory.h \
            include/trajectories/double_e.h \
            include/trajectories/rhombus.h \
-           include/trajectories/double8.h
+           include/trajectories/double8.h \
+           include/trajectories/bricks.h
 
 FORMS    += ui/mainwindow.ui \
             ui/formconnection.ui

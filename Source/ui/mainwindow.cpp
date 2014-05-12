@@ -10,6 +10,7 @@
 #include <e_trajectory.h>
 #include <double8.h>
 #include <rhombus.h>
+#include <bricks.h>
 
 //-----------------------------------------------------------------------------
 MainWindow::MainWindow(QWidget *parent) :
@@ -230,7 +231,9 @@ void MainWindow::on_executeButton_clicked() {
       } else if( tidx == 3 ) {
         double rho = eRhoSliderSpin->value();
         executing_trajectory_.reset( new Double8Trajectory( spd, lmbd, ampl, rho, rotate_vec, xangle) );
-      } else {
+      } else if( tidx == 4 ){
+        executing_trajectory_.reset( new BricksTrajectory( spd, ampl, rotate_vec, xangle) );
+      }else {
         uint32_t sup_stop = ui->supSpinBox->value(),
                  inf_stop = ui->infSpinBox->value();
         executing_trajectory_.reset( new TriangularTrajectory( spd, lmbd, ampl, sup_stop, inf_stop, rotate_vec, xangle) );
@@ -524,6 +527,8 @@ void MainWindow::redraw() {
     } else if( tidx == 3 ) {
       double rho = eRhoSliderSpin->value();
       Double8Trajectory::draft(v,spd,lmbd,ampl,rho);
+    } else if( tidx == 4 ) {
+      BricksTrajectory::draft( v, spd, ampl );
     }
     render(v);
   }
