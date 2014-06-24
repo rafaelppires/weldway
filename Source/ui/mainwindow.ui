@@ -1281,6 +1281,11 @@
               <string>Tijolo</string>
              </property>
             </item>
+            <item>
+             <property name="text">
+              <string>Duplo Triangular</string>
+             </property>
+            </item>
            </widget>
           </item>
          </layout>

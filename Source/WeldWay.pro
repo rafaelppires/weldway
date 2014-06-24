@@ -26,7 +26,8 @@ SOURCES += src/main.cpp \
            src/trajectories/e_trajectory.cpp \
            src/trajectories/double_e.cpp \
            src/trajectories/double8.cpp \
-           src/trajectories/bricks.cpp
+           src/trajectories/bricks.cpp \
+           src/trajectories/double_triang.cpp
 
 HEADERS += ui/mainwindow.h \
            include/simplemotion.h \
@@ -54,18 +55,19 @@ HEADERS += ui/mainwindow.h \
            include/trajectories/double_e.h \
            include/trajectories/rhombus.h \
            include/trajectories/double8.h \
-           include/trajectories/bricks.h
+           include/trajectories/bricks.h \
+           include/trajectories/double_triang.h
 
 FORMS    += ui/mainwindow.ui \
             ui/formconnection.ui
 
-LIBS += -L$$(DEV_DEPS)/boost_1_54_0/stage/lib \
-        SimpleMotion.dll inpout32.dll -lsetupapi \
-        -lboost_system-mgw48-mt-1_54 \
-        -lboost_thread-mgw48-mt-1_54 \
-        -lboost_chrono-mgw48-mt-1_54
+LIBS += -L$$(DEV_DEPS)/boost_1_55_0/stage/lib \
+        inpout32.dll -lsetupapi \
+        -lboost_system-mgw48-mt-1_55 \
+        -lboost_thread-mgw48-mt-1_55 \
+        -lboost_chrono-mgw48-mt-1_55
 
-INCLUDEPATH += $$(DEV_DEPS)/boost_1_54_0 include include/trajectories ui
+INCLUDEPATH += $$(DEV_DEPS)/boost_1_55_0 include include/trajectories ui
 
 RESOURCES += \
     resources.qrc

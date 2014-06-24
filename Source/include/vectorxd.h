@@ -129,7 +129,9 @@ public:
   Vector2( const s& v ) { x() = v(0); y() = v(1); }
   Vector2( T a, T b ) { x() = a; y() = b; }
   T& x() { return s::v[0]; }
-  T& y() { return s::v[1];}
+  T& y() { return s::v[1]; }
+  const T& x() const { return s::v[0]; }
+  const T& y() const { return s::v[1];}
 };
 
 template< typename T>

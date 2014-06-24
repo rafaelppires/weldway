@@ -61,7 +61,28 @@ bool MasterCommunicator::sendPosCmmds( AbstractProtocol::ConcurrentCmmd32 &cmmds
   comm_->sendPosCmmds( cmmds );
   return true;
 }
+//-----------------------------------------------------------------------------
+bool MasterCommunicator::gotoPosition( const Vector3D &pos, uint16_t spd, const Vector2I &apos ) {
+  if( !comm_ ) return false;
+  AbstractProtocol::ConcurrentCmmd32 scmd, pcmd;
+  Vector3D delta( pos - comm_->getLastSentPos() ),
+           vr( delta.unary() );
+  vr *= spd;
+  scmd[ X_AXIS ] = abs(vr.x());
+  scmd[ Y_AXIS ] = abs(vr.y());
+  scmd[ Z_AXIS ] = abs(vr.z());
+  scmd[ A_AXIS ] = 100;
+  scmd[ B_AXIS ] = 100;
+  comm_->sendSpdCmmds( scmd );
 
+  pcmd[ X_AXIS ] =  pos.x();
+  pcmd[ Y_AXIS ] = -pos.y();
+  pcmd[ Z_AXIS ] =  pos.z();
+  pcmd[ A_AXIS ] =  apos.x();
+  pcmd[ B_AXIS ] =  apos.y();
+  comm_->sendPosCmmds( pcmd );
+  return true;
+}
 //-----------------------------------------------------------------------------
 int32_t MasterCommunicator::getStatus( GraniteParams p, uint8_t axis ) {
   if( !comm_ ) return ~0;

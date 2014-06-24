@@ -33,6 +33,7 @@ public:
   bool sendLinearIncrement( uint8_t axis, double spd, double inc );
   void setAngularOffset( double angle );
   bool sendLinearCorrection( uint8_t axis, double inc );
+  bool gotoPosition(const Vector3D&, uint16_t, const Vector2I& );
 
   // Setup
   void setupParallelPort( uint16_t addr );

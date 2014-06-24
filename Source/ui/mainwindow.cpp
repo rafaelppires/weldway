@@ -11,6 +11,7 @@
 #include <double8.h>
 #include <rhombus.h>
 #include <bricks.h>
+#include <double_triang.h>
 
 //-----------------------------------------------------------------------------
 MainWindow::MainWindow(QWidget *parent) :
@@ -196,19 +197,13 @@ void MainWindow::on_executeButton_clicked() {
   } else {
     executing_trajectory_.reset();
     if( idx == 2 ) {
-      machine_.setMaxSpeed( speedSliderSpin->value( spd_unit ), AXIS_ALL );
-
-      AbstractProtocol::ConcurrentCmmd32 cmd;
-      cmd[ X_AXIS ] =  xposSliderSpin->value( pos_unit );
-      cmd[ Y_AXIS ] = -yposSliderSpin->value( pos_unit );
-      cmd[ Z_AXIS ] =  zposSliderSpin->value( pos_unit );
+      Vector3D pos( xposSliderSpin->value( pos_unit ),
+                    yposSliderSpin->value( pos_unit ),
+                    zposSliderSpin->value( pos_unit ) );
 
       Vector2I angpos = machine_.angularOffset( ANGULAR_VERTICAL,   vOrSliderSpin->value("") ) +
-                        machine_.angularOffset( ANGULAR_HORIZONTAL, hOrSliderSpin->value("") );
-      cmd[ A_AXIS ] = angpos.x();
-      cmd[ B_AXIS ] = angpos.y();
-
-      machine_.sendPosCmmds( cmd );
+                        machine_.angularOffset( ANGULAR_HORIZONTAL, hOrSliderSpin->value("") );     
+      machine_.gotoPosition( pos, speedSliderSpin->value( spd_unit ), angpos );
     } else if( idx == 3 ) { // Longitudinal
       int32_t tidx = ui->longTrajectoryComboBox->currentIndex(),
               weldspd = sbWeldSpeedSliderSpin->value( spd_unit );
@@ -233,6 +228,8 @@ void MainWindow::on_executeButton_clicked() {
         executing_trajectory_.reset( new Double8Trajectory( spd, lmbd, ampl, rho, rotate_vec, xangle) );
       } else if( tidx == 4 ){
         executing_trajectory_.reset( new BricksTrajectory( spd, ampl, rotate_vec, xangle) );
+      } else if( tidx == 5 ){
+        executing_trajectory_.reset( new DoubleTriangularTraj( spd, lmbd, ampl, rotate_vec, xangle) );
       }else {
         uint32_t sup_stop = ui->supSpinBox->value(),
                  inf_stop = ui->infSpinBox->value();
@@ -529,6 +526,8 @@ void MainWindow::redraw() {
       Double8Trajectory::draft(v,spd,lmbd,ampl,rho);
     } else if( tidx == 4 ) {
       BricksTrajectory::draft( v, spd, ampl );
+    } else if( tidx == 5 ) {
+      DoubleTriangularTraj::draft( v, spd, lmbd, ampl );
     }
     render(v);
   }

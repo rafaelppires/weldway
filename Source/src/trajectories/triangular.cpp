@@ -3,16 +3,15 @@
 //-----------------------------------------------------------------------------
 TriangularTrajectory::TriangularTrajectory(double spd, double lmbd, double ampl,
                      uint32_t sstop, uint32_t istop, const Vector3D &rotate_vec, double deg_xang ) : AbstractTrajectory(rotate_vec, deg_xang) {
-  double total_length = rotate_vec.length();
   double
-      xspeedmm  = double(spd) / TO_RPM,
+      xspeedmm  = spd / TO_RPM,
       period    = lmbd / (xspeedmm * TO_PULSES),
       sstoplen  = xspeedmm * sstop * TO_PULSES / 1000.,
       istoplen  = xspeedmm * istop * TO_PULSES / 1000.,
       risexlen  = (lmbd - sstoplen - istoplen)/4.,
       yspeedmm  = 2. * (ampl/TO_PULSES)  / (period - (sstop+istop)/1000.),
       risespd   = Vector2D(xspeedmm, yspeedmm).length();
-   int period_count = 0.5 + total_length/lmbd;
+   int period_count = 0.5 + rotate_vec.length()/lmbd;
 
    addR( Vector3D( risexlen, ampl/2., 0 ), risespd );
    addRepeatable( period_count - 1, sstop, istop, risexlen, ampl, risespd, xspeedmm );

@@ -31,7 +31,7 @@ private:
 
   // all dimensions must be at the same base units
   uint16_t fixSpeed( double v, double a, double t );
-  double adjustedSpeed( double v, double a, double t) {
+  static double adjustedSpeed( double v, double a, double t) {
     return (a * t - sqrt( a*a*t*t - 4 * a * v * t ) ) / 2.;
   }
 
