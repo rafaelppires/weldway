@@ -27,7 +27,8 @@ SOURCES += src/main.cpp \
            src/trajectories/double_e.cpp \
            src/trajectories/double8.cpp \
            src/trajectories/bricks.cpp \
-           src/trajectories/double_triang.cpp
+           src/trajectories/double_triang.cpp \
+           src/trajectories/double_triang2nd.cpp
 
 HEADERS += ui/mainwindow.h \
            include/simplemotion.h \
@@ -56,7 +57,8 @@ HEADERS += ui/mainwindow.h \
            include/trajectories/rhombus.h \
            include/trajectories/double8.h \
            include/trajectories/bricks.h \
-           include/trajectories/double_triang.h
+           include/trajectories/double_triang.h \
+           include/trajectories/double_triang2nd.h
 
 FORMS    += ui/mainwindow.ui \
             ui/formconnection.ui

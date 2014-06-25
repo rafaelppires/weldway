@@ -1286,6 +1286,11 @@
               <string>Duplo Triangular</string>
              </property>
             </item>
+            <item>
+             <property name="text">
+              <string>Duplo Triangular 5 segmentos</string>
+             </property>
+            </item>
            </widget>
           </item>
          </layout>

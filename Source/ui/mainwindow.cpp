@@ -12,6 +12,7 @@
 #include <rhombus.h>
 #include <bricks.h>
 #include <double_triang.h>
+#include <double_triang2nd.h>
 
 //-----------------------------------------------------------------------------
 MainWindow::MainWindow(QWidget *parent) :
@@ -230,7 +231,9 @@ void MainWindow::on_executeButton_clicked() {
         executing_trajectory_.reset( new BricksTrajectory( spd, ampl, rotate_vec, xangle) );
       } else if( tidx == 5 ){
         executing_trajectory_.reset( new DoubleTriangularTraj( spd, lmbd, ampl, rotate_vec, xangle) );
-      }else {
+      } else if( tidx == 6 ){
+        executing_trajectory_.reset( new DoubleTriangular2ndTraj( spd, lmbd, ampl, rotate_vec, xangle) );
+      } else {
         uint32_t sup_stop = ui->supSpinBox->value(),
                  inf_stop = ui->infSpinBox->value();
         executing_trajectory_.reset( new TriangularTrajectory( spd, lmbd, ampl, sup_stop, inf_stop, rotate_vec, xangle) );
@@ -528,6 +531,8 @@ void MainWindow::redraw() {
       BricksTrajectory::draft( v, spd, ampl );
     } else if( tidx == 5 ) {
       DoubleTriangularTraj::draft( v, spd, lmbd, ampl );
+    } else if( tidx == 6 ) {
+      DoubleTriangular2ndTraj::draft( v, spd, lmbd, ampl );
     }
     render(v);
   }
