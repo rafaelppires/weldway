@@ -318,7 +318,7 @@ void MainWindow::on_transvTrajectoryComboBox_currentTextChanged(const QString &a
     ui->stopTimeWidget->setHidden(false);
     ui->rhoWidget->setHidden(true);
   } else {
-    if( arg1 != "Duplo e" ) ui->rhoWidget->setHidden(false);
+    ui->rhoWidget->setHidden( arg1 != "E" && arg1 != "Duplo 8" );
     ui->stopTimeWidget->setHidden(true);
   }
   redraw();
@@ -545,36 +545,49 @@ void MainWindow::on_tabWidget_currentChanged( int index ) {
 
 //-----------------------------------------------------------------------------
 void MainWindow::on_initPosButton_clicked() {
+  /*
   machine_.setMaxSpeed( 650, AXIS_ALL );
 
   AbstractProtocol::ConcurrentCmmd32 cmd;
   cmd[ X_AXIS ] =  ui->xinitSpinBox->value() * TO_PULSES;
   cmd[ Y_AXIS ] = -ui->yinitSpinBox->value() * TO_PULSES;
   cmd[ Z_AXIS ] =  ui->zinitSpinBox->value() * TO_PULSES;
-
+  */
+  Vector3D pos( ui->xinitSpinBox->value(), ui->yinitSpinBox->value(), ui->zinitSpinBox->value());
+  pos *= TO_PULSES;
   Vector2I angpos = machine_.angularOffset( ANGULAR_VERTICAL,   ui->vAngleSpinBox->value() ) +
                     machine_.angularOffset( ANGULAR_HORIZONTAL, ui->hAngleSpinBox->value() );
+  /*
   cmd[ A_AXIS ] = angpos.x();
   cmd[ B_AXIS ] = angpos.y();
 
   machine_.sendPosCmmds( cmd );
+  */
+  machine_.gotoPosition(pos, 650, angpos);
 }
 
 //-----------------------------------------------------------------------------
 void MainWindow::on_finalPosButton_clicked() {
+  /*
   machine_.setMaxSpeed( 650, AXIS_ALL );
 
   AbstractProtocol::ConcurrentCmmd32 cmd;
   cmd[ X_AXIS ] =  ui->xfinalSpinBox->value() * TO_PULSES;
   cmd[ Y_AXIS ] = -ui->yfinalSpinBox->value() * TO_PULSES;
   cmd[ Z_AXIS ] =  ui->zfinalSpinBox->value() * TO_PULSES;
-
+  */
+  Vector3D pos( ui->xfinalSpinBox->value(), ui->yfinalSpinBox->value(), ui->zfinalSpinBox->value());
+  pos *= TO_PULSES;
   Vector2I angpos = machine_.angularOffset( ANGULAR_VERTICAL,   ui->vAngleSpinBox->value() ) +
                     machine_.angularOffset( ANGULAR_HORIZONTAL, ui->hAngleSpinBox->value() );
+  /*
   cmd[ A_AXIS ] = angpos.x();
   cmd[ B_AXIS ] = angpos.y();
 
   machine_.sendPosCmmds( cmd );
+  */
+
+  machine_.gotoPosition(pos, 650, angpos);
 }
 
 //-----------------------------------------------------------------------------

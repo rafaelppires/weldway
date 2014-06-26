@@ -65,12 +65,18 @@ bool MasterCommunicator::sendPosCmmds( AbstractProtocol::ConcurrentCmmd32 &cmmds
 bool MasterCommunicator::gotoPosition( const Vector3D &pos, uint16_t spd, const Vector2I &apos ) {
   if( !comm_ ) return false;
   AbstractProtocol::ConcurrentCmmd32 scmd, pcmd;
+  std::cout << "Pos: " << pos << " LP: " << comm_->getLastSentPos() << "\n";
   Vector3D delta( pos - comm_->getLastSentPos() ),
            vr( delta.unary() );
   vr *= spd;
-  scmd[ X_AXIS ] = abs(vr.x());
-  scmd[ Y_AXIS ] = abs(vr.y());
-  scmd[ Z_AXIS ] = abs(vr.z());
+
+  if( delta.length() ) {
+    std::cout << Vector3D(delta.unary()) << " " << vr << "\n";
+    int32_t sx = 0.5+fabs(vr.x()), sy = 0.5+fabs(vr.y()), sz = 0.5+fabs(vr.z());
+    if( sx ) scmd[ X_AXIS ] = sx;
+    if( sy ) scmd[ Y_AXIS ] = sy;
+    if( sz ) scmd[ Z_AXIS ] = sz;
+  }
   scmd[ A_AXIS ] = 100;
   scmd[ B_AXIS ] = 100;
   comm_->sendSpdCmmds( scmd );
@@ -81,6 +87,11 @@ bool MasterCommunicator::gotoPosition( const Vector3D &pos, uint16_t spd, const 
   pcmd[ A_AXIS ] =  apos.x();
   pcmd[ B_AXIS ] =  apos.y();
   comm_->sendPosCmmds( pcmd );
+
+  printf("SPD (%d,%d,%d) (%d,%d) POS (%d,%d,%d) (%d,%d)\n\n", scmd[ X_AXIS ], scmd[ Y_AXIS ], scmd[ Z_AXIS ], scmd[ A_AXIS ], scmd[ B_AXIS ],
+                                                             pcmd[ X_AXIS ], pcmd[ Y_AXIS ], pcmd[ Z_AXIS ], pcmd[ A_AXIS ], pcmd[ B_AXIS ]);
+  fflush( stdin );
+
   return true;
 }
 //-----------------------------------------------------------------------------
