@@ -64,6 +64,9 @@ MainWindow::MainWindow(QWidget *parent) :
   sbtSpeedSliderSpin = new SliderSpin( this, ui->sbtWeldSpeedSlider, ui->sbtWeldSpeedSpinBox, ui->sbtWeldSpeedUnitComboBox, UnitConvPtr(new SpeedConv(0,100)) );
   sbtAmplSliderSpin  = new SliderSpin( this, ui->sbtAmplitudeSlider, ui->sbtAmplitudeSpinBox, ui->sbtAmplitudeUnitComboBox, UnitConvPtr(new PositionConv(0,50)) );
   sbtLenSliderSpin   = new SliderSpin( this, ui->sbtForwardLenSlider, ui->sbtForwardLenSpinBox, ui->sbtForwardLenUnitComboBox, UnitConvPtr(new PositionConv(0,30)) );
+  connect(sbtAmplSliderSpin, SIGNAL(valueChanged()), this, SLOT(redraw()));
+  connect(sbtLenSliderSpin, SIGNAL(valueChanged()), this, SLOT(redraw()));
+  connect(ui->sbtOscCountSpinBox, SIGNAL(valueChanged(int)), this, SLOT(redraw()) );
 
   //ok_label_  = new QLabel( ui->statusbar );
   x_statlabel_ = new QLabel( statusBar() );
@@ -482,7 +485,7 @@ void MainWindow::on_correctButton_clicked() {
 }
 
 //-----------------------------------------------------------------------------
-void TrajectoryScene::drawBackground ( QPainter * painter, const QRectF & rect ) {
+void TrajectoryScene::drawBackground( QPainter * painter, const QRectF & rect ) {
   painter->setPen( Qt::lightGray );
   double x = int(rect.x() / 40) * 40, x0 = x;
   for(; fabs(x-x0) < rect.width(); x += 40 )
@@ -508,9 +511,9 @@ void MainWindow::render( PositionVector &v ) {
 //-----------------------------------------------------------------------------
 void MainWindow::redraw() {
   int index = ui->tabWidget->currentIndex();
+  std::string pos_unit("pulsos"), spd_unit("rpm");
   if( index == 4 ) {
     int32_t tidx = ui->transvTrajectoryComboBox->currentIndex();
-    std::string pos_unit("pulsos"), spd_unit("rpm");
     double lmbd = trLmbdSliderSpin->value( pos_unit ),
            spd  = trSpeedSliderSpin->value( spd_unit ),
            ampl = trAmplSliderSpin->value( pos_unit );
@@ -534,6 +537,13 @@ void MainWindow::redraw() {
     } else if( tidx == 6 ) {
       DoubleTriangular2ndTraj::draft( v, spd, lmbd, ampl );
     }
+    render(v);
+  } else if( index == 5 ) {
+    PositionVector v;
+    int32_t spd  = sbtSpeedSliderSpin->value( spd_unit ),
+            ampl = sbtAmplSliderSpin->value( pos_unit ),
+            len  = sbtLenSliderSpin->value( pos_unit );
+    Rhombus::draft(v,ampl,len,ui->sbtOscCountSpinBox->value(),spd);
     render(v);
   }
 }

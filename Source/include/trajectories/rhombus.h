@@ -34,6 +34,16 @@ public:
   void applyCorrection( int32_t a, int32_t l, uint8_t n, double wspeed ) {
 
   }
+
+  //-----------------------------------------------------------------------------
+  static void draft(PositionVector &out, int32_t a, int32_t l, uint8_t n, double wspeed ) {
+    Rhombus e( a,l,n,wspeed,Vector3D(4*l,0,0),0 );
+    out.clear();
+    out.push_back( e.initialOffset() );
+    out.insert( out.end(), e.positions_.begin(), e.positions_.end() );
+  }
+
+  //-----------------------------------------------------------------------------
 };
 
 #endif
