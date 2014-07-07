@@ -237,8 +237,8 @@ void MainWindow::on_executeButton_clicked() {
       } else if( tidx == 6 ){
         executing_trajectory_.reset( new DoubleTriangular2ndTraj( spd, lmbd, ampl, rotate_vec, xangle) );
       } else {
-        uint32_t sup_stop = ui->supSpinBox->value(),
-                 inf_stop = ui->infSpinBox->value();
+        uint32_t sup_stop = 0,
+                 inf_stop = 0;
         executing_trajectory_.reset( new TriangularTrajectory( spd, lmbd, ampl, sup_stop, inf_stop, rotate_vec, xangle) );
       }
     } else if( idx == 5 ) {
@@ -471,8 +471,8 @@ void MainWindow::on_correctButton_clicked() {
                 (de = dynamic_cast<DoubleETrajectory *>( executing_trajectory_.get() ))) {
        de->applyCorrection( spd, lmbd, ampl );
      } else if( TriangularTrajectory *tt = dynamic_cast<TriangularTrajectory *>( executing_trajectory_.get() ) ) {
-       uint32_t sup_stop = ui->supSpinBox->value(),
-                inf_stop = ui->infSpinBox->value();
+       uint32_t sup_stop = 0,
+                inf_stop = 0;
        tt->applyCorrection( spd, lmbd, ampl, sup_stop, inf_stop );
      }
    } else if( idx == 5 &&
@@ -519,8 +519,8 @@ void MainWindow::redraw() {
            ampl = trAmplSliderSpin->value( pos_unit );
     PositionVector v;
     if( tidx == 0 ) {
-      uint32_t sup_stop = ui->supSpinBox->value(),
-               inf_stop = ui->infSpinBox->value();
+      uint32_t sup_stop = 0,
+               inf_stop = 0;
       TriangularTrajectory::draft( v, spd, lmbd, ampl, sup_stop, inf_stop );
     } else if( tidx == 1 ) {
       double rho = eRhoSliderSpin->value();

@@ -1238,7 +1238,7 @@
        <attribute name="title">
         <string>Transversal</string>
        </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_8">
+       <layout class="QVBoxLayout" name="verticalLayout">
         <item>
          <spacer name="verticalSpacer_7">
           <property name="orientation">
@@ -1489,7 +1489,7 @@
           <item row="0" column="0">
            <widget class="QLabel" name="label_33">
             <property name="text">
-             <string>Lambda:</string>
+             <string>Comprimento de onda (λ):</string>
             </property>
            </widget>
           </item>
@@ -1609,92 +1609,74 @@
              <item>
               <widget class="QLabel" name="label_35">
                <property name="text">
-                <string>Tempo de Parada</string>
+                <string>Extremidades</string>
                </property>
               </widget>
              </item>
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_6">
+              <layout class="QHBoxLayout" name="horizontalLayout_2">
                <item>
-                <spacer name="horizontalSpacer_5">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>40</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-               <item>
-                <widget class="QLabel" name="stopTimeLabel">
+                <widget class="QLabel" name="label_50">
                  <property name="text">
-                  <string>Superior:</string>
+                  <string>Velocidade (× Vel. Transversal):</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QSpinBox" name="supSpinBox">
+                <widget class="QDoubleSpinBox" name="doubleSpinBox_3">
                  <property name="maximum">
-                  <number>1500</number>
+                  <double>4.000000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>1.000000000000000</double>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_6">
+               <item>
+                <widget class="QLabel" name="stopTimeLabel">
+                 <property name="text">
+                  <string>Superior (% λ):</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QDoubleSpinBox" name="doubleSpinBox">
+                 <property name="maximum">
+                  <double>50.000000000000000</double>
                  </property>
                 </widget>
                </item>
                <item>
                 <widget class="QLabel" name="label_37">
                  <property name="text">
-                  <string>ms</string>
+                  <string>(0 mm)</string>
                  </property>
                 </widget>
-               </item>
-               <item>
-                <spacer name="horizontalSpacer_6">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>40</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
                </item>
                <item>
                 <widget class="QLabel" name="label_38">
                  <property name="text">
-                  <string>Inferior:</string>
+                  <string>Inferior (% λ):</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QSpinBox" name="infSpinBox">
+                <widget class="QDoubleSpinBox" name="doubleSpinBox_2">
                  <property name="maximum">
-                  <number>1500</number>
+                  <double>50.000000000000000</double>
                  </property>
                 </widget>
                </item>
                <item>
                 <widget class="QLabel" name="label_39">
                  <property name="text">
-                  <string>ms</string>
+                  <string>(0 mm)</string>
                  </property>
                 </widget>
-               </item>
-               <item>
-                <spacer name="horizontalSpacer_7">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>40</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
                </item>
               </layout>
              </item>
