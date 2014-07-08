@@ -40,7 +40,9 @@ void TrajectoryExecuter::operator()() {
     fflush(stdout);
     now = high_resolution_clock::now();
 
-    waitFor( interval - boost::chrono::duration_cast<milliseconds>(now - start).count() );
+    int diff = interval - boost::chrono::duration_cast<milliseconds>(now - start).count();
+    if( diff > 0 )
+      waitFor( diff );
     last_pos = cur_point;
 
     if( progress_callback_ ) progress_callback_( progress );

@@ -10,20 +10,17 @@ TriangularTrajectory::TriangularTrajectory(double spd, double lmbd, double ampl,
 
   double lbdmm = fabs(lmbd) / TO_PULSES,
          vsmm = fabs(spd) / TO_RPM,
+         amplmm = ampl/TO_PULSES,
          dsup = lbdmm * sstop,
          dinf = lbdmm * istop,
-         dint = lbdmm - (dsup+dinf);
-         vext = f * vsmm,
-         text = 0;
-  if( vext > 1e-5 )
-    text = (dsup + dinf) / vext;
-
-  double amplmm = ampl/TO_PULSES,
-         vint = sqrt(4*amplmm*amplmm+dint*dint) * vsmm / (ldbmm - vsmm * text);
+         dint = lbdmm - (dsup+dinf),
+         vint = (sqrt(4*amplmm*amplmm+dint*dint)+(dsup+dinf)/f) * vsmm / lbdmm,
+         vext = f * vint;
 
   int period_count = 0.5 + rotate_vec.length()/lmbd;
   addRepeatable( period_count, lmbd, dsup*TO_PULSES, dinf*TO_PULSES, ampl, vint, vext );
   rotate();
+  printf("%d points vint %f vext %f\n", positions_.size(), vint*TO_RPM, vext*TO_RPM);
 }
 
 //-----------------------------------------------------------------------------

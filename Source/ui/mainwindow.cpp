@@ -237,9 +237,10 @@ void MainWindow::on_executeButton_clicked() {
       } else if( tidx == 6 ){
         executing_trajectory_.reset( new DoubleTriangular2ndTraj( spd, lmbd, ampl, rotate_vec, xangle) );
       } else {
-        uint32_t sup_stop = 0,
-                 inf_stop = 0;
-        executing_trajectory_.reset( new TriangularTrajectory( spd, lmbd, ampl, sup_stop, inf_stop, rotate_vec, xangle) );
+        double sup_stop = ui->stopSupSpinBox->value()/100,
+               inf_stop = ui->stopInfSpinBox->value()/100,
+               factor = ui->spdExtrSpinBox->value();
+        executing_trajectory_.reset( new TriangularTrajectory( spd, lmbd, ampl, sup_stop, inf_stop, factor, rotate_vec, xangle) );
       }
     } else if( idx == 5 ) {
       int32_t spd  = sbtSpeedSliderSpin->value( spd_unit ),
@@ -519,9 +520,10 @@ void MainWindow::redraw() {
            ampl = trAmplSliderSpin->value( pos_unit );
     PositionVector v;
     if( tidx == 0 ) {
-      uint32_t sup_stop = 0,
-               inf_stop = 0;
-      TriangularTrajectory::draft( v, spd, lmbd, ampl, sup_stop, inf_stop );
+      double sup_stop = ui->stopSupSpinBox->value()/100,
+             inf_stop = ui->stopInfSpinBox->value()/100,
+             factor = ui->spdExtrSpinBox->value();
+      TriangularTrajectory::draft( v, spd, lmbd, ampl, sup_stop, inf_stop, factor );
     } else if( tidx == 1 ) {
       double rho = eRhoSliderSpin->value();
       ETrajectory::draft( v, spd, lmbd, ampl, rho );

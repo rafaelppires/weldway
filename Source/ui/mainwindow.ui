@@ -1623,9 +1623,12 @@
                 </widget>
                </item>
                <item>
-                <widget class="QDoubleSpinBox" name="doubleSpinBox_3">
+                <widget class="QDoubleSpinBox" name="spdExtrSpinBox">
                  <property name="maximum">
                   <double>4.000000000000000</double>
+                 </property>
+                 <property name="singleStep">
+                  <double>0.100000000000000</double>
                  </property>
                  <property name="value">
                   <double>1.000000000000000</double>
@@ -1644,7 +1647,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QDoubleSpinBox" name="doubleSpinBox">
+                <widget class="QDoubleSpinBox" name="stopSupSpinBox">
                  <property name="maximum">
                   <double>50.000000000000000</double>
                  </property>
@@ -1665,7 +1668,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QDoubleSpinBox" name="doubleSpinBox_2">
+                <widget class="QDoubleSpinBox" name="stopInfSpinBox">
                  <property name="maximum">
                   <double>50.000000000000000</double>
                  </property>

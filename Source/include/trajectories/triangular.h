@@ -12,8 +12,8 @@ public:
   void applyCorrection(double spd, double lmbd, double ampl,
                        uint32_t sstop, uint32_t istop);
 
-  void addRepeatable(int count, uint32_t sstop, uint32_t istop,
-                      double risexlen, double ampl, double risespd, double xspeedmm );
+  void addRepeatable(int count, double lmbd, double dsup, double dinf,
+                     double ampl, double vint, double vext );
   static void draft(PositionVector &out, double spd, double l, double ampl, double sstop, double istop , double f);
 };
 

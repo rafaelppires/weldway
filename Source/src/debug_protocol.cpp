@@ -42,7 +42,7 @@ void DebugProtocol::sendSpdCmmds( const ConcurrentCmmd32 & ) {
   
 //-----------------------------------------------------------------------------
 int32_t DebugProtocol::getStatus( GraniteParams param, uint8_t axis ) {
-  return 0;
+  return STAT_TARGET_REACHED;
 }
 
 //-----------------------------------------------------------------------------
