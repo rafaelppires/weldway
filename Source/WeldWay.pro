@@ -9,6 +9,9 @@ SOURCES += src/main.cpp \
            src/simple_motion_interface.cpp \
            ui/mainwindow.cpp \
            ui/slider_spin.cpp \
+           ui/longitudinalwidget.cpp \
+           ui/transversalwidget.cpp \
+           ui/triangularswitchback.cpp \
            src/units.cpp \
            ui/formconnection.cpp \
            src/master_communicator.cpp \
@@ -30,10 +33,15 @@ SOURCES += src/main.cpp \
            src/trajectories/double_triang.cpp \
            src/trajectories/double_triang2nd.cpp
 
+
 HEADERS += ui/mainwindow.h \
            include/simplemotion.h \
            include/simple_motion_interface.h \
            ui/slider_spin.h \
+           ui/longitudinalwidget.h \
+           ui/transversalwidget.h \
+           ui/triangularswitchback.h \
+           ui/oscillation_widget.h \
            include/units.h \
            ui/formconnection.h \
            include/master_communicator.h \
@@ -61,7 +69,10 @@ HEADERS += ui/mainwindow.h \
            include/trajectories/double_triang2nd.h
 
 FORMS    += ui/mainwindow.ui \
-            ui/formconnection.ui
+            ui/formconnection.ui \
+            ui/longitudinalwidget.ui \
+            ui/transversalwidget.ui \
+            ui/triangularswitchback.ui
 
 LIBS += -L$$(DEV_DEPS)/boost_1_55_0/stage/lib \
         inpout32.dll -lsetupapi \

@@ -4,15 +4,6 @@
 #include <iostream>
 #include <QLineEdit>
 #include <formconnection.h>
-#include <switch_back.h>
-#include <triangular.h>
-#include <double_e.h>
-#include <e_trajectory.h>
-#include <double8.h>
-#include <rhombus.h>
-#include <bricks.h>
-#include <double_triang.h>
-#include <double_triang2nd.h>
 
 //-----------------------------------------------------------------------------
 MainWindow::MainWindow(QWidget *parent) :
@@ -33,40 +24,6 @@ MainWindow::MainWindow(QWidget *parent) :
   zposSliderSpin  = new SliderSpin( this, ui->zpositionSlider, ui->zpositionSpinBox, ui->zposUnitComboBox, UnitConvPtr(new PositionConv(0, 100)) );
   vOrSliderSpin = new SliderSpin( this, ui->vorientationSlider, ui->vorientationSpinBox, NULL, UnitConvPtr(new UnitConv(-90,90)) );
   hOrSliderSpin = new SliderSpin( this, ui->horientationSlider, ui->horientationSpinBox, NULL, UnitConvPtr(new UnitConv(-90,90)) );
-
-  // Switch Back
-  sbWeldSpeedSliderSpin = new SliderSpin( this, ui->sbWeldSpeedSlider, ui->sbWeldSpeedSpinBox, ui->sbWeldSpeedUnitComboBox, UnitConvPtr(new SpeedConv(1, 50)) );
-  fwSpeedSliderSpin  = new SliderSpin( this, ui->fwSpeedSlider, ui->fwSpeedSpinBox, ui->fwSpeedUnitComboBox, UnitConvPtr(new SpeedConv(4, 200)) );
-  fwLengthSliderSpin = new SliderSpin( this, ui->fwLengthSlider, ui->fwLengthSpinBox, ui->fwLengthUnitComboBox, UnitConvPtr(new PositionConv(4, 20)) );
-  bwSpeedSliderSpin  = new SliderSpin( this, ui->bwSpeedSlider, ui->bwSpeedSpinBox, ui->bwSpeedUnitComboBox, UnitConvPtr(new SpeedConv(2, 100)) );
-  bwLengthSliderSpin = new SliderSpin( this, ui->bwLengthSlider, ui->bwLengthSpinBox, ui->bwLengthUnitComboBox, UnitConvPtr(new PositionConv(2, 10)) );
-
-  sbWeldSpeedSliderSpin->addMultiplier( fwSpeedSliderSpin, 4.0 );
-  sbWeldSpeedSliderSpin->addMultiplier( bwSpeedSliderSpin, 2.0 );
-
-  fwSpeedSliderSpin->addMultiplier( bwSpeedSliderSpin, 0.5 );
-  fwLengthSliderSpin->addMultiplier( bwLengthSliderSpin, 0.5 );
-
-
-  // Triangular
-  trSpeedSliderSpin = new SliderSpin( this, ui->trWeldSpeedSlider, ui->trWeldSpeedSpinBox, ui->trWeldSpeedUnitComboBox, UnitConvPtr(new SpeedConv(0, 30)) );
-  trAmplSliderSpin  = new SliderSpin( this, ui->trAmplitudeSlider, ui->trAmplitudeSpinBox, ui->trAmplitudeUnitComboBox, UnitConvPtr(new PositionConv(0, 50)) );
-  trLmbdSliderSpin  = new SliderSpin( this, ui->trLambdaSlider,    ui->trLambdaSpinBox,    ui->trLambdaUnitComboBox,    UnitConvPtr(new PositionConv(1, 5)) );
-
-  connect( trSpeedSliderSpin, SIGNAL(valueChanged()), this, SLOT(on_frequency_changed()) );
-  connect( trLmbdSliderSpin,  SIGNAL(valueChanged()), this, SLOT(on_frequency_changed()) );
-  connect( trAmplSliderSpin,  SIGNAL(valueChanged()), this, SLOT(redraw()));
-
-  eRhoSliderSpin = new SliderSpin( this, ui->rhoSlider, ui->rhoSpinBox, NULL, UnitConvPtr(new UnitConv(0,0.99)) );
-  connect( eRhoSliderSpin,  SIGNAL(valueChanged()), this, SLOT(redraw()));
-
-  // SB + Triang
-  sbtSpeedSliderSpin = new SliderSpin( this, ui->sbtWeldSpeedSlider, ui->sbtWeldSpeedSpinBox, ui->sbtWeldSpeedUnitComboBox, UnitConvPtr(new SpeedConv(0,100)) );
-  sbtAmplSliderSpin  = new SliderSpin( this, ui->sbtAmplitudeSlider, ui->sbtAmplitudeSpinBox, ui->sbtAmplitudeUnitComboBox, UnitConvPtr(new PositionConv(0,50)) );
-  sbtLenSliderSpin   = new SliderSpin( this, ui->sbtForwardLenSlider, ui->sbtForwardLenSpinBox, ui->sbtForwardLenUnitComboBox, UnitConvPtr(new PositionConv(0,30)) );
-  connect(sbtAmplSliderSpin, SIGNAL(valueChanged()), this, SLOT(redraw()));
-  connect(sbtLenSliderSpin, SIGNAL(valueChanged()), this, SLOT(redraw()));
-  connect(ui->sbtOscCountSpinBox, SIGNAL(valueChanged(int)), this, SLOT(redraw()) );
 
   //ok_label_  = new QLabel( ui->statusbar );
   x_statlabel_ = new QLabel( statusBar() );
@@ -112,7 +69,7 @@ MainWindow::MainWindow(QWidget *parent) :
   scene_ = new TrajectoryScene;
   ui->graphicsView->setScene( scene_ );
 
-  on_transvTrajectoryComboBox_currentTextChanged( ui->transvTrajectoryComboBox->currentText() );
+  oscillationsSetup();
 }
 //-----------------------------------------------------------------------------
 
@@ -127,31 +84,48 @@ MainWindow::~MainWindow() {
   delete xposSliderSpin;
   delete yposSliderSpin;
   delete zposSliderSpin;
-
-  delete sbWeldSpeedSliderSpin;
-  delete fwSpeedSliderSpin;
-  delete fwLengthSliderSpin;
-  delete bwSpeedSliderSpin;
-  delete bwLengthSliderSpin;
-
-  delete trSpeedSliderSpin;
-  delete trAmplSliderSpin;
-  delete trLmbdSliderSpin;
-
-  delete sbtSpeedSliderSpin;
-  delete sbtAmplSliderSpin;
-  delete sbtLenSliderSpin;
-
-  delete eRhoSliderSpin;
 }
 
 //-----------------------------------------------------------------------------
-void MainWindow::on_frequency_changed() {
-  double f = trSpeedSliderSpin->value("mm/s") / trLmbdSliderSpin->value("mm");
-  char value[64];
-  sprintf( value, "%.1f", f );
-  ui->frLabel->setText( value );
-  redraw();
+void MainWindow::oscillationsSetup() {
+  oscillationsToolBox = new QToolBox(ui->oscillationTab);
+  oscillationsToolBox->setObjectName(QStringLiteral("oscillationsToolBox"));
+  oscillationsToolBox->setStyleSheet(QLatin1String(" QToolBox::tab {\n"
+"     background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
+"                                 stop: 0 #E1E1E1, stop: 0.4 #DDDDDD,\n"
+"                                 stop: 0.5 #D8D8D8, stop: 1.0 #D3D3D3);\n"
+"     border-radius: 5px;\n"
+"	 color: rgb(145, 145, 145);\n"
+" }\n"
+"\n"
+" QToolBox::tab:selected {\n"
+"	 font: 75;\n"
+"     color: black;\n"
+" }"));
+
+  longit_panel_ = new LongitudinalWidget();
+  oscillationsToolBox->addItem( longit_panel_, QStringLiteral("Longitudinais") );
+
+  transv_panel_ = new TransversalWidget( this );
+  oscillationsToolBox->addItem( transv_panel_, QStringLiteral("Transversais") );
+
+  triswitch_panel_ = new TriangularSwitchback( this );
+  oscillationsToolBox->addItem( triswitch_panel_, QStringLiteral("Switchback Triangular") );
+
+  ui->oscillationTabLayout->addWidget(oscillationsToolBox);
+}
+//-----------------------------------------------------------------------------
+OscillationWidget* MainWindow::activeWidget() {
+  std::string cur = oscillationsToolBox->currentWidget()->objectName().toStdString();
+  if( cur == "LongitudinalWidget" ) {
+    return longit_panel_;
+  } else if ( cur == "TransversalWidget" ) {
+    return transv_panel_;
+  } else if( cur == "TriangularSwitchback" ) {
+    return triswitch_panel_;
+  } else {
+    return 0;
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -192,12 +166,23 @@ void MainWindow::on_executeButton_clicked() {
 
   Vector3I  init, final;
   setLimits( init, final );
-  machine_.setAngularOffset( ui->xangleSpinBox->value() );
   double xangle = ui->xangleSpinBox->value();
+  machine_.setAngularOffset( xangle );
+
   Vector3D rotate_vec = final - init;
   if( machine_.busy() ) {
     machine_.cancel();
     printf(">>> Cancelled <<<\n");
+  } else if( ui->tabWidget->currentWidget()->objectName() == "oscillationTab" ) {    
+    OscillationWidget *w = activeWidget();
+    if( w ) {
+      executing_trajectory_ = w->trajectory(xangle, rotate_vec);
+    }
+
+    if( executing_trajectory_ ) {
+      machine_.executeTrajectory( executing_trajectory_ );
+      ui->executeButton->setText("Cancelar");
+    }
   } else {
     executing_trajectory_.reset();
     if( idx == 2 ) {
@@ -208,50 +193,6 @@ void MainWindow::on_executeButton_clicked() {
       Vector2I angpos = machine_.angularOffset( ANGULAR_VERTICAL,   vOrSliderSpin->value("") ) +
                         machine_.angularOffset( ANGULAR_HORIZONTAL, hOrSliderSpin->value("") );     
       machine_.gotoPosition( pos, speedSliderSpin->value( spd_unit ), angpos );
-    } else if( idx == 3 ) { // Longitudinal
-      int32_t tidx = ui->longTrajectoryComboBox->currentIndex(),
-              weldspd = sbWeldSpeedSliderSpin->value( spd_unit );
-      if( tidx == 0 ) {
-        int32_t fwlen = fwLengthSliderSpin->value( pos_unit );
-        executing_trajectory_.reset( new SwitchBackTrajectory(fwlen, weldspd, rotate_vec, xangle) );
-      } else {
-        executing_trajectory_.reset( new LinearTrajectory( weldspd, rotate_vec, xangle) );
-      }
-    } else if( idx == 4 ) { // Transversal
-      double lmbd = trLmbdSliderSpin->value( pos_unit ),
-             spd  = trSpeedSliderSpin->value( spd_unit ),
-             ampl = trAmplSliderSpin->value( pos_unit );
-      int32_t tidx = ui->transvTrajectoryComboBox->currentIndex();
-      if( tidx == 1 ) {
-        double rho = eRhoSliderSpin->value();
-        executing_trajectory_.reset( new ETrajectory( spd, lmbd, ampl, rho, rotate_vec, xangle) );
-      } else if( tidx == 2 ) {
-        executing_trajectory_.reset( new DoubleETrajectory( spd, lmbd, ampl, rotate_vec, xangle) );
-      } else if( tidx == 3 ) {
-        double rho = eRhoSliderSpin->value();
-        executing_trajectory_.reset( new Double8Trajectory( spd, lmbd, ampl, rho, rotate_vec, xangle) );
-      } else if( tidx == 4 ){
-        executing_trajectory_.reset( new BricksTrajectory( spd, ampl, rotate_vec, xangle) );
-      } else if( tidx == 5 ){
-        executing_trajectory_.reset( new DoubleTriangularTraj( spd, lmbd, ampl, rotate_vec, xangle) );
-      } else if( tidx == 6 ){
-        executing_trajectory_.reset( new DoubleTriangular2ndTraj( spd, lmbd, ampl, rotate_vec, xangle) );
-      } else {
-        double sup_stop = ui->stopSupSpinBox->value()/100,
-               inf_stop = ui->stopInfSpinBox->value()/100,
-               factor = ui->spdExtrSpinBox->value();
-        executing_trajectory_.reset( new TriangularTrajectory( spd, lmbd, ampl, sup_stop, inf_stop, factor, rotate_vec, xangle) );
-      }
-    } else if( idx == 5 ) {
-      int32_t spd  = sbtSpeedSliderSpin->value( spd_unit ),
-              ampl = sbtAmplSliderSpin->value( pos_unit ),
-              len  = sbtLenSliderSpin->value( pos_unit );
-      executing_trajectory_.reset(new Rhombus( ampl, len, ui->sbtOscCountSpinBox->value(), spd, rotate_vec, xangle));
-    }
-
-    if( executing_trajectory_ ) {
-      machine_.executeTrajectory( executing_trajectory_ );
-      ui->executeButton->setText("Cancelar");
     }
   }
   fflush( stdout );
@@ -306,26 +247,6 @@ void MainWindow::checkStatus() {
   setStatus( machine_.getStatus( FaultBits, Z_AXIS ), z_statlabel_ );
   setStatus( machine_.getStatus( FaultBits, A_AXIS ), a_statlabel_ );
   setStatus( machine_.getStatus( FaultBits, B_AXIS ), b_statlabel_ );
-}
-
-//-----------------------------------------------------------------------------
-void MainWindow::on_longTrajectoryComboBox_currentTextChanged(const QString &arg1) {
-  if( arg1 == "Linear" )
-    ui->advanceRetreatWidget->setHidden(true);
-  else
-    ui->advanceRetreatWidget->setHidden(false);
-}
-
-//-----------------------------------------------------------------------------
-void MainWindow::on_transvTrajectoryComboBox_currentTextChanged(const QString &arg1) {
-  if( arg1 == "Triangular" ) {
-    ui->stopTimeWidget->setHidden(false);
-    ui->rhoWidget->setHidden(true);
-  } else {
-    ui->rhoWidget->setHidden( arg1 != "E" && arg1 != "Duplo 8" );
-    ui->stopTimeWidget->setHidden(true);
-  }
-  redraw();
 }
 
 //-----------------------------------------------------------------------------
@@ -443,6 +364,7 @@ void MainWindow::executionFinished() {
 
 //-----------------------------------------------------------------------------
 void MainWindow::on_correctButton_clicked() {
+  /*
   std::string pos_unit("pulsos"), spd_unit("rpm");
   int idx = ui->tabWidget->currentIndex();
   Rhombus *rt = 0;
@@ -483,6 +405,7 @@ void MainWindow::on_correctButton_clicked() {
              len  = sbtLenSliderSpin->value( pos_unit );
      rt->applyCorrection( ampl, len, ui->sbtOscCountSpinBox->value(), spd );
    }
+   */
 }
 
 //-----------------------------------------------------------------------------
@@ -511,42 +434,21 @@ void MainWindow::render( PositionVector &v ) {
 
 //-----------------------------------------------------------------------------
 void MainWindow::redraw() {
-  int index = ui->tabWidget->currentIndex();
-  std::string pos_unit("pulsos"), spd_unit("rpm");
-  if( index == 4 ) {
-    int32_t tidx = ui->transvTrajectoryComboBox->currentIndex();
-    double lmbd = trLmbdSliderSpin->value( pos_unit ),
-           spd  = trSpeedSliderSpin->value( spd_unit ),
-           ampl = trAmplSliderSpin->value( pos_unit );
+  if( !redraw_timer_ ) {
+    redraw_timer_.reset( new QTimer(this) );
+    redraw_timer_->setSingleShot( true );
+    connect( redraw_timer_.get(), SIGNAL(timeout()), this, SLOT(actuallyRedraw()));
+  }
+  redraw_timer_->start( 100 );
+}
+
+//-----------------------------------------------------------------------------
+void MainWindow::actuallyRedraw() {
+  OscillationWidget *w = activeWidget();
+  if( w ) {
     PositionVector v;
-    if( tidx == 0 ) {
-      double sup_stop = ui->stopSupSpinBox->value()/100,
-             inf_stop = ui->stopInfSpinBox->value()/100,
-             factor = ui->spdExtrSpinBox->value();
-      TriangularTrajectory::draft( v, spd, lmbd, ampl, sup_stop, inf_stop, factor );
-    } else if( tidx == 1 ) {
-      double rho = eRhoSliderSpin->value();
-      ETrajectory::draft( v, spd, lmbd, ampl, rho );
-    } else if( tidx == 2 ) {
-      DoubleETrajectory::draft( v, spd, lmbd, ampl );
-    } else if( tidx == 3 ) {
-      double rho = eRhoSliderSpin->value();
-      Double8Trajectory::draft(v,spd,lmbd,ampl,rho);
-    } else if( tidx == 4 ) {
-      BricksTrajectory::draft( v, spd, ampl );
-    } else if( tidx == 5 ) {
-      DoubleTriangularTraj::draft( v, spd, lmbd, ampl );
-    } else if( tidx == 6 ) {
-      DoubleTriangular2ndTraj::draft( v, spd, lmbd, ampl );
-    }
-    render(v);
-  } else if( index == 5 ) {
-    PositionVector v;
-    int32_t spd  = sbtSpeedSliderSpin->value( spd_unit ),
-            ampl = sbtAmplSliderSpin->value( pos_unit ),
-            len  = sbtLenSliderSpin->value( pos_unit );
-    Rhombus::draft(v,ampl,len,ui->sbtOscCountSpinBox->value(),spd);
-    render(v);
+    w->draft( v );
+    render( v );
   }
 }
 
