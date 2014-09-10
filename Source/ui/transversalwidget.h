@@ -4,6 +4,7 @@
 #include <oscillation_widget.h>
 #include <slider_spin.h>
 #include <trajectory.h>
+#include <triangularswitchback.h>
 
 namespace Ui {
 class TransversalWidget;
@@ -29,6 +30,7 @@ private slots:
 private:
   Ui::TransversalWidget *ui;
   SliderSpin *trSpeedSliderSpin, *trAmplSliderSpin, *trLmbdSliderSpin,  *eRhoSliderSpin;
+  TriangularSwitchback *triswitch_panel_;
 };
 
 #endif // TRANSVERSALWIDGET_H

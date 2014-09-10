@@ -107,10 +107,10 @@ void MainWindow::oscillationsSetup() {
   oscillationsToolBox->addItem( longit_panel_, QStringLiteral("Longitudinais") );
 
   transv_panel_ = new TransversalWidget( this );
-  oscillationsToolBox->addItem( transv_panel_, QStringLiteral("Transversais") );
+  oscillationsToolBox->addItem( transv_panel_, QStringLiteral("Transversais e Combinados") );
 
   triswitch_panel_ = new TriangularSwitchback( this );
-  oscillationsToolBox->addItem( triswitch_panel_, QStringLiteral("Switchback Triangular") );
+  oscillationsToolBox->addItem( triswitch_panel_, QStringLiteral("Customizados") );
 
   ui->oscillationTabLayout->addWidget(oscillationsToolBox);
 }

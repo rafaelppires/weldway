@@ -24,6 +24,10 @@ TransversalWidget::TransversalWidget(QWidget *parent) :
   
   eRhoSliderSpin = new SliderSpin( this, ui->rhoSlider, ui->rhoSpinBox, NULL, UnitConvPtr(new UnitConv(0,0.99)) );
   connect( eRhoSliderSpin,  SIGNAL(valueChanged()), parent, SLOT(redraw()));
+
+  triswitch_panel_ = new TriangularSwitchback( parent );
+  triswitch_panel_->setHidden( true );
+  ui->widVerticalLayout->addWidget( triswitch_panel_ );
   
   on_transvTrajectoryComboBox_currentTextChanged( ui->transvTrajectoryComboBox->currentText() );
 
@@ -73,6 +77,8 @@ AbsTrajectoryPtr TransversalWidget::trajectory(double xangle, Vector3D rotate) {
     return AbsTrajectoryPtr( new DoubleTriangularTraj( spd, lmbd, ampl, rotate, xangle) );
   } else if( tidx == 6 ){
     return AbsTrajectoryPtr( new DoubleTriangular2ndTraj( spd, lmbd, ampl, rotate, xangle) );
+  } else if( tidx == 7 ){
+    return triswitch_panel_->trajectory(xangle, rotate);
   } else {
     double sup_stop = ui->stopSupSpinBox->value()/100,
            inf_stop = ui->stopInfSpinBox->value()/100,
@@ -101,6 +107,8 @@ void TransversalWidget::draft( PositionVector &v ) {
     DoubleTriangularTraj::draft(v, spd, lmbd, ampl);
   } else if( tidx == 6 ){
     DoubleTriangular2ndTraj::draft(v, spd, lmbd, ampl);
+  } else if( tidx == 7 ) {
+    triswitch_panel_->draft( v );
   } else {
     double sup_stop = ui->stopSupSpinBox->value()/100,
            inf_stop = ui->stopInfSpinBox->value()/100,
@@ -111,12 +119,19 @@ void TransversalWidget::draft( PositionVector &v ) {
 
 //-----------------------------------------------------------------------------
 void TransversalWidget::on_transvTrajectoryComboBox_currentTextChanged(const QString &arg1) {
-  if( arg1 == "Triangular" ) {
-    ui->stopTimeWidget->setHidden(false);
-    ui->rhoWidget->setHidden(true);
+  if( arg1.endsWith("com switch-back") ) {
+    ui->transWidget->setHidden(true);
+    triswitch_panel_->setHidden(false);
   } else {
-    ui->rhoWidget->setHidden( arg1 != "E" && arg1 != "Duplo 8" );
-    ui->stopTimeWidget->setHidden(true);
+    triswitch_panel_->setHidden(true);
+    ui->transWidget->setHidden(false);
+    if( arg1 == "Triangular" ) {
+      ui->stopTimeWidget->setHidden(false);
+      ui->rhoWidget->setHidden(true);
+    } else {
+      ui->rhoWidget->setHidden( arg1 != "E" && arg1 != "Duplo 8" );
+      ui->stopTimeWidget->setHidden(true);
+    }
   }
   emit updated();
 }
