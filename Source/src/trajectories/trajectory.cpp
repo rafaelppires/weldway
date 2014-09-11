@@ -5,9 +5,6 @@ AbstractTrajectory::AbstractTrajectory(const Vector3D &rotate_vec, double rad_xa
   setupMatrixes(rad_xangle);
 }
 //-----------------------------------------------------------------------------
-AbstractTrajectory::AbstractTrajectory() : index_(~0) {}
-
-//-----------------------------------------------------------------------------
 void AbstractTrajectory::setupMatrixes( double xangle ) {
   Vector2D xyproj( rotation_vec_.x(), rotation_vec_.y() );
   Vector3D yline( -rotation_vec_.y()/xyproj.length(), 0, 0);

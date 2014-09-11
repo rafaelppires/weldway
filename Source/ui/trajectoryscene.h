@@ -7,6 +7,8 @@
 class TrajectoryScene : public QGraphicsScene {
   Q_OBJECT
 
+public:
+  TrajectoryScene();
 
 signals:
   void sceneClicked(Vector2D point);

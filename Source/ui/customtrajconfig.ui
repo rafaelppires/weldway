@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>390</width>
-    <height>303</height>
+    <width>467</width>
+    <height>510</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -30,7 +30,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QComboBox" name="comboBox">
+      <widget class="QComboBox" name="trajListComboBox">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -58,74 +58,6 @@
    <item>
     <widget class="QWidget" name="editWidget" native="true">
      <layout class="QGridLayout" name="gridLayout_3">
-      <item row="0" column="0" colspan="2">
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <item>
-         <widget class="QLabel" name="label_7">
-          <property name="text">
-           <string>Nome:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLineEdit" name="trajNameLineEdit"/>
-        </item>
-       </layout>
-      </item>
-      <item row="1" column="0">
-       <layout class="QGridLayout" name="gridLayout">
-        <item row="0" column="0">
-         <widget class="QLabel" name="label">
-          <property name="text">
-           <string>Segmentos:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="2">
-         <widget class="QDoubleSpinBox" name="ycoordSpinBox"/>
-        </item>
-        <item row="0" column="1">
-         <widget class="QDoubleSpinBox" name="xcoordSpinBox"/>
-        </item>
-        <item row="1" column="1" rowspan="4" colspan="2">
-         <widget class="QListWidget" name="pointListWidget"/>
-        </item>
-        <item row="4" column="0">
-         <widget class="QPushButton" name="delPtButton">
-          <property name="text">
-           <string>-</string>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="0">
-         <widget class="QPushButton" name="addPtButton">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string>+</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item row="2" column="0" colspan="2">
-       <widget class="QLabel" name="label_3">
-        <property name="text">
-         <string>Abscissa: Multiplicador do comprimento de onda</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0" colspan="2">
-       <widget class="QLabel" name="label_4">
-        <property name="text">
-         <string>Ordenada: Multiplicador da amplitude</string>
-        </property>
-       </widget>
-      </item>
       <item row="1" column="1">
        <widget class="QGroupBox" name="groupBox">
         <property name="title">
@@ -186,7 +118,89 @@
         </layout>
        </widget>
       </item>
-      <item row="4" column="0">
+      <item row="0" column="0" colspan="2">
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QLabel" name="label_7">
+          <property name="text">
+           <string>Nome:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="trajNameLineEdit"/>
+        </item>
+       </layout>
+      </item>
+      <item row="3" column="0" colspan="2">
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>Ordenada: % da amplitude</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="0" column="0">
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>Segmentos:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2">
+         <widget class="QDoubleSpinBox" name="ycoordSpinBox">
+          <property name="minimum">
+           <double>-500.000000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>500.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QDoubleSpinBox" name="xcoordSpinBox">
+          <property name="minimum">
+           <double>-500.000000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>500.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1" rowspan="4" colspan="2">
+         <widget class="QListWidget" name="pointListWidget"/>
+        </item>
+        <item row="4" column="0">
+         <widget class="QPushButton" name="delPtButton">
+          <property name="text">
+           <string>-</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QPushButton" name="addPtButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>+</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="2" column="0" colspan="2">
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string>Abscissa: % do comprimento de onda</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0" colspan="2">
        <spacer name="verticalSpacer">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
@@ -201,6 +215,246 @@
       </item>
      </layout>
     </widget>
+   </item>
+   <item>
+    <spacer name="verticalSpacer_2">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item>
+    <widget class="QWidget" name="paramsWidget" native="true">
+     <layout class="QVBoxLayout" name="verticalLayout_4">
+      <item>
+       <layout class="QGridLayout" name="gridLayout_12">
+        <item row="1" column="0">
+         <widget class="QSlider" name="trWeldSpeedSlider">
+          <property name="maximum">
+           <number>300</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2">
+         <widget class="QComboBox" name="trWeldSpeedUnitComboBox">
+          <item>
+           <property name="text">
+            <string>m/min</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>mm/s</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>rpm</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>rps</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_14">
+          <property name="text">
+           <string>Velocidade de Soldagem</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QDoubleSpinBox" name="trWeldSpeedSpinBox">
+          <property name="minimumSize">
+           <size>
+            <width>70</width>
+            <height>0</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QGridLayout" name="gridLayout_6">
+        <item row="1" column="0">
+         <widget class="QSlider" name="trAmplitudeSlider">
+          <property name="maximum">
+           <number>300</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QDoubleSpinBox" name="trAmplitudeSpinBox">
+          <property name="minimumSize">
+           <size>
+            <width>70</width>
+            <height>0</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2">
+         <widget class="QComboBox" name="trAmplitudeUnitComboBox">
+          <property name="sizeIncrement">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+          <item>
+           <property name="text">
+            <string>mm</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>cm</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>m</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>pulsos</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>&quot;</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_9">
+          <property name="text">
+           <string>Amplitude:</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QGridLayout" name="gridLayout_10">
+        <item row="1" column="1">
+         <widget class="QDoubleSpinBox" name="trLambdaSpinBox">
+          <property name="minimumSize">
+           <size>
+            <width>70</width>
+            <height>0</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2">
+         <widget class="QComboBox" name="trLambdaUnitComboBox">
+          <property name="sizeIncrement">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+          <item>
+           <property name="text">
+            <string>mm</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>cm</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>m</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>pulsos</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>&quot;</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QSlider" name="trLambdaSlider">
+          <property name="maximum">
+           <number>300</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_33">
+          <property name="text">
+           <string>Comprimento de onda (λ):</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="5">
+         <widget class="QLabel" name="label_15">
+          <property name="text">
+           <string>Hz)</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="4">
+         <widget class="QLabel" name="frLabel">
+          <property name="text">
+           <string>0,00</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="3">
+         <widget class="QLabel" name="label_12">
+          <property name="text">
+           <string>(</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <spacer name="verticalSpacer_3">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
    </item>
   </layout>
  </widget>

@@ -14,7 +14,6 @@ typedef std::vector<double>    SpeedVector;
 //-----------------------------------------------------------------------------
 class AbstractTrajectory {
 public:
-  AbstractTrajectory();
   AbstractTrajectory( const Vector3D &rotate_vec, double rad_xangle );
 
   virtual const PositionVector& positions() const { return positions_; }

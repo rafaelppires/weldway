@@ -6,6 +6,10 @@
 #include <vectorxd.h>
 
 //-----------------------------------------------------------------------------
+TrajectoryScene::TrajectoryScene() {
+}
+
+//-----------------------------------------------------------------------------
 void TrajectoryScene::drawBackground( QPainter * painter, const QRectF & rect ) {
   painter->setPen( Qt::lightGray );
   double x = int(rect.x() / 40) * 40, x0 = x;

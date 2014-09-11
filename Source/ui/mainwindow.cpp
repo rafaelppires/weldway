@@ -67,6 +67,8 @@ MainWindow::MainWindow(QWidget *parent) :
   ui->emergencyLabel->setVisible( false );
 
   scene_ = new TrajectoryScene;
+  ui->graphicsView->setRenderHint(QPainter::Antialiasing);
+  ui->graphicsView->setInteractive(true);
   ui->graphicsView->setScene( scene_ );
 
   oscillationsSetup();
