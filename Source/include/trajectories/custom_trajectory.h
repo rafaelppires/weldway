@@ -27,6 +27,7 @@ public:
   Vector2D moveSource(int idx, const Vector2D &d );
   Vector2D moveDestination(int idx, const Vector2D &d );
   const SegmentVector& getSegments() { return segments_; }
+  void setSegments( const SegmentVector &s ) { segments_ = s; }
   void setName( std::string n ) { name_ = n; }
   std::string name() { return name_; }
   void draft(PositionVector &v,double,double,double);

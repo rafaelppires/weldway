@@ -41,6 +41,8 @@ private slots:
  void on_delPtButton_clicked();
  void on_pointListWidget_itemSelectionChanged();
 
+ void on_trajListComboBox_currentIndexChanged(int index);
+
 private:
   void addPoint( const Vector2D &p, double, double);
   void newEntryAction();
@@ -49,11 +51,12 @@ private:
   void editEntryAction();
   void editSaveAction();
   void editCancelAction();
+  void clearEditing();
 
   Ui::CustomTrajectoryWidget *ui;
   TrajectoryScene *scene_;
   Vector2D scale_;
-  SegmentVector segments_;
+  SegmentVector segments_, segments_clone_;
   CustomTrajectoryPtr editing_trajectory_;
   CustomTrajVector trajectory_list_;
   bool nonrec_;

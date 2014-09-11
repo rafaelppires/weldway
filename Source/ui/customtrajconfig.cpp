@@ -119,10 +119,19 @@ void CustomTrajectoryWidget::newSaveAction() {
   editing_trajectory_->setName( ui->trajNameLineEdit->text().toStdString() );
   ui->trajListComboBox->addItem( editing_trajectory_->name().c_str() );
   trajectory_list_.push_back( editing_trajectory_ );
+  clearEditing();
+  emit updated();
 }
 
 //-----------------------------------------------------------------------------
 void CustomTrajectoryWidget::newCancelAction() {
+  clearEditing();
+  emit updated();
+}
+//-----------------------------------------------------------------------------
+
+void CustomTrajectoryWidget::clearEditing() {
+  ui->trajNameLineEdit->clear();
   editing_trajectory_.reset();
   ui->pointListWidget->clear();
   scene_->clear();
@@ -130,17 +139,32 @@ void CustomTrajectoryWidget::newCancelAction() {
 
 //-----------------------------------------------------------------------------
 void CustomTrajectoryWidget::editEntryAction() {
+  int idx = ui->trajListComboBox->currentIndex();
+  if( idx < 0 || idx >= trajectory_list_.size() ) return;
 
+  ui->trajListComboBox->setEnabled( false );
+  editing_trajectory_ = trajectory_list_[idx];
+  segments_clone_ = editing_trajectory_->getSegments();
+  ui->trajNameLineEdit->setText( editing_trajectory_->name().c_str() );
+  updatePath();
 }
 
 //-----------------------------------------------------------------------------
 void CustomTrajectoryWidget::editSaveAction() {
-
+  if( !editing_trajectory_ ) return;
+  editing_trajectory_->setName( ui->trajNameLineEdit->text().toStdString() );
+  ui->trajListComboBox->setItemText( ui->trajListComboBox->currentIndex(), ui->trajNameLineEdit->text() );
+  clearEditing();
+  ui->trajListComboBox->setEnabled( true );
+  emit updated();
 }
 
 //-----------------------------------------------------------------------------
 void CustomTrajectoryWidget::editCancelAction() {
-
+  editing_trajectory_->setSegments( segments_clone_ );
+  clearEditing();
+  ui->trajListComboBox->setEnabled( true );
+  emit updated();
 }
 
 //-----------------------------------------------------------------------------
@@ -252,6 +276,11 @@ AbsTrajectoryPtr CustomTrajectoryWidget::trajectory(double xangle, Vector3D rota
          spd  = trSpeedSliderSpin->value( spd_unit ),
          ampl = trAmplSliderSpin->value( pos_unit );
   return trajectory->getExecutable( rotate, xangle, spd, lmbd, ampl );
+}
+
+//-----------------------------------------------------------------------------
+void CustomTrajectoryWidget::on_trajListComboBox_currentIndexChanged(int index) {
+  emit updated();
 }
 
 //-----------------------------------------------------------------------------
