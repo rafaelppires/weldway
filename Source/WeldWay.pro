@@ -12,6 +12,8 @@ SOURCES += src/main.cpp \
            ui/longitudinalwidget.cpp \
            ui/transversalwidget.cpp \
            ui/triangularswitchback.cpp \
+           ui/customtrajconfig.cpp \
+           ui/trajectoryscene.cpp \
            src/units.cpp \
            ui/formconnection.cpp \
            src/master_communicator.cpp \
@@ -31,8 +33,8 @@ SOURCES += src/main.cpp \
            src/trajectories/double8.cpp \
            src/trajectories/bricks.cpp \
            src/trajectories/double_triang.cpp \
-           src/trajectories/double_triang2nd.cpp
-
+           src/trajectories/double_triang2nd.cpp \
+    src/trajectories/custom_trajectory.cpp
 
 HEADERS += ui/mainwindow.h \
            include/simplemotion.h \
@@ -42,6 +44,8 @@ HEADERS += ui/mainwindow.h \
            ui/transversalwidget.h \
            ui/triangularswitchback.h \
            ui/oscillation_widget.h \
+           ui/customtrajconfig.h \
+           ui/trajectoryscene.h \
            include/units.h \
            ui/formconnection.h \
            include/master_communicator.h \
@@ -66,13 +70,15 @@ HEADERS += ui/mainwindow.h \
            include/trajectories/double8.h \
            include/trajectories/bricks.h \
            include/trajectories/double_triang.h \
-           include/trajectories/double_triang2nd.h
+           include/trajectories/double_triang2nd.h \
+    include/trajectories/custom_trajectory.h
 
 FORMS    += ui/mainwindow.ui \
             ui/formconnection.ui \
             ui/longitudinalwidget.ui \
             ui/transversalwidget.ui \
-            ui/triangularswitchback.ui
+            ui/triangularswitchback.ui \
+    ui/customtrajconfig.ui
 
 LIBS += -L$$(DEV_DEPS)/boost_1_55_0/stage/lib \
         inpout32.dll -lsetupapi \

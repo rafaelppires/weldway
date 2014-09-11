@@ -163,6 +163,11 @@ Stream& operator<<( Stream &out, const Vector3<T> &v ) {
   return operator<< <Stream, 3, T>( out, *static_cast<const Vector<3,T>*>(&v) );
 }
 
+template <typename Stream, typename T>
+Stream& operator<<( Stream &out, const Vector2<T> &v ) {
+  return operator<< <Stream, 2, T>( out, *static_cast<const Vector<2,T>*>(&v) );
+}
+
 typedef Vector2<double>   Vector2D;  // double
 typedef Vector3<double>   Vector3D;
 

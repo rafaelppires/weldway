@@ -2,12 +2,19 @@
 
 //-----------------------------------------------------------------------------
 AbstractTrajectory::AbstractTrajectory(const Vector3D &rotate_vec, double rad_xangle ) : index_(~0), rotation_vec_(rotate_vec) {
-  Vector2D xyproj( rotate_vec.x(), rotate_vec.y() );
-  Vector3D yline( -rotate_vec.y()/xyproj.length(), 0, 0);
+  setupMatrixes(rad_xangle);
+}
+//-----------------------------------------------------------------------------
+AbstractTrajectory::AbstractTrajectory() : index_(~0) {}
+
+//-----------------------------------------------------------------------------
+void AbstractTrajectory::setupMatrixes( double xangle ) {
+  Vector2D xyproj( rotation_vec_.x(), rotation_vec_.y() );
+  Vector3D yline( -rotation_vec_.y()/xyproj.length(), 0, 0);
   yline.y() = sqrt(1-yline.x()*yline.x());
 
   long double alpha = atan2(-yline.x(),yline.y()),
-              beta  = atan2(rotate_vec.z(),xyproj.length());
+              beta  = atan2(rotation_vec_.z(),xyproj.length());
 
   MatrixLD overx(3), overy(3), overz(3);
   overz(0,0) = overz(1,1) = cos( alpha );
@@ -18,8 +25,8 @@ AbstractTrajectory::AbstractTrajectory(const Vector3D &rotate_vec, double rad_xa
   overy(2,0) = sin( beta );
   overy(0,2) = -overy(2,0);
 
-  overx(1,1) = overx(2,2) = cos( rad_xangle );
-  overx(1,2) = sin( rad_xangle );
+  overx(1,1) = overx(2,2) = cos( xangle );
+  overx(1,2) = sin( xangle );
   overx(2,1) = -overx(1,2);
 
   rotation_matrix_ = overz * overy * overx;

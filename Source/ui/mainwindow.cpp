@@ -109,8 +109,9 @@ void MainWindow::oscillationsSetup() {
   transv_panel_ = new TransversalWidget( this );
   oscillationsToolBox->addItem( transv_panel_, QStringLiteral("Transversais e Combinados") );
 
-  triswitch_panel_ = new TriangularSwitchback( this );
-  oscillationsToolBox->addItem( triswitch_panel_, QStringLiteral("Customizados") );
+  custom_panel_ = new CustomTrajectoryWidget( this, scene_ );
+  oscillationsToolBox->addItem( custom_panel_, QStringLiteral("Customizados") );
+  connect(scene_, SIGNAL(sceneClicked(Vector2D)), custom_panel_, SLOT(sceneClicked(Vector2D)));
 
   ui->oscillationTabLayout->addWidget(oscillationsToolBox);
 }
@@ -121,8 +122,8 @@ OscillationWidget* MainWindow::activeWidget() {
     return longit_panel_;
   } else if ( cur == "TransversalWidget" ) {
     return transv_panel_;
-  } else if( cur == "TriangularSwitchback" ) {
-    return triswitch_panel_;
+  } else if( cur == "CustomTrajectoryWidget" ) {
+    return custom_panel_;
   } else {
     return 0;
   }
@@ -408,16 +409,6 @@ void MainWindow::on_correctButton_clicked() {
    */
 }
 
-//-----------------------------------------------------------------------------
-void TrajectoryScene::drawBackground( QPainter * painter, const QRectF & rect ) {
-  painter->setPen( Qt::lightGray );
-  double x = int(rect.x() / 40) * 40, x0 = x;
-  for(; fabs(x-x0) < rect.width(); x += 40 )
-    painter->drawLine( x, rect.y(), x, rect.y()+rect.height() );
-  double y = int(rect.y() / 40) * 40, y0 = y;
-  for(; fabs(y-y0) < rect.height(); y += 40 )
-    painter->drawLine( rect.x(), y, rect.x()+rect.width(), y );
-}
 
 //-----------------------------------------------------------------------------
 void MainWindow::render( PositionVector &v ) {

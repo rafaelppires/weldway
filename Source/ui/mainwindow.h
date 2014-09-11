@@ -12,16 +12,13 @@
 #include <longitudinalwidget.h>
 #include <transversalwidget.h>
 #include <triangularswitchback.h>
-#include <QtWidgets/QGraphicsScene>
+#include <customtrajconfig.h>
 #include <QtWidgets/QToolBox>
+#include <trajectoryscene.h>
 
 namespace Ui {
 class MainWindow;
 }
-
-class TrajectoryScene : public QGraphicsScene {
-  void drawBackground ( QPainter * painter, const QRectF & rect );
-};
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -68,7 +65,7 @@ private:
   QToolBox *oscillationsToolBox;
   TransversalWidget *transv_panel_;
   LongitudinalWidget *longit_panel_;
-  TriangularSwitchback *triswitch_panel_;
+  CustomTrajectoryWidget *custom_panel_;
 
   Ui::MainWindow *ui;
   QLabel *x_statlabel_, *y_statlabel_, *z_statlabel_, *a_statlabel_, *b_statlabel_;

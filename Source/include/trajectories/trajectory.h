@@ -14,12 +14,16 @@ typedef std::vector<double>    SpeedVector;
 //-----------------------------------------------------------------------------
 class AbstractTrajectory {
 public:
+  AbstractTrajectory();
   AbstractTrajectory( const Vector3D &rotate_vec, double rad_xangle );
 
   virtual const PositionVector& positions() const { return positions_; }
   virtual const SpeedVector& speeds() const { return speeds_; }
   virtual Vector3I initialOffset() const { return Vector3I(); }
   virtual bool getPoint( Vector3D &pos, double &spd, double &progress );
+
+private:
+  void setupMatrixes( double xangle );
 
 protected:
   void setReference( const Vector3D & ); // set last point as reference for future relative adds
