@@ -15,6 +15,7 @@
 #include <customtrajconfig.h>
 #include <QtWidgets/QToolBox>
 #include <trajectoryscene.h>
+#include <trajrectparamswidget.h>
 
 namespace Ui {
 class MainWindow;
@@ -39,9 +40,6 @@ private slots:
   void on_executeButton_clicked();
   void on_getValuesButton_clicked();
   void openConnectionForm();
-  void on_invertDirectionButton_clicked();
-  void on_markFinalPositionButton_clicked();
-  void on_markInitPositionButton_clicked();
   void on_correctButton_clicked();
   void on_tabWidget_currentChanged(int index);
   void redraw();
@@ -62,10 +60,11 @@ private:
   void oscillationsSetup();
   OscillationWidget* activeWidget();
 
-  QToolBox *oscillationsToolBox;
+  QToolBox *oscillationsToolBox, *trajSetupToolBox;
   TransversalWidget *transv_panel_;
   LongitudinalWidget *longit_panel_;
   CustomTrajectoryWidget *custom_panel_;
+  TrajRectParamsWidget *trajparams_panel_;
 
   Ui::MainWindow *ui;
   QLabel *x_statlabel_, *y_statlabel_, *z_statlabel_, *a_statlabel_, *b_statlabel_;

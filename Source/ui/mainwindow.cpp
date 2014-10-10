@@ -116,6 +116,16 @@ void MainWindow::oscillationsSetup() {
   connect(scene_, SIGNAL(sceneClicked(Vector2D)), custom_panel_, SLOT(sceneClicked(Vector2D)));
 
   ui->oscillationTabLayout->addWidget(oscillationsToolBox);
+
+  //-----------------
+  trajSetupToolBox = new QToolBox(ui->trajectoryTab);
+  trajSetupToolBox->setObjectName(QStringLiteral("trajSetupToolBox"));
+  trajSetupToolBox->setStyleSheet(oscillationsToolBox->styleSheet());
+
+  trajparams_panel_ = new TrajRectParamsWidget( machine_, this );
+  trajSetupToolBox->addItem( trajparams_panel_, QStringLiteral("Eixo Longitudinal Retilíneo") );
+
+  ui->trajectoryTabLayout->addWidget(trajSetupToolBox);
 }
 //-----------------------------------------------------------------------------
 OscillationWidget* MainWindow::activeWidget() {
@@ -143,23 +153,12 @@ void MainWindow::on_findZeroPushButton_clicked() {
 
 //-----------------------------------------------------------------------------
 void MainWindow::setLimits( Vector3I &init, Vector3I &final ) {
-  double xv = ui->xinitSpinBox->value(),
-         yv = ui->yinitSpinBox->value(),
-         zv = ui->zinitSpinBox->value();
+  UnitConvPtr xc = xposSliderSpin->getConversionObj(),
+              yc = yposSliderSpin->getConversionObj(),
+              zc = zposSliderSpin->getConversionObj();
 
-  std::string cur_unit = ui->initFinalPosUnitComboBox->currentText().toStdString(),
-              unit = "pulsos";
-  UnitConvPtr xconv = xposSliderSpin->getConversionObj(),
-              yconv = yposSliderSpin->getConversionObj(),
-              zconv = zposSliderSpin->getConversionObj();
-  xconv->getConv(unit);
-  init = Vector3I( xconv->convertFromTo( xv, cur_unit, unit ),
-                   yconv->convertFromTo( yv, cur_unit, unit ),
-                   zconv->convertFromTo( zv, cur_unit, unit ) );
-  final = Vector3I( xconv->convertFromTo( ui->xfinalSpinBox->value() , cur_unit, unit ),
-                    yconv->convertFromTo( ui->yfinalSpinBox->value(),  cur_unit, unit ),
-                    zconv->convertFromTo( ui->zfinalSpinBox->value(),  cur_unit, unit ));
-  machine_.setLimits( init, final );
+  machine_.setLimits( init = trajparams_panel_->initPos(xc,yc,zc),
+                      final = trajparams_panel_->finalPos(xc,yc,zc) );
 }
 
 //-----------------------------------------------------------------------------
@@ -169,7 +168,7 @@ void MainWindow::on_executeButton_clicked() {
 
   Vector3I  init, final;
   setLimits( init, final );
-  double xangle = ui->xangleSpinBox->value();
+  double xangle = trajparams_panel_->xangle();
   machine_.setAngularOffset( xangle );
 
   Vector3D rotate_vec = final - init;
@@ -304,35 +303,6 @@ void MainWindow::keyPressEvent(QKeyEvent *event) {
 }
 
 //-----------------------------------------------------------------------------
-void MainWindow::on_invertDirectionButton_clicked() {
-  double xt = ui->xinitSpinBox->value(),
-         yt = ui->yinitSpinBox->value(),
-         zt = ui->zinitSpinBox->value();
-  ui->xinitSpinBox->setValue( ui->xfinalSpinBox->value() );
-  ui->yinitSpinBox->setValue( ui->yfinalSpinBox->value() );
-  ui->zinitSpinBox->setValue( ui->zfinalSpinBox->value() );
-  ui->xfinalSpinBox->setValue( xt );
-  ui->yfinalSpinBox->setValue( yt );
-  ui->zfinalSpinBox->setValue( zt );
-}
-
-//-----------------------------------------------------------------------------
-void MainWindow::on_markFinalPositionButton_clicked() {
-    Vector3D pos = machine_.currentPosition();
-    ui->xfinalSpinBox->setValue( pos.x() );
-    ui->yfinalSpinBox->setValue( pos.y() );
-    ui->zfinalSpinBox->setValue( pos.z() );
-}
-
-//-----------------------------------------------------------------------------
-void MainWindow::on_markInitPositionButton_clicked() {
-    Vector3D pos = machine_.currentPosition();
-    ui->xinitSpinBox->setValue( pos.x() );
-    ui->yinitSpinBox->setValue( pos.y() );
-    ui->zinitSpinBox->setValue( pos.z() );
-}
-
-//-----------------------------------------------------------------------------
 void MainWindow::progressUpdate( double p ) {
   int percent = 100 * p;
   QMetaObject::invokeMethod( ui->progressBar,
@@ -452,48 +422,27 @@ void MainWindow::on_tabWidget_currentChanged( int index ) {
 
 //-----------------------------------------------------------------------------
 void MainWindow::on_initPosButton_clicked() {
-  /*
-  machine_.setMaxSpeed( 650, AXIS_ALL );
+  UnitConvPtr xc = xposSliderSpin->getConversionObj(),
+              yc = yposSliderSpin->getConversionObj(),
+              zc = zposSliderSpin->getConversionObj();
 
-  AbstractProtocol::ConcurrentCmmd32 cmd;
-  cmd[ X_AXIS ] =  ui->xinitSpinBox->value() * TO_PULSES;
-  cmd[ Y_AXIS ] = -ui->yinitSpinBox->value() * TO_PULSES;
-  cmd[ Z_AXIS ] =  ui->zinitSpinBox->value() * TO_PULSES;
-  */
-  Vector3D pos( ui->xinitSpinBox->value(), ui->yinitSpinBox->value(), ui->zinitSpinBox->value());
+  Vector3D pos( trajparams_panel_->initPos(xc,yc,zc) );
   pos *= TO_PULSES;
-  Vector2I angpos = machine_.angularOffset( ANGULAR_VERTICAL,   ui->vAngleSpinBox->value() ) +
-                    machine_.angularOffset( ANGULAR_HORIZONTAL, ui->hAngleSpinBox->value() );
-  /*
-  cmd[ A_AXIS ] = angpos.x();
-  cmd[ B_AXIS ] = angpos.y();
-
-  machine_.sendPosCmmds( cmd );
-  */
+  Vector2I angpos = machine_.angularOffset( ANGULAR_VERTICAL,   trajparams_panel_->vangle() ) +
+                    machine_.angularOffset( ANGULAR_HORIZONTAL, trajparams_panel_->hangle() );
   machine_.gotoPosition(pos, 650, angpos);
 }
 
 //-----------------------------------------------------------------------------
 void MainWindow::on_finalPosButton_clicked() {
-  /*
-  machine_.setMaxSpeed( 650, AXIS_ALL );
+  UnitConvPtr xc = xposSliderSpin->getConversionObj(),
+              yc = yposSliderSpin->getConversionObj(),
+              zc = zposSliderSpin->getConversionObj();
 
-  AbstractProtocol::ConcurrentCmmd32 cmd;
-  cmd[ X_AXIS ] =  ui->xfinalSpinBox->value() * TO_PULSES;
-  cmd[ Y_AXIS ] = -ui->yfinalSpinBox->value() * TO_PULSES;
-  cmd[ Z_AXIS ] =  ui->zfinalSpinBox->value() * TO_PULSES;
-  */
-  Vector3D pos( ui->xfinalSpinBox->value(), ui->yfinalSpinBox->value(), ui->zfinalSpinBox->value());
+  Vector3D pos( trajparams_panel_->finalPos(xc,yc,zc) );
   pos *= TO_PULSES;
-  Vector2I angpos = machine_.angularOffset( ANGULAR_VERTICAL,   ui->vAngleSpinBox->value() ) +
-                    machine_.angularOffset( ANGULAR_HORIZONTAL, ui->hAngleSpinBox->value() );
-  /*
-  cmd[ A_AXIS ] = angpos.x();
-  cmd[ B_AXIS ] = angpos.y();
-
-  machine_.sendPosCmmds( cmd );
-  */
-
+  Vector2I angpos = machine_.angularOffset( ANGULAR_VERTICAL,   trajparams_panel_->vangle() ) +
+                    machine_.angularOffset( ANGULAR_HORIZONTAL, trajparams_panel_->hangle() );
   machine_.gotoPosition(pos, 650, angpos);
 }
 
