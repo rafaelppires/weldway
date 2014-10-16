@@ -125,6 +125,9 @@ void MainWindow::oscillationsSetup() {
   trajparams_panel_ = new TrajRectParamsWidget( machine_, this );
   trajSetupToolBox->addItem( trajparams_panel_, QStringLiteral("Eixo Longitudinal Retilíneo") );
 
+  trajcircle_panel_ = new CircularWidget( machine_, this );
+  trajSetupToolBox->addItem( trajcircle_panel_, QStringLiteral("Eixo Longitudinal Circular") );
+
   ui->trajectoryTabLayout->addWidget(trajSetupToolBox);
 }
 //-----------------------------------------------------------------------------

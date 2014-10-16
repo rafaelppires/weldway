@@ -16,6 +16,7 @@
 #include <QtWidgets/QToolBox>
 #include <trajectoryscene.h>
 #include <trajrectparamswidget.h>
+#include <circularwidget.h>
 
 namespace Ui {
 class MainWindow;
@@ -65,6 +66,7 @@ private:
   LongitudinalWidget *longit_panel_;
   CustomTrajectoryWidget *custom_panel_;
   TrajRectParamsWidget *trajparams_panel_;
+  CircularWidget *trajcircle_panel_;
 
   Ui::MainWindow *ui;
   QLabel *x_statlabel_, *y_statlabel_, *z_statlabel_, *a_statlabel_, *b_statlabel_;
@@ -75,6 +77,7 @@ private:
   MasterCommunicator &machine_;
   boost::shared_ptr<AbstractTrajectory> executing_trajectory_;
   boost::shared_ptr<QTimer> redraw_timer_;
+
 };
 
 #endif // MAINWINDOW_H

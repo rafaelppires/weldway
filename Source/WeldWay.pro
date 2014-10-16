@@ -34,8 +34,12 @@ SOURCES += src/main.cpp \
            src/trajectories/bricks.cpp \
            src/trajectories/double_triang.cpp \
            src/trajectories/double_triang2nd.cpp \
-    src/trajectories/custom_trajectory.cpp \
-    ui/trajrectparamswidget.cpp
+           src/trajectories/custom_trajectory.cpp \
+           ui/trajrectparamswidget.cpp \
+           ui/circularwidget.cpp \
+    src/trajectories/circular_transform.cpp \
+    include/trajectories/linear_transform.cpp \
+    src/trajectories/trajectory_transform.cpp
 
 HEADERS += ui/mainwindow.h \
            include/simplemotion.h \
@@ -72,16 +76,21 @@ HEADERS += ui/mainwindow.h \
            include/trajectories/bricks.h \
            include/trajectories/double_triang.h \
            include/trajectories/double_triang2nd.h \
-    include/trajectories/custom_trajectory.h \
-    ui/trajrectparamswidget.h
+           include/trajectories/custom_trajectory.h \
+           ui/trajrectparamswidget.h \
+           ui/circularwidget.h \
+    include/trajectories/circular_transform.h \
+    include/trajectories/linear_transform.h \
+    include/trajectories/trajectory_transform.h
 
 FORMS    += ui/mainwindow.ui \
             ui/formconnection.ui \
             ui/longitudinalwidget.ui \
             ui/transversalwidget.ui \
             ui/triangularswitchback.ui \
-    ui/customtrajconfig.ui \
-    ui/trajrectparamswidget.ui
+            ui/customtrajconfig.ui \
+            ui/trajrectparamswidget.ui \
+            ui/circularwidget.ui
 
 LIBS += -L$$(DEV_DEPS)/boost_1_55_0/stage/lib \
         inpout32.dll -lsetupapi \

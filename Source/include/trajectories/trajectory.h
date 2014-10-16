@@ -6,6 +6,7 @@
 #include <boost/shared_ptr.hpp>
 #include <units.h>
 #include <boost/thread.hpp>
+#include <trajectory_transform.h>
 
 //-----------------------------------------------------------------------------
 typedef std::vector<Vector3D>  PositionVector;
@@ -14,7 +15,7 @@ typedef std::vector<double>    SpeedVector;
 //-----------------------------------------------------------------------------
 class AbstractTrajectory {
 public:
-  AbstractTrajectory( const Vector3D &rotate_vec, double rad_xangle );
+  AbstractTrajectory( TrajectoryTransformPtr tt );
 
   virtual const PositionVector& positions() const { return positions_; }
   virtual const SpeedVector& speeds() const { return speeds_; }
@@ -40,6 +41,7 @@ protected:
   SpeedVector speeds_;
   uint32_t index_;
   boost::mutex data_mutex_;
+  TrajectoryTransformPtr transform_;
 };
 
 //-----------------------------------------------------------------------------

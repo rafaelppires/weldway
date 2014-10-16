@@ -1,9 +1,9 @@
 #include <trajectory.h>
 
 //-----------------------------------------------------------------------------
-AbstractTrajectory::AbstractTrajectory(const Vector3D &rotate_vec, double rad_xangle ) : index_(~0), rotation_vec_(rotate_vec) {
-  setupMatrixes(rad_xangle);
+AbstractTrajectory::AbstractTrajectory( TrajectoryTransformPtr tt ) : index_(~0), transform_(tt) {
 }
+
 //-----------------------------------------------------------------------------
 void AbstractTrajectory::setupMatrixes( double alpha ) {
   Vector2D xzproj( rotation_vec_.x(), rotation_vec_.z() );
