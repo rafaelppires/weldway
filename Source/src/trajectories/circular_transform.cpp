@@ -19,11 +19,19 @@ CircularTransform::CircularTransform(const Vector3D &center, const Vector3D &beg
   MatrixD overprevx = rotationMatrix3D(line2vec(prevx),va);
 
   Vector3D rotated = column2vec(overprevx*overy*z.columnMatrix());
-  std::cout << rotated << "\n";
+  std::cout << "Rotated: " << rotated << "\n";
 
-  Vector3D unrot1 = column2vec( rotationMatrix3D(0,-atan2(rotated.z(),rotated.y())) * rotated.columnMatrix() );
-  std::cout << unrot1 << "\n";
+  double vangle, hangle;
+  MatrixD un_overx( rotationMatrix3D(0,vangle=-atan2(rotated.y(),rotated.z())) );
+  Vector3D unrot1 = column2vec( un_overx * rotated.columnMatrix() );
 
+  Vector3D prevy = line2vec( Vector3D(0,1,0).lineMatrix() * un_overx );
+  Vector3D prevy_check = column2vec( un_overx * prevy.columnMatrix() );
+
+  MatrixD scn_rot = rotationMatrix3D(prevy, hangle=-atan2(unrot1.x(), unrot1.z()));
+  std::cout << "prevy: " << prevy << " (l:"<<prevy.length()<<") checking: " << prevy_check << " (l:"<<prevy_check.length()<<")\nMatrix: " << scn_rot << "\n";
+  std::cout << column2vec( scn_rot * unrot1.columnMatrix() ) << "\n";
+  std::cout << "Angles: v: " << rad2deg(-vangle) << " h: " << rad2deg(-hangle) << "\n";
 }
 
 //-----------------------------------------------------------------------------

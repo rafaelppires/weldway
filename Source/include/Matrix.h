@@ -23,7 +23,7 @@ public:
   Matrix( const Matrix &m ) : m_(m.m_), n_(m.n_), latex_(m.latex_) {
     size_t n = m_*n_;
     data_.reset( new T[n] );
-    for(int i=0; i<n; i++) data_[i] = m.data_[i];;
+    for(int i=0; i<n; i++) data_[i] = m.data_[i];
   }
 
   Matrix(unsigned int n) : m_(n), n_(n){

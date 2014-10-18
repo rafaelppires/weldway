@@ -116,7 +116,7 @@ public:
   Matrix<T> lineMatrix() const {
     Matrix<T> ret(1,N);
     for(unsigned int i = 0; i < N; ++i )
-      ret(0,1) = v[i];
+      ret(0,i) = v[i];
     return ret;
   }
 
