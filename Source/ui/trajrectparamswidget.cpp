@@ -1,9 +1,11 @@
 #include "trajrectparamswidget.h"
 #include "ui_trajrectparamswidget.h"
+#include <linear_transform.h>
+#include <geometry.h>
 
 //-----------------------------------------------------------------------------
-TrajRectParamsWidget::TrajRectParamsWidget(MasterCommunicator &m, QWidget *parent) :
-  QWidget(parent), machine_(m),
+TrajRectParamsWidget::TrajRectParamsWidget(MasterCommunicator &m, UnitConvPtr xconv, UnitConvPtr yconv, UnitConvPtr zconv, QWidget *parent) :
+  TransformationWidget(parent), machine_(m), xconv_(xconv), yconv_(yconv), zconv_(zconv),
   ui(new Ui::TrajRectParamsWidget) {
   ui->setupUi(this);
 }
@@ -14,7 +16,7 @@ TrajRectParamsWidget::~TrajRectParamsWidget() {
 }
 
 //-----------------------------------------------------------------------------
-Vector3I TrajRectParamsWidget::initPos(UnitConvPtr xconv, UnitConvPtr yconv, UnitConvPtr zconv) {
+Vector3I TrajRectParamsWidget::initPos() {
   double xv = ui->xinitSpinBoxx->value(),
          yv = ui->yinitSpinBoxx->value(),
          zv = ui->zinitSpinBoxx->value();
@@ -22,13 +24,13 @@ Vector3I TrajRectParamsWidget::initPos(UnitConvPtr xconv, UnitConvPtr yconv, Uni
   std::string cur_unit = ui->initFinalPosUnitComboBox->currentText().toStdString(),
               unit = "pulsos";
 
-  return Vector3I( xconv->convertFromTo( xv, cur_unit, unit ),
-                   yconv->convertFromTo( yv, cur_unit, unit ),
-                   zconv->convertFromTo( zv, cur_unit, unit ) );
+  return Vector3I( xconv_->convertFromTo( xv, cur_unit, unit ),
+                   yconv_->convertFromTo( yv, cur_unit, unit ),
+                   zconv_->convertFromTo( zv, cur_unit, unit ) );
 }
 
 //-----------------------------------------------------------------------------
-Vector3I TrajRectParamsWidget::finalPos(UnitConvPtr xconv, UnitConvPtr yconv, UnitConvPtr zconv) {
+Vector3I TrajRectParamsWidget::finalPos() {
   double xv = ui->xfinalSpinBoxx->value(),
          yv = ui->yfinalSpinBoxx->value(),
          zv = ui->zfinalSpinBoxx->value();
@@ -36,9 +38,9 @@ Vector3I TrajRectParamsWidget::finalPos(UnitConvPtr xconv, UnitConvPtr yconv, Un
   std::string cur_unit = ui->initFinalPosUnitComboBox->currentText().toStdString(),
               unit = "pulsos";
 
-  return Vector3I( xconv->convertFromTo( xv, cur_unit, unit ),
-                   yconv->convertFromTo( yv, cur_unit, unit ),
-                   zconv->convertFromTo( zv, cur_unit, unit ) );
+  return Vector3I( xconv_->convertFromTo( xv, cur_unit, unit ),
+                   yconv_->convertFromTo( yv, cur_unit, unit ),
+                   zconv_->convertFromTo( zv, cur_unit, unit ) );
 }
 
 //-----------------------------------------------------------------------------
@@ -84,3 +86,9 @@ void TrajRectParamsWidget::on_markFinalPositionButton_clicked() {
   ui->yfinalSpinBoxx->setValue( pos.y() );
   ui->zfinalSpinBoxx->setValue( pos.z() );
 }
+//-----------------------------------------------------------------------------
+TrajectoryTransformPtr TrajRectParamsWidget::transformation() {
+  return TrajectoryTransformPtr( new LinearTransform(finalPos()-initPos(), deg2rad(xangle())) );
+}
+
+//-----------------------------------------------------------------------------

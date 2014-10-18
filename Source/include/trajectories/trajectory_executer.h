@@ -17,7 +17,7 @@ public:
   void operator()();
   bool finished();
   void cancel();
-  void setLimits(const Vector3I &init, const Vector3I &final );
+  void setLimits(const Vector3I &init);
   void setCurrent( const Vector3I &last );
   void setAngularOffset( double );
   Vector3US getSpeedsAndInterval(const Vector3D &delta, uint16_t &interval, double res_spd);

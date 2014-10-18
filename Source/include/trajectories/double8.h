@@ -6,7 +6,7 @@
 
 class Double8Trajectory : public AbstractTrajectory {
 public:
-  Double8Trajectory( double spd, double lambda, double ampl, double rho, const Vector3D &rotate_vec, double deg_xang );
+  Double8Trajectory(double spd, double lambda, double ampl, double rho, TrajectoryTransformPtr tt);
   void applyCorrection( double spd, double lambda, double ampl, double rho );
   static void draft( PositionVector &out, double spd, double l, double ampl, double rho );
 private:

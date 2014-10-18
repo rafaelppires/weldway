@@ -15,7 +15,7 @@ typedef std::vector< CustomEntry > SegmentVector;
 //-----------------------------------------------------------------------------
 class CustomExecutable : public AbstractTrajectory {
 public:
-  CustomExecutable(const Vector3D &rotvec, double xangle, double s, double l, double a, const SegmentVector &svec);
+  CustomExecutable(TrajectoryTransformPtr tt, double s, double l, double a, const SegmentVector &svec);
 };
 //-----------------------------------------------------------------------------
 class CustomTrajectory {
@@ -31,7 +31,7 @@ public:
   void setName( std::string n ) { name_ = n; }
   std::string name() { return name_; }
   void draft(PositionVector &v,double,double,double);
-  AbsTrajectoryPtr getExecutable(const Vector3D &rotate, double xangle, double spd, double lmbd, double ampl );
+  AbsTrajectoryPtr getExecutable(TrajectoryTransformPtr tt, double spd, double lmbd, double ampl );
 private:
   std::string name_;
   Vector2D rescale();

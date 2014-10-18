@@ -9,8 +9,8 @@
 //-----------------------------------------------------------------------------
 class LinearTrajectory : public AbstractTrajectory {
 public:
-  LinearTrajectory( int32_t weldspd, const Vector3D &rotate_vec, double deg_xang ) : AbstractTrajectory(rotate_vec, deg_xang) {
-    addR( Vector3D( rotate_vec.length(), 0, 0 ), weldspd / TO_RPM );
+  LinearTrajectory( int32_t weldspd,  TrajectoryTransformPtr tt  ) : AbstractTrajectory(tt) {
+    addR( Vector3D( tt->length(), 0, 0 ), weldspd / TO_RPM );
     rotate();
   }
 
@@ -22,8 +22,8 @@ public:
 //-----------------------------------------------------------------------------
 class SwitchBackTrajectory : public AbstractTrajectory {
 public:
-  SwitchBackTrajectory(int32_t fwlen, int32_t weldspd, const Vector3D &rotate_vec, double deg_xang ) : AbstractTrajectory(rotate_vec, deg_xang) {
-    double total_length = rotate_vec.length();
+  SwitchBackTrajectory(int32_t fwlen, int32_t weldspd, TrajectoryTransformPtr tt  ) : AbstractTrajectory(tt) {
+    double total_length = tt->length();
     int period_count = 0.5 + 2. * total_length/fwlen;
     double spdmm = weldspd / TO_RPM;
     Vector3D forward(fwlen,0,0), backward(-fwlen/2.,0,0);

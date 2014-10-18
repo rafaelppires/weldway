@@ -7,7 +7,7 @@
 class TriangularTrajectory : public AbstractTrajectory {
 public:
   TriangularTrajectory(double spd, double lmbd, double ampl,
-                       double sstop, double istop, double f, const Vector3D &rotate_vec, double deg_xang );
+                       double sstop, double istop, double f, TrajectoryTransformPtr tt );
 
   void applyCorrection(double spd, double lmbd, double ampl,
                        uint32_t sstop, uint32_t istop);

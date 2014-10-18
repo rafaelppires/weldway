@@ -16,7 +16,7 @@ class LongitudinalWidget : public OscillationWidget {
 public:
   explicit LongitudinalWidget(QWidget *parent = 0);
   ~LongitudinalWidget();
-  virtual AbsTrajectoryPtr trajectory(double xangle, Vector3D rotate);
+  virtual AbsTrajectoryPtr trajectory(TrajectoryTransformPtr tt);
   virtual void draft(PositionVector&) {}
 
 private slots:

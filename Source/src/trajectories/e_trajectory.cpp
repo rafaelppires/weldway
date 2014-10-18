@@ -1,10 +1,11 @@
 #include <e_trajectory.h>
+#include <linear_transform.h>
 
 //-----------------------------------------------------------------------------
 ETrajectory::ETrajectory( double spd, double l, double ampl, double rho,
-                          const Vector3D &rotate_vec, double deg_xang ) :
-        AbstractTrajectory(rotate_vec, deg_xang), l_(l), rho_(rho), A_(ampl)  {
-  double total_length = rotate_vec.length();
+                          TrajectoryTransformPtr tt ) :
+        AbstractTrajectory(tt), l_(l), rho_(rho), A_(ampl)  {
+  double total_length = tt->length();
   int period_count = 0.5 + total_length/l;
 
   defineSingle( spd, l );
@@ -54,8 +55,8 @@ Vector3D ETrajectory::f( double arc ) {
 
 //-----------------------------------------------------------------------------
 Vector3I ETrajectory::initialOffset() const {
-  int sig = rotation_vec_.x() / fabs(rotation_vec_.x());
-  return rotate( Vector3D(offset_.x()*sig, offset_.y(), offset_.z()) );
+  int sig = 1; //CHECK rotation_vec_.x() / fabs(rotation_vec_.x());
+  return transform_->transform( Vector3D(offset_.x()*sig, offset_.y(), offset_.z()) );
 }
 
 //-----------------------------------------------------------------------------
@@ -65,12 +66,12 @@ void ETrajectory::applyCorrection( double spd, double l, double ampl, double rho
   Vector3D diff, cur, prev;
   uint32_t idx = index_;
 
-  prev = unrotate( positions_[idx-1] );
+  prev = transform_->transform( positions_[idx-1] );
   do {
-    cur = unrotate( positions_[idx++] );
+    cur = transform_->revert( positions_[idx++] );
     diff = cur - prev;
     prev = cur;
-  } while( idx < positions_.size() && (diff.y() > 0 || Vector3D(unrotate(positions_[idx])-prev).y() < 0) );
+  } while( idx < positions_.size() && (diff.y() > 0 || Vector3D(transform_->revert(positions_[idx])-prev).y() < 0) );
 
   eraseFrom( idx );
   A_ = ampl;
@@ -81,10 +82,10 @@ void ETrajectory::applyCorrection( double spd, double l, double ampl, double rho
   positions_.back() += offset_;
   setReference();
 
-  int period_count = 0.5 + (rotation_vec_.length() - positions_[idx].x())/l;
+  int period_count = 0.5 + (transform_->length() - positions_[idx].x())/l;
   addRepeatable( period_count );
   for( int i = idx; i < positions_.size(); ++i )
-    positions_[i] = rotate(positions_[i]);
+    positions_[i] = transform_->transform(positions_[i]);
 }
 
 //-----------------------------------------------------------------------------
@@ -99,7 +100,7 @@ void ETrajectory::addRepeatable( uint16_t count ) {
 
 //-----------------------------------------------------------------------------
 void ETrajectory::draft( PositionVector &out, double spd, double l, double ampl, double rho ) {
-  ETrajectory e( spd, l, ampl, rho, Vector3D(4*l,0,0), 0);
+  ETrajectory e( spd, l, ampl, rho, TrajectoryTransformPtr(new LinearTransform(Vector3D(4*l,0,0), 0)));
   out.clear();
   out.push_back( e.initialOffset() );
   out.insert( out.end(), e.positions_.begin(), e.positions_.end() );

@@ -1,11 +1,11 @@
 #include <double_e.h>
+#include <linear_transform.h>
 
 //-----------------------------------------------------------------------------
 DoubleETrajectory::DoubleETrajectory( double spd, double lambda, int32_t ampl,
-                                      const Vector3D &rotate_vec,
-                                      double deg_xang ) :
-  AbstractTrajectory(rotate_vec, deg_xang) {
-  double total_length = rotate_vec.length();
+                                      TrajectoryTransformPtr tt ) :
+  AbstractTrajectory(tt) {
+  double total_length = tt->length();
   int period_count = 0.5 + total_length/lambda;
   double freq = (TO_PULSES*spd) / (TO_RPM*lambda),
          t = 1. / freq,                      // s
@@ -28,17 +28,17 @@ void DoubleETrajectory::applyCorrection( double spd, double lambda,
   uint32_t idx = index_;
   double prevdiffy;
 
-  cur = unrotate( positions_[idx-1] );
+  cur = transform_->revert( positions_[idx-1] );
   do {
     prev = cur;
-    cur = unrotate( positions_[idx++] );
+    cur = transform_->revert( positions_[idx++] );
     prevdiffy = diff.y();
     diff = cur - prev;
     if( fabs(diff.x())<1e-5 ) diff.x() = 0;
     if( fabs(diff.y())<1e-5 ) diff.y() = 0;
   } while( idx < positions_.size() && (diff.y() != 0 || prevdiffy <= 0) );
   eraseFrom( idx-1 );
-  int period_count = 0.5 + (rotation_vec_.length() - cur.x())/lambda;
+  int period_count = 0.5 + (transform_->length() - cur.x())/lambda;
   double freq = (TO_PULSES*spd) / (TO_RPM*lambda),
          t = 1. / freq,                      // s
          hsqr2 = sqrt(2.) / 2.,
@@ -52,7 +52,7 @@ void DoubleETrajectory::applyCorrection( double spd, double lambda,
   setReference();
   addRepeatable( period_count, lambda, yoff, vr);
   for( int i = idx-2; i < positions_.size(); ++i )
-    positions_[i] = rotate(positions_[i]);
+    positions_[i] = transform_->transform(positions_[i]);
 }
 
 //-----------------------------------------------------------------------------
@@ -76,7 +76,7 @@ void DoubleETrajectory::addRepeatable( uint32_t period_count, double lmb,
 }
 //-----------------------------------------------------------------------------
 void DoubleETrajectory::draft( PositionVector &out, double spd, double l, double ampl ) {
-  DoubleETrajectory e( spd, l, ampl, Vector3D(4*l,0,0), 0);
+  DoubleETrajectory e( spd, l, ampl, TrajectoryTransformPtr( new LinearTransform(Vector3D(4*l,0,0), 0)));
   out.clear();
   out.push_back( e.initialOffset() );
   out.insert( out.end(), e.positions_.begin(), e.positions_.end() );

@@ -106,11 +106,17 @@ public:
     return v[i>=N ? N-1 : i];
   }
 
-  template< typename T2 >
-  operator Matrix<T2>() const {
-    Matrix<T2> ret(N,1);
+  Matrix<T> columnMatrix() const {
+    Matrix<T> ret(N,1);
     for(unsigned int i = 0; i < N; ++i )
       ret(i,0) = v[i];
+    return ret;
+  }
+
+  Matrix<T> lineMatrix() const {
+    Matrix<T> ret(1,N);
+    for(unsigned int i = 0; i < N; ++i )
+      ret(0,1) = v[i];
     return ret;
   }
 

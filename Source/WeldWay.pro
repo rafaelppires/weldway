@@ -37,9 +37,10 @@ SOURCES += src/main.cpp \
            src/trajectories/custom_trajectory.cpp \
            ui/trajrectparamswidget.cpp \
            ui/circularwidget.cpp \
-    src/trajectories/circular_transform.cpp \
-    include/trajectories/linear_transform.cpp \
-    src/trajectories/trajectory_transform.cpp
+           src/trajectories/circular_transform.cpp \
+           src/trajectories/linear_transform.cpp \
+           src/trajectories/trajectory_transform.cpp \
+           src/geometry.cpp
 
 HEADERS += ui/mainwindow.h \
            include/simplemotion.h \
@@ -79,9 +80,12 @@ HEADERS += ui/mainwindow.h \
            include/trajectories/custom_trajectory.h \
            ui/trajrectparamswidget.h \
            ui/circularwidget.h \
-    include/trajectories/circular_transform.h \
-    include/trajectories/linear_transform.h \
-    include/trajectories/trajectory_transform.h
+           include/trajectories/circular_transform.h \
+           include/trajectories/linear_transform.h \
+           include/trajectories/trajectory_transform.h \
+           ui/transformation_widget.h \
+           include/trajectories/curved_trajectory.h \
+           include/geometry.h
 
 FORMS    += ui/mainwindow.ui \
             ui/formconnection.ui \

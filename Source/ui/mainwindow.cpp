@@ -4,6 +4,7 @@
 #include <iostream>
 #include <QLineEdit>
 #include <formconnection.h>
+#include <linear_transform.h>
 
 //-----------------------------------------------------------------------------
 MainWindow::MainWindow(QWidget *parent) :
@@ -122,16 +123,16 @@ void MainWindow::oscillationsSetup() {
   trajSetupToolBox->setObjectName(QStringLiteral("trajSetupToolBox"));
   trajSetupToolBox->setStyleSheet(oscillationsToolBox->styleSheet());
 
-  trajparams_panel_ = new TrajRectParamsWidget( machine_, this );
+  trajparams_panel_ = new TrajRectParamsWidget( machine_, xposSliderSpin->getConversionObj(), yposSliderSpin->getConversionObj(), zposSliderSpin->getConversionObj(), this );
   trajSetupToolBox->addItem( trajparams_panel_, QStringLiteral("Eixo Longitudinal Retilíneo") );
 
-  trajcircle_panel_ = new CircularWidget( machine_, this );
+  trajcircle_panel_ = new CircularWidget( machine_, xposSliderSpin->getConversionObj(), yposSliderSpin->getConversionObj(), zposSliderSpin->getConversionObj(), this );
   trajSetupToolBox->addItem( trajcircle_panel_, QStringLiteral("Eixo Longitudinal Circular") );
 
   ui->trajectoryTabLayout->addWidget(trajSetupToolBox);
 }
 //-----------------------------------------------------------------------------
-OscillationWidget* MainWindow::activeWidget() {
+OscillationWidget* MainWindow::activeOscillationWidget() {
   std::string cur = oscillationsToolBox->currentWidget()->objectName().toStdString();
   if( cur == "LongitudinalWidget" ) {
     return longit_panel_;
@@ -139,6 +140,17 @@ OscillationWidget* MainWindow::activeWidget() {
     return transv_panel_;
   } else if( cur == "CustomTrajectoryWidget" ) {
     return custom_panel_;
+  } else {
+    return 0;
+  }
+}
+//-----------------------------------------------------------------------------
+TransformationWidget* MainWindow::activeTransformWidget() {
+  std::string cur = trajSetupToolBox->currentWidget()->objectName().toStdString();
+  if( cur == "CircularWidget" ) {
+    return trajcircle_panel_;
+  } else if ( cur == "TrajRectParamsWidget" ) {
+    return trajparams_panel_;
   } else {
     return 0;
   }
@@ -155,13 +167,10 @@ void MainWindow::on_findZeroPushButton_clicked() {
 }
 
 //-----------------------------------------------------------------------------
-void MainWindow::setLimits( Vector3I &init, Vector3I &final ) {
-  UnitConvPtr xc = xposSliderSpin->getConversionObj(),
-              yc = yposSliderSpin->getConversionObj(),
-              zc = zposSliderSpin->getConversionObj();
-
-  machine_.setLimits( init = trajparams_panel_->initPos(xc,yc,zc),
-                      final = trajparams_panel_->finalPos(xc,yc,zc) );
+void MainWindow::setLimits( ) {
+  TransformationWidget *tw = activeTransformWidget();
+  if( tw )
+  machine_.setLimits( tw->initPos() );
 }
 
 //-----------------------------------------------------------------------------
@@ -169,19 +178,18 @@ void MainWindow::on_executeButton_clicked() {
   std::string pos_unit("pulsos"), spd_unit("rpm");
   int idx = ui->tabWidget->currentIndex();
 
-  Vector3I  init, final;
-  setLimits( init, final );
+  setLimits();
   double xangle = trajparams_panel_->xangle();
   machine_.setAngularOffset( xangle );
 
-  Vector3D rotate_vec = final - init;
   if( machine_.busy() ) {
     machine_.cancel();
     printf(">>> Cancelled <<<\n");
   } else if( ui->tabWidget->currentWidget()->objectName() == "oscillationTab" ) {    
-    OscillationWidget *w = activeWidget();
-    if( w ) {
-      executing_trajectory_ = w->trajectory(xangle, rotate_vec);
+    OscillationWidget *ow = activeOscillationWidget();
+    TransformationWidget *tw = activeTransformWidget();
+    if( ow && tw ) {
+      executing_trajectory_ = ow->trajectory( tw->transformation() );
     }
 
     if( executing_trajectory_ ) {
@@ -410,7 +418,7 @@ void MainWindow::redraw() {
 
 //-----------------------------------------------------------------------------
 void MainWindow::actuallyRedraw() {
-  OscillationWidget *w = activeWidget();
+  OscillationWidget *w = activeOscillationWidget();
   if( w ) {
     PositionVector v;
     w->draft( v );
@@ -425,11 +433,7 @@ void MainWindow::on_tabWidget_currentChanged( int index ) {
 
 //-----------------------------------------------------------------------------
 void MainWindow::on_initPosButton_clicked() {
-  UnitConvPtr xc = xposSliderSpin->getConversionObj(),
-              yc = yposSliderSpin->getConversionObj(),
-              zc = zposSliderSpin->getConversionObj();
-
-  Vector3D pos( trajparams_panel_->initPos(xc,yc,zc) );
+  Vector3D pos( trajparams_panel_->initPos() );
   pos *= TO_PULSES;
   Vector2I angpos = machine_.angularOffset( ANGULAR_VERTICAL,   trajparams_panel_->vangle() ) +
                     machine_.angularOffset( ANGULAR_HORIZONTAL, trajparams_panel_->hangle() );
@@ -438,11 +442,7 @@ void MainWindow::on_initPosButton_clicked() {
 
 //-----------------------------------------------------------------------------
 void MainWindow::on_finalPosButton_clicked() {
-  UnitConvPtr xc = xposSliderSpin->getConversionObj(),
-              yc = yposSliderSpin->getConversionObj(),
-              zc = zposSliderSpin->getConversionObj();
-
-  Vector3D pos( trajparams_panel_->finalPos(xc,yc,zc) );
+  Vector3D pos( trajparams_panel_->finalPos() );
   pos *= TO_PULSES;
   Vector2I angpos = machine_.angularOffset( ANGULAR_VERTICAL,   trajparams_panel_->vangle() ) +
                     machine_.angularOffset( ANGULAR_HORIZONTAL, trajparams_panel_->hangle() );

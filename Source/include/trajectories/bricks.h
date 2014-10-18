@@ -6,7 +6,7 @@
 
 class BricksTrajectory : public AbstractTrajectory {
 public:
-  BricksTrajectory( double spd, double ampl, const Vector3D &rotate_vec, double deg_xang );
+  BricksTrajectory( double spd, double ampl, TrajectoryTransformPtr tt );
   void applyCorrection( double spd, double ampl );
   static void draft( PositionVector &out, double spd, double ampl );
   Vector3I initialOffset() const;

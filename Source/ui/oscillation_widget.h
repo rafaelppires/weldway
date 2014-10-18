@@ -9,7 +9,7 @@ class OscillationWidget : public QWidget {
 public:
   OscillationWidget(QWidget *parent) : QWidget(parent) {}
   virtual void draft(PositionVector&) = 0;
-  virtual AbsTrajectoryPtr trajectory(double xangle, Vector3D rotate) = 0;
+  virtual AbsTrajectoryPtr trajectory(TrajectoryTransformPtr) = 0;
 };
 
 #endif // OSCILLATION_WIDGET_H

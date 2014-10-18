@@ -7,7 +7,7 @@
 class DoubleTriangular2ndTraj : public AbstractTrajectory {
 public:
   DoubleTriangular2ndTraj(double spd, double lmbd, double ampl,
-                       const Vector3D &rotate_vec, double deg_xang );
+                       TrajectoryTransformPtr tt );
 
   void applyCorrection(double spd, double lmbd, double ampl);
 

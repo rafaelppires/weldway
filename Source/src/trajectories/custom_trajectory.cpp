@@ -72,15 +72,15 @@ void CustomTrajectory::draft(PositionVector &v, double,double lmbd,double ampl) 
 }
 
 //-----------------------------------------------------------------------------
-AbsTrajectoryPtr CustomTrajectory::getExecutable(const Vector3D &rotate, double xangle, double spd, double lmbd, double ampl ) {
-  return AbsTrajectoryPtr( new CustomExecutable(rotate, xangle, spd, lmbd, ampl, segments_ ) );
+AbsTrajectoryPtr CustomTrajectory::getExecutable(TrajectoryTransformPtr tt, double spd, double lmbd, double ampl ) {
+  return AbsTrajectoryPtr( new CustomExecutable(tt, spd, lmbd, ampl, segments_ ) );
 }
 
 //-----------------------------------------------------------------------------
-CustomExecutable::CustomExecutable(const Vector3D &rotvec, double xangle,
+CustomExecutable::CustomExecutable(TrajectoryTransformPtr tt,
                                    double s, double l, double a,
                                    const SegmentVector &svec) :
-  AbstractTrajectory(rotvec,xangle) {
+  AbstractTrajectory(tt) {
 
   double len, prd = (fabs(l) * TO_RPM) / (fabs(s) * TO_PULSES);
   SegmentVector::const_iterator it = svec.begin(), end = svec.end();
@@ -89,7 +89,7 @@ CustomExecutable::CustomExecutable(const Vector3D &rotvec, double xangle,
   double spdmm = len/(prd*TO_PULSES);
 
 
-  int period_count = 0.5 + rotvec.length()/l;
+  int period_count = 0.5 + tt->length()/l;
   for(int i = 0; i < period_count; ++i) {
     SegmentVector::const_iterator it = svec.begin(), end = svec.end();
     for(; it!=end;++it) {

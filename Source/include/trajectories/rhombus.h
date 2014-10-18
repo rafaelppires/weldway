@@ -3,11 +3,12 @@
 
 #include <trajectory.h>
 #include <vectorxd.h>
+#include <linear_transform.h>
 
 class Rhombus : public AbstractTrajectory {
 public:
-  Rhombus(int32_t a, int32_t l, uint8_t n, double wspeed , const Vector3D &rotate_vec, double deg_xang ) : AbstractTrajectory(rotate_vec, deg_xang) {
-    double total_length = rotate_vec.length();
+  Rhombus(int32_t a, int32_t l, uint8_t n, double wspeed ,   TrajectoryTransformPtr tt ) : AbstractTrajectory(tt) {
+    double total_length = tt->length();
     int32_t xstep = l / (4 * n);
     int period_count = 0.5 + 2 * total_length/l;
     double xspeed = 3 * wspeed,
@@ -37,7 +38,7 @@ public:
 
   //-----------------------------------------------------------------------------
   static void draft(PositionVector &out, int32_t a, int32_t l, uint8_t n, double wspeed ) {
-    Rhombus e( a,l,n,wspeed,Vector3D(4*l,0,0),0 );
+    Rhombus e( a,l,n,wspeed, TrajectoryTransformPtr( new LinearTransform(Vector3D(4*l,0,0),0)) );
     out.clear();
     out.push_back( e.initialOffset() );
     out.insert( out.end(), e.positions_.begin(), e.positions_.end() );

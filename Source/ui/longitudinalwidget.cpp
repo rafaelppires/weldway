@@ -1,6 +1,7 @@
 #include "longitudinalwidget.h"
 #include "ui_longitudinalwidget.h"
 #include <switch_back.h>
+#include <linear_transform.h>
 
 //-----------------------------------------------------------------------------
 LongitudinalWidget::LongitudinalWidget(QWidget *parent) :
@@ -33,15 +34,16 @@ LongitudinalWidget::~LongitudinalWidget() {
 }
 
 //-----------------------------------------------------------------------------
-AbsTrajectoryPtr LongitudinalWidget::trajectory(double xangle, Vector3D rotate) {
+AbsTrajectoryPtr LongitudinalWidget::trajectory(TrajectoryTransformPtr tt) {
   std::string pos_unit("pulsos"), spd_unit("rpm");
   int32_t tidx = ui->longTrajectoryComboBox->currentIndex(),
-		  weldspd = sbWeldSpeedSliderSpin->value( spd_unit );
+       weldspd = sbWeldSpeedSliderSpin->value( spd_unit );
+
   if( tidx == 0 ) {
 	int32_t fwlen = fwLengthSliderSpin->value( pos_unit );
-    return AbsTrajectoryPtr( new SwitchBackTrajectory(fwlen, weldspd, rotate, xangle) );
+    return AbsTrajectoryPtr( new SwitchBackTrajectory(fwlen, weldspd, tt) );
   } else {
-    return AbsTrajectoryPtr( new LinearTrajectory( weldspd, rotate, xangle) );
+    return AbsTrajectoryPtr( new LinearTrajectory( weldspd, tt) );
   }
 }
 

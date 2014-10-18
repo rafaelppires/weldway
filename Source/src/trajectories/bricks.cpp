@@ -1,10 +1,11 @@
 #include <bricks.h>
+#include <linear_transform.h>
 //-----------------------------------------------------------------------------
 BricksTrajectory::BricksTrajectory( double spd, double ampl,
-                                    const Vector3D &rotate_vec, double deg_xang ) :
-    AbstractTrajectory(rotate_vec, deg_xang) {
+                                    TrajectoryTransformPtr tt) :
+    AbstractTrajectory(tt) {
 
-  double sqsz = ampl / 2, lmbd = 6*sqsz, total = rotate_vec.length();
+  double sqsz = ampl / 2, lmbd = 6*sqsz, total = tt->length();
   offset_ = Vector3D( 0, sqsz, 0 );
   setReference( offset_ );
 
@@ -29,13 +30,13 @@ void BricksTrajectory::addRepeatable( size_t n, double sqr, double spd ) {
 
 //-----------------------------------------------------------------------------
 Vector3I BricksTrajectory::initialOffset() const {
-  int sig = rotation_vec_.x() / fabs(rotation_vec_.x());
-  return rotate( Vector3D(offset_.x()*sig, offset_.y(), offset_.z()) );
+  int sig = 1; // CHECK rotation_vec_.x() / fabs(rotation_vec_.x());
+  return transform_->transform( Vector3D(offset_.x()*sig, offset_.y(), offset_.z()) );
 }
 
 //-----------------------------------------------------------------------------
 void BricksTrajectory::draft( PositionVector &out, double spd, double ampl ) {
-  BricksTrajectory e( spd, ampl, Vector3D(9*ampl,0,0), 0);
+  BricksTrajectory e( spd, ampl, TrajectoryTransformPtr(new LinearTransform(Vector3D(9*ampl,0,0), 0)));
   out.clear();
   out.push_back( e.initialOffset() );
   out.insert( out.end(), e.positions_.begin(), e.positions_.end() );

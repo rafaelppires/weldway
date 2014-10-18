@@ -16,7 +16,7 @@ class TriangularSwitchback : public OscillationWidget {
 public:
   explicit TriangularSwitchback(QWidget *parent = 0);
   ~TriangularSwitchback();
-  virtual AbsTrajectoryPtr trajectory(double xangle, Vector3D rotate);
+  virtual AbsTrajectoryPtr trajectory(TrajectoryTransformPtr tt);
   virtual void draft(PositionVector&);
   
 private:

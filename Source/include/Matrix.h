@@ -268,6 +268,7 @@ private:
   std::string latex_;
 };
 
+typedef Matrix<double> MatrixD;
 typedef Matrix<long double> MatrixLD;
 
 #endif

@@ -6,7 +6,7 @@
 
 class ETrajectory : public AbstractTrajectory {
 public:
-  ETrajectory(double spd, double l, double ampl, double rho,  const Vector3D &rotate_vec, double deg_xang );
+  ETrajectory(double spd, double l, double ampl, double rho,  TrajectoryTransformPtr tt );
   Vector3I initialOffset() const;
   void applyCorrection(double spd, double l, double ampl , double rho);
   void addRepeatable( uint16_t count );

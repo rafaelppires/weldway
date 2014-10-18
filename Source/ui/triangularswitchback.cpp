@@ -27,12 +27,12 @@ TriangularSwitchback::~TriangularSwitchback() {
 }
 
 //-----------------------------------------------------------------------------
-AbsTrajectoryPtr TriangularSwitchback::trajectory(double xangle, Vector3D rotate) {
+AbsTrajectoryPtr TriangularSwitchback::trajectory(TrajectoryTransformPtr tt) {
   std::string pos_unit("pulsos"), spd_unit("rpm");
   int32_t spd  = sbtSpeedSliderSpin->value( spd_unit ),
           ampl = sbtAmplSliderSpin->value( pos_unit ),
           len  = sbtLenSliderSpin->value( pos_unit );
-  return AbsTrajectoryPtr(new Rhombus( ampl, len, ui->sbtOscCountSpinBox->value(), spd, rotate, xangle));
+  return AbsTrajectoryPtr(new Rhombus( ampl, len, ui->sbtOscCountSpinBox->value(), spd, tt));
 }
 
 //-----------------------------------------------------------------------------

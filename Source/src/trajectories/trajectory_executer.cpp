@@ -126,9 +126,8 @@ uint16_t TrajectoryExecuter::fixSpeed( double v, double a, double t ) {
 }
 
 //-----------------------------------------------------------------------------
-void TrajectoryExecuter::setLimits(const Vector3I &init, const Vector3I &final ) {
+void TrajectoryExecuter::setLimits(const Vector3I &init ) {
   trajectory_init_ = init;
-  trajectory_final_ = final;
 }
 
 //-----------------------------------------------------------------------------

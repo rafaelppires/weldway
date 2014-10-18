@@ -264,7 +264,7 @@ void CustomTrajectoryWidget::draft(PositionVector &v) {
   trajectory->draft(v, spd, lmbd, ampl);
 }
 //-----------------------------------------------------------------------------
-AbsTrajectoryPtr CustomTrajectoryWidget::trajectory(double xangle, Vector3D rotate) {
+AbsTrajectoryPtr CustomTrajectoryWidget::trajectory(TrajectoryTransformPtr tt) {
   int idx = ui->trajListComboBox->currentIndex();
   if( ui->editCancelButton->text() != "Editar" ||
       ui->newSaveButton->text() != "Nova" || idx == -1 || idx < 0 || idx >= trajectory_list_.size() )
@@ -275,7 +275,7 @@ AbsTrajectoryPtr CustomTrajectoryWidget::trajectory(double xangle, Vector3D rota
   double lmbd = trLmbdSliderSpin->value( pos_unit ),
          spd  = trSpeedSliderSpin->value( spd_unit ),
          ampl = trAmplSliderSpin->value( pos_unit );
-  return trajectory->getExecutable( rotate, xangle, spd, lmbd, ampl );
+  return trajectory->getExecutable( tt, spd, lmbd, ampl );
 }
 
 //-----------------------------------------------------------------------------

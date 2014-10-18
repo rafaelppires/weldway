@@ -54,12 +54,13 @@ private:
   QString stringAxis(uint32_t value);
   void setStatus( int32_t status, QLabel *label );
   void checkStatus();
-  void setLimits(Vector3I &init, Vector3I &final);
+  void setLimits();
   void progressUpdate( double );
   void emergencyUpdate( bool );
   void render(PositionVector &v);
   void oscillationsSetup();
-  OscillationWidget* activeWidget();
+  OscillationWidget* activeOscillationWidget();
+  TransformationWidget* activeTransformWidget();
 
   QToolBox *oscillationsToolBox, *trajSetupToolBox;
   TransversalWidget *transv_panel_;

@@ -1,14 +1,14 @@
 #include <double8.h>
 #include <e_trajectory.h>
+#include <linear_transform.h>
 //-----------------------------------------------------------------------------
 Double8Trajectory::Double8Trajectory( double spd, double lambda, double ampl,
-                                      double rho, const Vector3D &rotate_vec,
-                                      double deg_xang ) :
-  AbstractTrajectory(rotate_vec, deg_xang) {
-  double total_length = rotate_vec.length();
+                                      double rho, TrajectoryTransformPtr tt ) :
+  AbstractTrajectory(tt) {
+  double total_length = tt->length();
   int period_count = 0.5 + total_length/lambda;
  
-  ETrajectory e( spd, lambda/2., ampl/2., rho,  rotate_vec, deg_xang );
+  ETrajectory e( spd, lambda/2., ampl/2., rho, tt );
   e.getSingle(psingle_, ssingle_);
  
   addRepeatable( period_count );
@@ -37,7 +37,7 @@ void Double8Trajectory::addRepeatable( uint32_t period_count ) {
 }
 //-----------------------------------------------------------------------------
 void Double8Trajectory::draft( PositionVector &out, double spd, double l, double ampl, double rho ) {
-  Double8Trajectory e( spd, l, ampl, rho, Vector3D(4*l,0,0), 0);
+  Double8Trajectory e( spd, l, ampl, rho, TrajectoryTransformPtr(new LinearTransform(Vector3D(4*l,0,0), 0)));
   out.clear();
   out.push_back( e.initialOffset() );
   out.insert( out.end(), e.positions_.begin(), e.positions_.end() );

@@ -22,9 +22,6 @@ public:
   virtual Vector3I initialOffset() const { return Vector3I(); }
   virtual bool getPoint( Vector3D &pos, double &spd, double &progress );
 
-private:
-  void setupMatrixes( double xangle );
-
 protected:
   void setReference( const Vector3D & ); // set last point as reference for future relative adds
   void setReference(); // set last point as reference for future relative adds
@@ -32,11 +29,8 @@ protected:
   void addA( const Vector3D &pos, double spdmm );   // Absolute
   void eraseFrom( uint32_t idx );
   void rotate();
-  Vector3D rotate( const Vector3D &vec ) const;
-  Vector3D unrotate( const Vector3D &vec ) const;
 
-  MatrixLD rotation_matrix_, unrotation_matrix_;
-  Vector3D accumulator_, rotation_vec_;
+  Vector3D accumulator_;
   PositionVector positions_;
   SpeedVector speeds_;
   uint32_t index_;

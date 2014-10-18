@@ -1,12 +1,13 @@
 #include <double_triang.h>
+#include <linear_transform.h>
 
 //-----------------------------------------------------------------------------
 DoubleTriangularTraj::DoubleTriangularTraj( double spd, double lmbd, double ampl,
-                                            const Vector3D &rotate_vec, double deg_xang ) : AbstractTrajectory(rotate_vec, deg_xang) {
+                                            TrajectoryTransformPtr tt ) : AbstractTrajectory(tt) {
   double period = (lmbd*TO_RPM) / (spd*TO_PULSES),
          torchspd = (sqrt(ampl*ampl+pow(lmbd/2,2))*4+lmbd)/(period*TO_PULSES); // mm/s
 
-  addRepeatable( 0.5 + rotate_vec.length()/lmbd, lmbd, ampl, torchspd );
+  addRepeatable( 0.5 + tt->length()/lmbd, lmbd, ampl, torchspd );
   rotate();
 }
 
@@ -31,7 +32,7 @@ void DoubleTriangularTraj::addRepeatable(int count, double lmbd, double ampl, do
 
 //-----------------------------------------------------------------------------
 void DoubleTriangularTraj::draft(PositionVector &out, double spd, double l, double ampl) {
-  DoubleTriangularTraj e( spd, l, ampl,Vector3D(4*l,0,0), 0 );
+  DoubleTriangularTraj e( spd, l, ampl, TrajectoryTransformPtr( new LinearTransform(Vector3D(4*l,0,0), 0 )));
   out.clear();
   out.push_back( e.initialOffset() );
   out.insert( out.end(), e.positions_.begin(), e.positions_.end() );

@@ -1,8 +1,9 @@
 #include <triangular.h>
+#include <linear_transform.h>
 
 //-----------------------------------------------------------------------------
 TriangularTrajectory::TriangularTrajectory(double spd, double lmbd, double ampl,
-                     double sstop, double istop, double f, const Vector3D &rotate_vec, double deg_xang ) : AbstractTrajectory(rotate_vec, deg_xang) {
+                     double sstop, double istop, double f, TrajectoryTransformPtr tt) : AbstractTrajectory(tt) {
   // domain
   if( sstop < 0 || sstop > 1 ) sstop = 0;
   if( istop < 0 || istop > 1 ) istop = 0;
@@ -17,7 +18,7 @@ TriangularTrajectory::TriangularTrajectory(double spd, double lmbd, double ampl,
          vint = (sqrt(4*amplmm*amplmm+dint*dint)+(dsup+dinf)/f) * vsmm / lbdmm,
          vext = f * vint;
 
-  int period_count = 0.5 + rotate_vec.length()/lmbd;
+  int period_count = 0.5 + tt->length()/lmbd;
   addRepeatable( period_count, lmbd, dsup*TO_PULSES, dinf*TO_PULSES, ampl, vint, vext );
   rotate();
   printf("%d points vint %f vext %f\n", positions_.size(), vint*TO_RPM, vext*TO_RPM);
@@ -40,8 +41,8 @@ void TriangularTrajectory::applyCorrection(double spd, double lmbd, double ampl,
            risespd   = Vector2D(xspeedmm, yspeedmm).length();
 
     uint32_t idx = index_-1;
-    Vector3D cur = unrotate( positions_[idx] ),
-             nxt = unrotate( positions_[idx+1] );
+    Vector3D cur = transform_->revert( positions_[idx] ),
+             nxt = transform_->revert( positions_[idx+1] );
     if( fabs(nxt.y() - cur.y()) < 1e-5 ) { ++idx; cur = nxt; }
 
     eraseFrom( idx+1 );
@@ -54,12 +55,12 @@ void TriangularTrajectory::applyCorrection(double spd, double lmbd, double ampl,
       addA( Vector3D( cur.x() + 2*risexlen,  ampl/2., 0), risespd );
     }
 
-    double total_length = rotation_vec_.length() - accumulator_.x() + risexlen;
+    double total_length = transform_->length() - accumulator_.x() + risexlen;
     int period_count = 0.5 + total_length/lmbd;
     addRepeatable( period_count - 1, sstop, istop, risexlen, ampl, risespd, xspeedmm );
 
     for( int i = idx + 1; i < positions_.size(); ++i )
-      positions_[i] = rotate(positions_[i]);
+      positions_[i] = transform_->transform(positions_[i]);
 }
 
 //-----------------------------------------------------------------------------
@@ -77,7 +78,7 @@ void TriangularTrajectory::addRepeatable( int count, double lmbd, double dsup, d
 
 //-----------------------------------------------------------------------------
 void TriangularTrajectory::draft( PositionVector &out, double spd, double l, double ampl, double sstop, double istop, double f ) {
-  TriangularTrajectory e( spd, l, ampl, sstop, istop, f, Vector3D(4*l,0,0), 0);
+  TriangularTrajectory e( spd, l, ampl, sstop, istop, f, TrajectoryTransformPtr( new LinearTransform(Vector3D(4*l,0,0), 0)));
   out.clear();
   out.push_back( e.initialOffset() );
   out.insert( out.end(), e.positions_.begin(), e.positions_.end() );

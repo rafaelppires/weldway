@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>320</width>
-    <height>282</height>
+    <width>333</width>
+    <height>368</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -27,7 +27,7 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="1" rowspan="2">
+   <item row="0" column="1">
     <layout class="QGridLayout" name="gridLayout_2">
      <item row="2" column="0">
       <widget class="QLabel" name="label_32">
@@ -81,7 +81,63 @@
      </item>
     </layout>
    </item>
-   <item row="5" column="0">
+   <item row="1" column="0" colspan="2">
+    <layout class="QGridLayout" name="gridLayout_29">
+     <item row="0" column="2">
+      <widget class="QLabel" name="label_52">
+       <property name="text">
+        <string>º</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QDoubleSpinBox" name="hAngleSpinBoxx">
+       <property name="minimum">
+        <double>-90.000000000000000</double>
+       </property>
+       <property name="maximum">
+        <double>90.000000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_51">
+       <property name="text">
+        <string>Orientação horizontal da tocha:</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="2" column="0" colspan="2">
+    <layout class="QGridLayout" name="gridLayout_27">
+     <item row="0" column="1">
+      <widget class="QDoubleSpinBox" name="vAngleSpinBoxx">
+       <property name="minimum">
+        <double>-90.000000000000000</double>
+       </property>
+       <property name="maximum">
+        <double>90.000000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2">
+      <widget class="QLabel" name="label_50">
+       <property name="text">
+        <string>º</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_49">
+       <property name="text">
+        <string>Orientação vertical da tocha:</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="3" column="0">
     <widget class="QPushButton" name="markFinalPositionButton">
      <property name="minimumSize">
       <size>
@@ -94,7 +150,7 @@
      </property>
     </widget>
    </item>
-   <item row="5" column="1">
+   <item row="3" column="1">
     <layout class="QGridLayout" name="gridLayout_28">
      <item row="0" column="0">
       <widget class="QLabel" name="label_36">
@@ -104,7 +160,7 @@
       </widget>
      </item>
      <item row="0" column="1">
-      <widget class="QDoubleSpinBox" name="xfinalSpinBoxx">
+      <widget class="QDoubleSpinBox" name="xcenterSpinBox">
        <property name="maximum">
         <double>850.000000000000000</double>
        </property>
@@ -121,7 +177,7 @@
       </widget>
      </item>
      <item row="1" column="1">
-      <widget class="QDoubleSpinBox" name="yfinalSpinBoxx">
+      <widget class="QDoubleSpinBox" name="ycenterSpinBox">
        <property name="maximum">
         <double>750.000000000000000</double>
        </property>
@@ -138,18 +194,18 @@
       </widget>
      </item>
      <item row="2" column="1">
-      <widget class="QDoubleSpinBox" name="zfinalSpinBoxx"/>
+      <widget class="QDoubleSpinBox" name="zcenterSpinBox"/>
      </item>
     </layout>
    </item>
-   <item row="6" column="0">
+   <item row="4" column="0">
     <widget class="QLabel" name="label_29">
      <property name="text">
       <string>Unidade:</string>
      </property>
     </widget>
    </item>
-   <item row="6" column="1">
+   <item row="4" column="1">
     <widget class="QComboBox" name="initFinalPosUnitComboBox">
      <property name="sizeIncrement">
       <size>
@@ -184,14 +240,14 @@
      </item>
     </widget>
    </item>
-   <item row="7" column="0">
+   <item row="5" column="0">
     <widget class="QLabel" name="label_35">
      <property name="text">
       <string>Ângulo ao redor do eixo X:</string>
      </property>
     </widget>
    </item>
-   <item row="7" column="1">
+   <item row="5" column="1">
     <layout class="QGridLayout" name="gridLayout_26">
      <item row="0" column="0">
       <widget class="QDoubleSpinBox" name="xangleSpinBoxx">
@@ -212,57 +268,29 @@
      </item>
     </layout>
    </item>
-   <item row="4" column="0" colspan="2">
-    <layout class="QGridLayout" name="gridLayout_27">
-     <item row="0" column="1">
-      <widget class="QDoubleSpinBox" name="vAngleSpinBoxx">
-       <property name="minimum">
-        <double>-90.000000000000000</double>
-       </property>
-       <property name="maximum">
-        <double>90.000000000000000</double>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="2">
-      <widget class="QLabel" name="label_50">
-       <property name="text">
-        <string>º</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="label_49">
-       <property name="text">
-        <string>Orientação vertical da tocha:</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
+   <item row="6" column="0">
+    <widget class="QLabel" name="label_39">
+     <property name="text">
+      <string>Ângulo total da circunferência::</string>
+     </property>
+    </widget>
    </item>
-   <item row="2" column="0" colspan="2">
-    <layout class="QGridLayout" name="gridLayout_29">
-     <item row="0" column="2">
-      <widget class="QLabel" name="label_52">
+   <item row="6" column="1">
+    <layout class="QGridLayout" name="gridLayout_31">
+     <item row="0" column="1">
+      <widget class="QLabel" name="label_54">
        <property name="text">
         <string>º</string>
        </property>
       </widget>
      </item>
-     <item row="0" column="1">
-      <widget class="QDoubleSpinBox" name="hAngleSpinBoxx">
+     <item row="0" column="0">
+      <widget class="QDoubleSpinBox" name="rangeSpinBox">
        <property name="minimum">
-        <double>-90.000000000000000</double>
+        <double>-360.000000000000000</double>
        </property>
        <property name="maximum">
-        <double>90.000000000000000</double>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="label_51">
-       <property name="text">
-        <string>Orientação horizontal da tocha:</string>
+        <double>720.000000000000000</double>
        </property>
       </widget>
      </item>
@@ -270,16 +298,13 @@
    </item>
   </layout>
   <zorder>markInitPositionButton</zorder>
-  <zorder>layoutWidget</zorder>
-  <zorder>layoutWidget_2</zorder>
-  <zorder>layoutWidget_3</zorder>
-  <zorder>layoutWidget_4</zorder>
   <zorder>label_35</zorder>
-  <zorder>layoutWidget_5</zorder>
   <zorder>label_29</zorder>
   <zorder>markFinalPositionButton</zorder>
   <zorder>initFinalPosUnitComboBox</zorder>
-  <zorder>label_50</zorder>
+  <zorder>label_39</zorder>
+  <zorder>layoutWidget</zorder>
+  <zorder>rangeSpinBox</zorder>
  </widget>
  <resources/>
  <connections/>

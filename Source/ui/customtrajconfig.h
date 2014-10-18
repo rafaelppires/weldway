@@ -21,7 +21,7 @@ public:
   explicit CustomTrajectoryWidget(QWidget *parent, TrajectoryScene *);
   ~CustomTrajectoryWidget();
 
-  virtual AbsTrajectoryPtr trajectory(double xangle, Vector3D rotate);
+  virtual AbsTrajectoryPtr trajectory(TrajectoryTransformPtr tt);
   virtual void draft(PositionVector&);
 
   void lineMoved(int idx, QPointF delta);

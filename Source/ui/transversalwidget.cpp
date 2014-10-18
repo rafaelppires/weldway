@@ -57,7 +57,7 @@ void TransversalWidget::on_frequency_changed() {
 }
 
 //-----------------------------------------------------------------------------
-AbsTrajectoryPtr TransversalWidget::trajectory(double xangle, Vector3D rotate) {
+AbsTrajectoryPtr TransversalWidget::trajectory(TrajectoryTransformPtr tt) {
   std::string pos_unit("pulsos"), spd_unit("rpm");
   double lmbd = trLmbdSliderSpin->value( pos_unit ),
          spd  = trSpeedSliderSpin->value( spd_unit ),
@@ -65,25 +65,25 @@ AbsTrajectoryPtr TransversalWidget::trajectory(double xangle, Vector3D rotate) {
   int32_t tidx = ui->transvTrajectoryComboBox->currentIndex();
   if( tidx == 1 ) {
     double rho = eRhoSliderSpin->value();
-    return AbsTrajectoryPtr( new ETrajectory( spd, lmbd, ampl, rho, rotate, xangle) );
+    return AbsTrajectoryPtr( new ETrajectory( spd, lmbd, ampl, rho, tt) );
   } else if( tidx == 2 ) {
-    return AbsTrajectoryPtr( new DoubleETrajectory( spd, lmbd, ampl, rotate, xangle) );
+    return AbsTrajectoryPtr( new DoubleETrajectory( spd, lmbd, ampl, tt) );
   } else if( tidx == 3 ) {
     double rho = eRhoSliderSpin->value();
-    return AbsTrajectoryPtr( new Double8Trajectory( spd, lmbd, ampl, rho, rotate, xangle) );
+    return AbsTrajectoryPtr( new Double8Trajectory( spd, lmbd, ampl, rho, tt) );
   } else if( tidx == 4 ){
-    return AbsTrajectoryPtr( new BricksTrajectory( spd, ampl, rotate, xangle) );
+    return AbsTrajectoryPtr( new BricksTrajectory( spd, ampl, tt) );
   } else if( tidx == 5 ){
-    return AbsTrajectoryPtr( new DoubleTriangularTraj( spd, lmbd, ampl, rotate, xangle) );
+    return AbsTrajectoryPtr( new DoubleTriangularTraj( spd, lmbd, ampl, tt) );
   } else if( tidx == 6 ){
-    return AbsTrajectoryPtr( new DoubleTriangular2ndTraj( spd, lmbd, ampl, rotate, xangle) );
+    return AbsTrajectoryPtr( new DoubleTriangular2ndTraj( spd, lmbd, ampl, tt) );
   } else if( tidx == 7 ){
-    return triswitch_panel_->trajectory(xangle, rotate);
+    return triswitch_panel_->trajectory(tt);
   } else {
     double sup_stop = ui->stopSupSpinBox->value()/100,
            inf_stop = ui->stopInfSpinBox->value()/100,
            factor = ui->spdExtrSpinBox->value();
-    return AbsTrajectoryPtr( new TriangularTrajectory( spd, lmbd, ampl, sup_stop, inf_stop, factor, rotate, xangle) );
+    return AbsTrajectoryPtr( new TriangularTrajectory( spd, lmbd, ampl, sup_stop, inf_stop, factor, tt) );
   }
 }
 //-----------------------------------------------------------------------------
