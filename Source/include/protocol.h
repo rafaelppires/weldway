@@ -44,6 +44,7 @@ public:
   virtual void sendSpdCmmds( const ConcurrentCmmd32 & ) {}
   virtual int32_t getStatus( GraniteParams, uint8_t axis ) { return ~0; }
   virtual Vector3I getLastSentPos();
+  virtual Vector2I getLastSentTorch();
   virtual void startTorch() {}
   virtual void stopTorch() {}
   virtual void sendAngularIncrement( AngularDirection dir, double spd, double inc );

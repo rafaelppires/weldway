@@ -4,6 +4,12 @@
 Vector3I AbstractProtocol::getLastSentPos() {
   return Vector3I( lastcmmd_pos_[X_AXIS], -lastcmmd_pos_[Y_AXIS], lastcmmd_pos_[Z_AXIS] );
 }
+
+//-----------------------------------------------------------------------------
+Vector2I AbstractProtocol::getLastSentTorch() {
+  return Vector2I( lastcmmd_pos_[A_AXIS], lastcmmd_pos_[B_AXIS] );
+}
+
 //-----------------------------------------------------------------------------
 Vector2I AbstractProtocol::angularPulsesOffset( AngularDirection dir, double inc ) {
   Vector2I ret;
@@ -23,7 +29,7 @@ void AbstractProtocol::sendAngularIncrement( AngularDirection dir, double spd, d
   if( !homing_done_ ) return;
 
   ConcurrentCmmd32 speeds, pos;
-  Vector2I angpos( lastcmmd_pos_[A_AXIS], lastcmmd_pos_[B_AXIS] );
+  Vector2I angpos( getLastSentTorch() );
   angpos += angularPulsesOffset(dir,inc);
   speeds[A_AXIS] = speeds[B_AXIS] = spd;
 

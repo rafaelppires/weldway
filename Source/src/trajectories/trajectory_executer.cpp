@@ -7,6 +7,11 @@ using boost::chrono::nanoseconds;
 using boost::chrono::milliseconds;
 
 //-----------------------------------------------------------------------------
+TrajectoryExecuter::TrajectoryExecuter( AbsTrajectoryPtr t, boost::shared_ptr< AbstractProtocol > comm )
+  : trajectory_(t), comm_(comm), finished_(false), offset_updated_(false), controls_torch_(false), last_torch_spd_(0,0), last_spd_(0,0,0) {
+  acceleration_.x() = acceleration_.y() = acceleration_.z() = 4000 / (0.025 * TO_RPM); // mm/s²
+}
+//-----------------------------------------------------------------------------
 void TrajectoryExecuter::operator()() {
   if( !comm_->homingDone() ) { cancel(); return; }
 
@@ -18,12 +23,19 @@ void TrajectoryExecuter::operator()() {
   high_resolution_clock::time_point now, start;
 
   Vector3D cur_point;
+  Vector2D torch;
+  Vector2I cur_torch(0,0), delta_torch(0,0), last_torch(0,0);
   double cur_spd, progress;
   comm_->startTorch();
   waitFor( 2000 );
-  while( trajectory_->getPoint(cur_point, cur_spd, progress) ) {
+  controls_torch_ = trajectory_->controlsTorch();
+  while( trajectory_->getPoint(cur_point, cur_spd, torch, progress) ) {
+    cur_torch = comm_->angularPulsesOffset(ANGULAR_VERTICAL, torch.x()) +
+                comm_->angularPulsesOffset(ANGULAR_HORIZONTAL, torch.y());
+
     start = high_resolution_clock::now();
     delta = cur_point - last_pos;
+    delta_torch = cur_torch - last_torch;
 
     {
       boost::lock_guard<boost::mutex> lock(correction_mutex_);
@@ -33,8 +45,10 @@ void TrajectoryExecuter::operator()() {
         offset_updated_ = false;
       }
     }
-    Vector3US spds = getSpeedsAndInterval( delta, interval, cur_spd );
-    deliverSpeedsAndPositions( delta, spds );
+
+    Vector2US spd_torch;
+    Vector3US spds = getSpeedsAndInterval( delta, interval, cur_spd, delta_torch, spd_torch );
+    deliverSpeedsAndPositions( delta, spds, delta_torch, spd_torch );
 
 
     fflush(stdout);
@@ -44,6 +58,7 @@ void TrajectoryExecuter::operator()() {
     if( diff > 0 )
       waitFor( diff );
     last_pos = cur_point;
+    if( controls_torch_ ) last_torch = cur_torch;
 
     if( progress_callback_ ) progress_callback_( progress );
     if( finished() ) { break; }
@@ -52,7 +67,7 @@ void TrajectoryExecuter::operator()() {
 }
 
 //-----------------------------------------------------------------------------
-void TrajectoryExecuter::deliverSpeedsAndPositions( const Vector3I &delta, const Vector3US &speeds ) {
+void TrajectoryExecuter::deliverSpeedsAndPositions( const Vector3I &delta, const Vector3US &speeds, const Vector2I &delta_torch, const Vector2US &spd_torch ) {
   AbstractProtocol::ConcurrentCmmd32 poscmmds, spdcmmds;
   uint16_t sx = speeds.x(), sy = speeds.y(), sz = speeds.z();
   int32_t  dx = delta.x(), dy = delta.y(), dz = delta.z();
@@ -60,16 +75,30 @@ void TrajectoryExecuter::deliverSpeedsAndPositions( const Vector3I &delta, const
   if( dx && sx && sx != last_spd_.x() ) spdcmmds[ X_AXIS ] = sx;
   if( dy && sy && sy != last_spd_.y() ) spdcmmds[ Y_AXIS ] = sy;
   if( dz && sz && sz != last_spd_.z() ) spdcmmds[ Z_AXIS ] = sz;
+  if( controls_torch_ ) {
+    uint16_t sa = spd_torch.x(), sb = spd_torch.y();
+    if( delta_torch.x() && sa && sa != last_torch_spd_.x() ) spdcmmds[ A_AXIS ] = sa;
+    if( delta_torch.y() && sb && sb != last_torch_spd_.y() ) spdcmmds[ B_AXIS ] = sb;
+  }
 
   current_pos_ += delta;
   if( delta.x() ) poscmmds[ X_AXIS ] =  current_pos_.x();
   if( delta.y() ) poscmmds[ Y_AXIS ] = -current_pos_.y();
   if( delta.z() ) poscmmds[ Z_AXIS ] =  current_pos_.z();
+  if( controls_torch_ ) {
+    int32_t da = delta_torch.x(), db = delta_torch.y();
+    current_torch_ += delta_torch;
+    if( da ) poscmmds[ A_AXIS ] = current_torch_.x();
+    if( db ) poscmmds[ B_AXIS ] = current_torch_.y();
+  }
 
   comm_->sendSpdCmmds(spdcmmds);
   comm_->sendPosCmmds(poscmmds);
 
   last_spd_ = Vector3US(spdcmmds[ X_AXIS ], spdcmmds[ Y_AXIS ], spdcmmds[ Z_AXIS ]);
+  if( controls_torch_ ) {
+    last_torch_spd_ = Vector2US(spdcmmds[A_AXIS], spdcmmds[B_AXIS]);
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -85,7 +114,8 @@ Vector3D TrajectoryExecuter::gotoInitial() {
   uint16_t interv;
   trajectory_init_ += ret;
   Vector3I delta = trajectory_init_ - current_pos_;
-  deliverSpeedsAndPositions( delta, getSpeedsAndInterval( delta, interv, 650 ) );
+  Vector2I dummy1(0,0); Vector2US dummy2(0,0);
+  deliverSpeedsAndPositions( delta, getSpeedsAndInterval( delta, interv, 650, dummy1, dummy2 ), dummy1, dummy2 );
   int status = -1;
   while( status ) {
     status = 0;
@@ -106,7 +136,7 @@ void TrajectoryExecuter::setAngularOffset( double angle ) {
 }
 
 //-----------------------------------------------------------------------------
-Vector3US TrajectoryExecuter::getSpeedsAndInterval( const Vector3D &delta, uint16_t &interval, double res_spd ) {
+Vector3US TrajectoryExecuter::getSpeedsAndInterval(const Vector3D &delta, uint16_t &interval, double res_spd, const Vector2I &delta_torch, Vector2US &spd_torch ) {
   // Decompose to find the axis projection
   Vector3D vr( delta.unary() );
   vr *= res_spd / TO_RPM; // mm/s
@@ -117,6 +147,12 @@ Vector3US TrajectoryExecuter::getSpeedsAndInterval( const Vector3D &delta, uint1
   ret.x() = fixSpeed( abs(vr.x()), acceleration_.x(), interval/1000. );
   ret.y() = fixSpeed( abs(vr.y()), acceleration_.y(), interval/1000. );
   ret.z() = fixSpeed( abs(vr.z()), acceleration_.z(), interval/1000. );
+
+  if( controls_torch_ ) {
+    spd_torch.x()  = (delta_torch.x()*25.) / (6.*interval); // rpm
+    spd_torch.y()  = (delta_torch.y()*25.) / (6.*interval); // rpm
+  }
+
   return ret;
 }
 //-----------------------------------------------------------------------------
@@ -131,8 +167,9 @@ void TrajectoryExecuter::setLimits(const Vector3I &init ) {
 }
 
 //-----------------------------------------------------------------------------
-void TrajectoryExecuter::setCurrent(const Vector3I &last ) {
+void TrajectoryExecuter::setCurrent(const Vector3I &last, const Vector2I &last_torch) {
   current_pos_ = last;
+  current_torch_ = last_torch;
 }
 
 //-----------------------------------------------------------------------------

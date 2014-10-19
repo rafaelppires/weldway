@@ -9,6 +9,7 @@ public:
   virtual Vector3D transform(const Vector3D &v);
   virtual Vector3D revert(const Vector3D &v);
   virtual double length();
+  virtual bool controlsTorch();
 
 private:
   void setupMatrixes();

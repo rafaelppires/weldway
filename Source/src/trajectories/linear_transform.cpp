@@ -35,3 +35,10 @@ Vector3D LinearTransform::revert(const Vector3D &v) {
 double LinearTransform::length() {
   return rotation_.length();
 }
+
+//-----------------------------------------------------------------------------
+bool LinearTransform::controlsTorch() {
+  return false;
+}
+
+//-----------------------------------------------------------------------------

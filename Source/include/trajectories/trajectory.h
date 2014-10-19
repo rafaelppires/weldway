@@ -10,6 +10,7 @@
 
 //-----------------------------------------------------------------------------
 typedef std::vector<Vector3D>  PositionVector;
+typedef std::vector<Vector2D>  TorchVector;
 typedef std::vector<double>    SpeedVector;
 
 //-----------------------------------------------------------------------------
@@ -20,7 +21,8 @@ public:
   virtual const PositionVector& positions() const { return positions_; }
   virtual const SpeedVector& speeds() const { return speeds_; }
   virtual Vector3I initialOffset() const { return Vector3I(); }
-  virtual bool getPoint( Vector3D &pos, double &spd, double &progress );
+  virtual bool getPoint(Vector3D &pos, double &spd, Vector2D &torch, double &progress );
+  virtual bool controlsTorch() { return transform_->controlsTorch(); }
 
 protected:
   void setReference( const Vector3D & ); // set last point as reference for future relative adds
@@ -33,9 +35,11 @@ protected:
   Vector3D accumulator_;
   PositionVector positions_;
   SpeedVector speeds_;
+  TorchVector torch_pos_;
   uint32_t index_;
   boost::mutex data_mutex_;
   TrajectoryTransformPtr transform_;
+  bool controls_torch_;
 };
 
 //-----------------------------------------------------------------------------

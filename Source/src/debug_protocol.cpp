@@ -31,7 +31,7 @@ void DebugProtocol::setMaxSpeed( uint16_t spd, uint8_t axis ) {
 void DebugProtocol::sendPosCmmds( const ConcurrentCmmd32 &cmmds ) {
   ConcurrentCmmd32::const_iterator it = cmmds.begin(), end = cmmds.end();
   for(; it != end; ++it ) lastcmmd_pos_[it->first] = it->second;
-  posfile_ << lastcmmd_pos_[X_AXIS] << " " << lastcmmd_pos_[Y_AXIS] << " " << lastcmmd_pos_[Z_AXIS] << "\n";
+  posfile_ << lastcmmd_pos_[X_AXIS] << " " << lastcmmd_pos_[Y_AXIS] << " " << lastcmmd_pos_[Z_AXIS] << " " << lastcmmd_pos_[A_AXIS] << " " << lastcmmd_pos_[B_AXIS]  << "\n";
   posfile_.flush();
 }
   

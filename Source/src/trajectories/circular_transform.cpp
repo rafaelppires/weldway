@@ -13,34 +13,51 @@ CircularTransform::CircularTransform(const Vector3D &center, const Vector3D &beg
 
 
   double va = torch.x(), ha = torch.y();
+  std::cout << "va: " << va << " ha: " << ha << "\n";
   Vector3D z(0,0,1);
   MatrixD overy(rotationMatrix3D(1,ha));
   MatrixD prevx = Vector3D(1,0,0).lineMatrix() * overy;
   MatrixD overprevx = rotationMatrix3D(line2vec(prevx),va);
+  std::cout << "prevx " << prevx << "\nMatrix: \n" << overprevx << "\n";
 
-  Vector3D rotated = column2vec(overprevx*overy*z.columnMatrix());
-  std::cout << "Rotated: " << rotated << "\n";
+  torch_dir_ = column2vec(overprevx*overy*z.columnMatrix());
+  std::cout << "Rotated: " << torch_dir_ << "\n";
 
   double vangle, hangle;
-  MatrixD un_overx( rotationMatrix3D(0,vangle=-atan2(rotated.y(),rotated.z())) );
-  Vector3D unrot1 = column2vec( un_overx * rotated.columnMatrix() );
-
-  Vector3D prevy = line2vec( Vector3D(0,1,0).lineMatrix() * un_overx );
-  Vector3D prevy_check = column2vec( un_overx * prevy.columnMatrix() );
-
-  MatrixD scn_rot = rotationMatrix3D(prevy, hangle=-atan2(unrot1.x(), unrot1.z()));
-  std::cout << "prevy: " << prevy << " (l:"<<prevy.length()<<") checking: " << prevy_check << " (l:"<<prevy_check.length()<<")\nMatrix: " << scn_rot << "\n";
-  std::cout << column2vec( scn_rot * unrot1.columnMatrix() ) << "\n";
-  std::cout << "Angles: v: " << rad2deg(-vangle) << " h: " << rad2deg(-hangle) << "\n";
+  MatrixD un_overx( rotationMatrix3D(0,vangle=-atan2(torch_dir_.y(),torch_dir_.z())) );
+  Vector3D unrot1 = column2vec( un_overx * torch_dir_.columnMatrix() );
+  hangle=-atan2( unrot1.x(), unrot1.z() );
+  std::cout << "Angles: v: " << rad2deg(vangle) << " h: " << rad2deg(-hangle) << "\n";
 }
 
 //-----------------------------------------------------------------------------
 Vector3D CircularTransform::transform(const Vector3D &v) {
   PositionVector pv;
+  int sig = arange_/fabs(arange_);
   MatrixD rotated = rotation_ * v.columnMatrix();
-  pv.push_back( column2vec(rotated) );
-  pv = CurveTrajectory::process( pv, circular_, a0_, arange_/fabs(arange_) );
+  Vector3D cur = column2vec(rotated);
+  pv.push_back( cur );
+  pv = CurveTrajectory::process( pv, circular_, a0_, sig );
+
+  double angle = circular_.invarclen( cur.x() );
+  Vector3D cur_torch = column2vec( rotationMatrix3D(2,angle) * torch_dir_.columnMatrix() );
+  double vangle, hangle;
+  MatrixD un_overx( rotationMatrix3D(0,vangle=-atan2(cur_torch.y(),cur_torch.z())) );
+  Vector3D unrot1 = column2vec( un_overx * cur_torch.columnMatrix() );
+  hangle=-atan2( unrot1.x(), unrot1.z() );
+  std::cout << "Angles: v: " << rad2deg(vangle) << " h: " << rad2deg(-hangle) << "\n";
+  torch_.push( Vector2D(vangle,-hangle) );
+
   return pv.front();
+}
+
+//-----------------------------------------------------------------------------
+Vector2D CircularTransform::gettorch() {
+  Vector2D ret = torch_.front();
+  ret.x() = rad2deg( ret.x() );
+  ret.y() = rad2deg( ret.y() );
+  torch_.pop();
+  return ret;
 }
 
 //-----------------------------------------------------------------------------
@@ -51,6 +68,11 @@ Vector3D CircularTransform::revert(const Vector3D &v) {
 //-----------------------------------------------------------------------------
 double CircularTransform::length() {
   return fabs(r_*arange_);
+}
+
+//-----------------------------------------------------------------------------
+bool CircularTransform::controlsTorch() {
+  return true;
 }
 
 //-----------------------------------------------------------------------------

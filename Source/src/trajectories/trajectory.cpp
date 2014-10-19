@@ -1,16 +1,17 @@
 #include <trajectory.h>
 
 //-----------------------------------------------------------------------------
-AbstractTrajectory::AbstractTrajectory( TrajectoryTransformPtr tt ) : index_(~0), transform_(tt) {
+AbstractTrajectory::AbstractTrajectory( TrajectoryTransformPtr tt ) : index_(~0), transform_(tt), controls_torch_(tt->controlsTorch()) {
 }
 
 //-----------------------------------------------------------------------------
-bool AbstractTrajectory::getPoint( Vector3D &pos, double &spd, double &progress ) {
+bool AbstractTrajectory::getPoint( Vector3D &pos, double &spd, Vector2D &torch, double &progress ) {
   boost::lock_guard<boost::mutex> lock(data_mutex_);
   if( index_ == ~0 ) index_ = 0;
   if( index_ >= positions_.size() ) return false;
-  pos = positions_[index_];
-  spd = speeds_[index_];
+  pos   = positions_[index_];
+  spd   = speeds_[index_];
+  torch = torch_pos_[index_];
   progress = double(++index_) / positions_.size();
   return true;
 }
@@ -21,6 +22,8 @@ void AbstractTrajectory::rotate() {
                            end = positions_.end();
   for(; it != end; ++it) {
     *it = transform_->transform( *it );
+    if( controls_torch_ )
+      torch_pos_.push_back( transform_->gettorch() );
   }
 }
 

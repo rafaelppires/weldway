@@ -105,7 +105,7 @@ bool MasterCommunicator::executeTrajectory( AbsTrajectoryPtr at ) {
   if( !comm_ || busy() ) return false;
   delete trajectory_executer_;
   trajectory_executer_ = new TrajectoryExecuter( at, comm_ );
-  trajectory_executer_->setCurrent( comm_->getLastSentPos() );
+  trajectory_executer_->setCurrent( comm_->getLastSentPos(), comm_->getLastSentTorch() );
   trajectory_executer_->setLimits( trajectory_init_ );
   trajectory_executer_->setAngularOffset( overx_angoff_ );
   trajectory_executer_->setProgressCallback( progress_callback_ );
