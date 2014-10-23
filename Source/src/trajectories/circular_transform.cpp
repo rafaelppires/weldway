@@ -9,25 +9,14 @@ CircularTransform::CircularTransform(const Vector3D &center, const Vector3D &beg
            projection( xaxis * xaxis.dot(beg) );
   a0_ = atan2( beg.y(), projection.x() );
 
-  std::cout << "a0 = " << (a0_*180/3.1415926535) << " xangle = " << (xangle*180/3.1415926535) << "\n";
+  //std::cout << "a0 = " << rad2deg(a0_) << " xangle = " << rad2deg(xangle) << "\n";
 
 
   double va = torch.x(), ha = torch.y();
-  std::cout << "va: " << va << " ha: " << ha << "\n";
+  //std::cout << "va: " << va << " (" << rad2deg(va) << ") ha: " << ha << " (" << rad2deg(ha) << ")\n";
   Vector3D z(0,0,1);
-  MatrixD overy(rotationMatrix3D(1,ha));
-  MatrixD prevx = Vector3D(1,0,0).lineMatrix() * overy;
-  MatrixD overprevx = rotationMatrix3D(line2vec(prevx),va);
-  std::cout << "prevx " << prevx << "\nMatrix: \n" << overprevx << "\n";
-
-  torch_dir_ = column2vec(overprevx*overy*z.columnMatrix());
-  std::cout << "Rotated: " << torch_dir_ << "\n";
-
-  double vangle, hangle;
-  MatrixD un_overx( rotationMatrix3D(0,vangle=-atan2(torch_dir_.y(),torch_dir_.z())) );
-  Vector3D unrot1 = column2vec( un_overx * torch_dir_.columnMatrix() );
-  hangle=-atan2( unrot1.x(), unrot1.z() );
-  std::cout << "Angles: v: " << rad2deg(vangle) << " h: " << rad2deg(-hangle) << "\n";
+  torch_dir_ = column2vec( rotationMatrix3D(1,ha) * rotationMatrix3D(0,va) * z.columnMatrix());
+  //std::cout << "Rotated: " << torch_dir_ << "\n";
 }
 
 //-----------------------------------------------------------------------------
@@ -42,10 +31,10 @@ Vector3D CircularTransform::transform(const Vector3D &v) {
   double angle = circular_.invarclen( cur.x() );
   Vector3D cur_torch = column2vec( rotationMatrix3D(2,angle) * torch_dir_.columnMatrix() );
   double vangle, hangle;
-  MatrixD un_overx( rotationMatrix3D(0,vangle=-atan2(cur_torch.y(),cur_torch.z())) );
-  Vector3D unrot1 = column2vec( un_overx * cur_torch.columnMatrix() );
-  hangle=-atan2( unrot1.x(), unrot1.z() );
-  std::cout << "Angles: v: " << rad2deg(vangle) << " h: " << rad2deg(-hangle) << "\n";
+  MatrixD un_overy( rotationMatrix3D(1,hangle=-atan2(cur_torch.x(),cur_torch.z())) );
+  Vector3D unrot1 = column2vec( un_overy * cur_torch.columnMatrix() );
+  vangle=atan2( unrot1.y(), unrot1.z() );
+  //std::cout << "Angles: v: " << rad2deg(vangle) << " h: " << rad2deg(-hangle) << "\n";
   torch_.push( Vector2D(vangle,-hangle) );
 
   return pv.front();
