@@ -14,12 +14,12 @@ LongitudinalWidget::LongitudinalWidget(QWidget *parent) :
   fwLengthSliderSpin = new SliderSpin( this, ui->fwLengthSlider, ui->fwLengthSpinBox, ui->fwLengthUnitComboBox, UnitConvPtr(new PositionConv(4, 20)) );
   bwSpeedSliderSpin  = new SliderSpin( this, ui->bwSpeedSlider, ui->bwSpeedSpinBox, ui->bwSpeedUnitComboBox, UnitConvPtr(new SpeedConv(2, 100)) );
   bwLengthSliderSpin = new SliderSpin( this, ui->bwLengthSlider, ui->bwLengthSpinBox, ui->bwLengthUnitComboBox, UnitConvPtr(new PositionConv(2, 10)) );
-  
-  sbWeldSpeedSliderSpin->addMultiplier( fwSpeedSliderSpin, 4.0 );
-  sbWeldSpeedSliderSpin->addMultiplier( bwSpeedSliderSpin, 2.0 );
+  spdratioSliderSpin = new SliderSpin( this, ui->speedRatioSlider, ui->speedRatioSpinBox, NULL, UnitConvPtr(new UnitConv(0.1,2)) );
 
-  fwSpeedSliderSpin->addMultiplier( bwSpeedSliderSpin, 0.5 );
   fwLengthSliderSpin->addMultiplier( bwLengthSliderSpin, 0.5 );
+
+  connect(spdratioSliderSpin, SIGNAL(valueChanged()), this, SLOT(changeRatios()));
+  spdratioSliderSpin->setValue(0.5);
 }
 
 //-----------------------------------------------------------------------------
@@ -31,6 +31,17 @@ LongitudinalWidget::~LongitudinalWidget() {
   delete bwLengthSliderSpin;
   
   delete ui;
+}
+
+//-----------------------------------------------------------------------------
+void LongitudinalWidget::changeRatios() {
+  double r = spdratioSliderSpin->value("");
+
+  sbWeldSpeedSliderSpin->addMultiplier( fwSpeedSliderSpin,(1+2*r)/r );
+  sbWeldSpeedSliderSpin->addMultiplier( bwSpeedSliderSpin, 1+2*r );
+  fwSpeedSliderSpin->addMultiplier( bwSpeedSliderSpin, r );
+
+  sbWeldSpeedSliderSpin->resetValue();
 }
 
 //-----------------------------------------------------------------------------

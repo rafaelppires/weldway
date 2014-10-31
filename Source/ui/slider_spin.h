@@ -12,6 +12,7 @@ class SliderSpin : public QObject {
 public:
   SliderSpin( QObject *parent, QSlider *slider, QDoubleSpinBox *spinbox, QComboBox *unitcombo, UnitConvPtr unit );
   double value( std::string unit = "" );
+  void resetValue();
   void setValue( double );
   void addMultiplier(SliderSpin*, double , bool goon = true );
   UnitConvPtr getConversionObj();

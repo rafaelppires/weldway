@@ -21,10 +21,11 @@ public:
 
 private slots:
   void on_longTrajectoryComboBox_currentTextChanged(const QString &arg1);
+  void changeRatios();
 
 private:
   Ui::LongitudinalWidget *ui;
-  SliderSpin *sbWeldSpeedSliderSpin, *fwSpeedSliderSpin, *fwLengthSliderSpin, *bwSpeedSliderSpin, *bwLengthSliderSpin;
+  SliderSpin *sbWeldSpeedSliderSpin, *fwSpeedSliderSpin, *fwLengthSliderSpin, *bwSpeedSliderSpin, *bwLengthSliderSpin, *spdratioSliderSpin;
 };
 
 #endif // LONGITUDINALWIDGET_H

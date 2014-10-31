@@ -84,6 +84,13 @@ double SliderSpin::value( std::string u ) {
   std::string unit = unitcombo_ ? unitcombo_->currentText().toStdString() : std::string("");
   return unit_->convertFromTo( spinbox_->value(), unit, u );
 }
+//-----------------------------------------------------------------------------
+void SliderSpin::resetValue() {
+  double x;
+  x = fromCurrent( spinbox_->value() );
+  setValue( x+0.1 );
+  setValue( x );
+}
 
 //-----------------------------------------------------------------------------
 void SliderSpin::addMultiplier( SliderSpin *ss, double m, bool goon  ) {
