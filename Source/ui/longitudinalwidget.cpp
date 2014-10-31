@@ -52,7 +52,7 @@ AbsTrajectoryPtr LongitudinalWidget::trajectory(TrajectoryTransformPtr tt) {
 
   if( tidx == 0 ) {
 	int32_t fwlen = fwLengthSliderSpin->value( pos_unit );
-    return AbsTrajectoryPtr( new SwitchBackTrajectory(fwlen, weldspd, tt) );
+    return AbsTrajectoryPtr( new SwitchBackTrajectory(fwlen, weldspd, spdratioSliderSpin->value(""), tt) );
   } else {
     return AbsTrajectoryPtr( new LinearTrajectory( weldspd, tt) );
   }
