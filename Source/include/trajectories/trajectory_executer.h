@@ -7,6 +7,27 @@
 #include <boost/thread.hpp>
 #include <boost/function.hpp>
 
+using boost::chrono::high_resolution_clock;
+using boost::chrono::milliseconds;
+//-----------------------------------------------------------------------------
+class SingleShotSinc {
+public:
+  typedef boost::function1<void,const boost::system::error_code&> CallbackFunc;
+  SingleShotSinc(boost::shared_ptr< AbstractProtocol > comm, long t, uint8_t v, high_resolution_clock::time_point b) : comm_(comm), t_(t), v_(v), beg_(b) {}
+
+  void operator()() {
+    boost::this_thread::sleep_for(milliseconds(t_));
+    comm_->setSinc( v_ );
+    std::cout << "bye! " << boost::chrono::duration_cast<milliseconds>(high_resolution_clock::now() - beg_).count() << "ms ";
+  }
+private:
+  long t_;
+  uint8_t v_;
+  boost::shared_ptr< AbstractProtocol > comm_;
+  high_resolution_clock::time_point beg_;
+};
+
+//-----------------------------------------------------------------------------
 class TrajectoryExecuter {
 public:
   TrajectoryExecuter( AbsTrajectoryPtr t, boost::shared_ptr< AbstractProtocol > comm );
@@ -19,6 +40,7 @@ public:
   Vector3US getSpeedsAndInterval(const Vector3D &delta, uint16_t &interval, double res_spd, const Vector2I &delta_torch, Vector2US &spd_torch);
   void setProgressCallback( boost::function<void(double)> cb ) { progress_callback_ = cb; }
   void addLinearOffset( const Vector3D &offset );
+  void scheduleSinc( double t, uint8_t v );
 
 private:
   void waitFor( uint32_t ms );

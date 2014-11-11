@@ -18,6 +18,7 @@
 #define SPIREAD_DATA_MSK  0x8000  // SPI Read data pin mask
 
 #define TORCH_ENABLE_PIN  14
+#define SOURCE_SINC_PIN   13 //???
 
 struct RetRawCmmd {
   uint8_t  stat;
@@ -39,6 +40,7 @@ public:
   virtual int32_t getStatus( GraniteParams param, uint8_t axis );
   virtual void startTorch();
   virtual void stopTorch();
+  virtual void setSinc( uint8_t v );
   void setEmergencyCallback( EmergencyCallbackType cback );
   virtual void homingFinished();
 

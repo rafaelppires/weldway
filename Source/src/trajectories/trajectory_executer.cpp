@@ -25,17 +25,20 @@ void TrajectoryExecuter::operator()() {
   Vector3D cur_point;
   Vector2D torch;
   Vector2I cur_torch(0,0), delta_torch(0,0), last_torch(0,0);
+  SincPair sinc;
   double cur_spd, progress;
   comm_->startTorch();
   waitFor( 2000 );
   controls_torch_ = trajectory_->controlsTorch();
-  while( trajectory_->getPoint(cur_point, cur_spd, torch, progress) ) {
+  while( trajectory_->getPoint(cur_point, cur_spd, torch, sinc, progress) ) {
     cur_torch = comm_->angularPulsesOffset(ANGULAR_VERTICAL, torch.x()) +
                 comm_->angularPulsesOffset(ANGULAR_HORIZONTAL, torch.y());
 
     start = high_resolution_clock::now();
     delta = cur_point - last_pos;
     delta_torch = cur_torch - last_torch;
+
+    if( sinc.first == 0 ) comm_->setSinc( sinc.second );
 
     {
       boost::lock_guard<boost::mutex> lock(correction_mutex_);
@@ -48,6 +51,7 @@ void TrajectoryExecuter::operator()() {
 
     Vector2US spd_torch;
     Vector3US spds = getSpeedsAndInterval( delta, interval, cur_spd, delta_torch, spd_torch );
+    if( sinc.first > 0 && sinc.first < 1. ) scheduleSinc( sinc.first*interval, sinc.second );
     deliverSpeedsAndPositions( delta, spds, delta_torch, spd_torch );
 
 
@@ -57,13 +61,21 @@ void TrajectoryExecuter::operator()() {
     int diff = interval - boost::chrono::duration_cast<milliseconds>(now - start).count();
     if( diff > 0 )
       waitFor( diff );
+
+    if( sinc.first == 1. ) comm_->setSinc( sinc.second );
+
     last_pos = cur_point;
     if( controls_torch_ ) last_torch = cur_torch;
-
     if( progress_callback_ ) progress_callback_( progress );
     if( finished() ) { break; }
   }
   cancel();
+}
+
+//-----------------------------------------------------------------------------
+void TrajectoryExecuter::scheduleSinc( double t, uint8_t v ) {
+  std::cout << "In " << t << "ms, sinc should be " << int(v) << "\n";
+  boost::thread thr( SingleShotSinc(comm_,t,v, high_resolution_clock::now()) );
 }
 
 //-----------------------------------------------------------------------------

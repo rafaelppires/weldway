@@ -28,8 +28,8 @@ public:
     double spdmm = weldspd / TO_RPM;
     Vector3D forward(fwlen,0,0), backward(-fwlen/2.,0,0);
     for( int i = 0; i < period_count; ++i ) {
-      addR( forward, (1+2*ratio)*spdmm/ratio );
-      addR( backward, (1+2*ratio)*spdmm );
+      addR( forward, (1+2*ratio)*spdmm/ratio, SincPair(0.5,1) );
+      addR( backward, (1+2*ratio)*spdmm, SincPair(1,0) );
     }
     rotate();
   }

@@ -5,13 +5,14 @@ AbstractTrajectory::AbstractTrajectory( TrajectoryTransformPtr tt ) : index_(~0)
 }
 
 //-----------------------------------------------------------------------------
-bool AbstractTrajectory::getPoint( Vector3D &pos, double &spd, Vector2D &torch, double &progress ) {
+bool AbstractTrajectory::getPoint(Vector3D &pos, double &spd, Vector2D &torch, SincPair &s, double &progress ) {
   boost::lock_guard<boost::mutex> lock(data_mutex_);
   if( index_ == ~0 ) index_ = 0;
   if( index_ >= positions_.size() ) return false;
   pos   = positions_[index_];
   spd   = speeds_[index_];
-  torch = torch_pos_[index_];
+  if( controls_torch_ ) torch = torch_pos_[index_];
+  s = sinc_[index_];
   progress = double(++index_) / positions_.size();
   return true;
 }
@@ -28,10 +29,11 @@ void AbstractTrajectory::rotate() {
 }
 
 //-----------------------------------------------------------------------------
-void AbstractTrajectory::addR( const Vector3D &delta, double spdmm ) { // Relative
+void AbstractTrajectory::addR(const Vector3D &delta, double spdmm , const SincPair &s) { // Relative
   accumulator_ += delta;
   positions_.push_back( accumulator_ );
   speeds_.push_back( spdmm * TO_RPM );
+  sinc_.push_back( s );
 
   //Eliminate collinear points when speeds of both segments are equal
   size_t psz = positions_.size();
@@ -49,10 +51,11 @@ void AbstractTrajectory::addR( const Vector3D &delta, double spdmm ) { // Relati
 }
 
 //-----------------------------------------------------------------------------
-void AbstractTrajectory::addA( const Vector3D &pos, double spdmm ) { // Absolute
+void AbstractTrajectory::addA( const Vector3D &pos, double spdmm, const SincPair &s ) { // Absolute
   accumulator_ = pos;
   positions_.push_back( accumulator_ );
   speeds_.push_back( spdmm * TO_RPM );
+  sinc_.push_back( s );
 }
 //-----------------------------------------------------------------------------
 void AbstractTrajectory::setReference( const Vector3D &v ) {

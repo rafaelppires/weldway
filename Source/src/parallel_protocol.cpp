@@ -96,7 +96,12 @@ ParallelProtocol::ParallelProtocol(uint16_t addr , EmergencyCallbackType cb ) :
                          std::bind1st( std::mem_fun(&ParallelProtocol::emergencyCallback), this ) );
   stopTorch();
 }
-
+//-----------------------------------------------------------------------------
+void ParallelProtocol::setSinc( uint8_t v ) {
+  uint32_t value = v&1;
+  port_.writePins( value<<SOURCE_SINC_PIN, 1<<SOURCE_SINC_PIN );
+  std::cout << "s" << int(v) << " ";
+}
 //-----------------------------------------------------------------------------
 void ParallelProtocol::startTorch() {
   port_.setLowPinSync( TORCH_ENABLE_PIN );
