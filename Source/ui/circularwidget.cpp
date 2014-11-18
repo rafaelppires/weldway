@@ -27,6 +27,20 @@ Vector3I CircularWidget::initPos() {
                    yconv_->convertFromTo( yv, cur_unit, unit ),
                    zconv_->convertFromTo( zv, cur_unit, unit ) );
 }
+//-----------------------------------------------------------------------------
+Vector2D CircularWidget::initTorch() {
+  return Vector2D( ui->hAngleSpinBoxx->value(), ui->vAngleSpinBoxx->value() );
+}
+
+//-----------------------------------------------------------------------------
+Vector3I CircularWidget::finalPos() {
+    return initPos(); // CHANGE
+}
+
+//-----------------------------------------------------------------------------
+Vector2D CircularWidget::finalTorch() {
+    return initTorch(); // CHANGE
+}
 
 //-----------------------------------------------------------------------------
 Vector3I CircularWidget::centerPos() {
@@ -47,5 +61,23 @@ TrajectoryTransformPtr CircularWidget::transformation() {
   Vector2D torch(deg2rad(ui->vAngleSpinBoxx->value()),deg2rad(ui->hAngleSpinBoxx->value()));
   double xangle = ui->xangleSpinBoxx->value(),
          range  = ui->rangeSpinBox->value();
-  return TrajectoryTransformPtr( new CircularTransform(centerPos(),initPos(),deg2rad(xangle),deg2rad(range),torch) );
+  return TrajectoryTransformPtr( new CircularTransform(centerPos(),initPos(),deg2rad(xangle),deg2rad(range),torch,yconv_->convertFromTo(76,"mm","pulsos")) );
 }
+
+//-----------------------------------------------------------------------------
+void CircularWidget::on_markInitPositionButton_clicked() {
+  Vector3D pos = machine_.currentPosition();
+  ui->xinitSpinBoxx->setValue( pos.x() );
+  ui->yinitSpinBoxx->setValue( pos.y() );
+  ui->zinitSpinBoxx->setValue( pos.z() );
+}
+
+//-----------------------------------------------------------------------------
+void CircularWidget::on_markCentralPositionButton_clicked() {
+  Vector3D pos = machine_.currentPosition();
+  ui->xcenterSpinBox->setValue( pos.x() );
+  ui->ycenterSpinBox->setValue( pos.y() );
+  ui->zcenterSpinBox->setValue( pos.z() );
+}
+
+//-----------------------------------------------------------------------------

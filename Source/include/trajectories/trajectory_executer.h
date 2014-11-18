@@ -34,7 +34,7 @@ public:
   void operator()();
   bool finished();
   void cancel();
-  void setLimits(const Vector3I &init);
+  void setLimits(const Vector3I &init, const Vector2D &torch);
   void setCurrent(const Vector3I &last , const Vector2I &last_torch);
   void setAngularOffset( double );
   Vector3US getSpeedsAndInterval(const Vector3D &delta, uint16_t &interval, double res_spd, const Vector2I &delta_torch, Vector2US &spd_torch);
@@ -44,7 +44,7 @@ public:
 
 private:
   void waitFor( uint32_t ms );
-  Vector3D gotoInitial();
+  Vector3D gotoInitial(Vector2I &last_torch );
   void deliverSpeedsAndPositions(const Vector3I &delta, const Vector3US &speeds , const Vector2I &delta_torch, const Vector2US &spd_torch);
 
   // all dimensions must be at the same base units
@@ -65,6 +65,7 @@ private:
   double overx_angle_;
   boost::function<void(double)> progress_callback_;
   bool controls_torch_;
+  Vector2D torch_init_;
 };
 
 #endif

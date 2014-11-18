@@ -170,7 +170,7 @@ void MainWindow::on_findZeroPushButton_clicked() {
 void MainWindow::setLimits( ) {
   TransformationWidget *tw = activeTransformWidget();
   if( tw )
-  machine_.setLimits( tw->initPos() );
+  machine_.setLimits( tw->initPos(), tw->initTorch() );
 }
 
 //-----------------------------------------------------------------------------
@@ -202,10 +202,7 @@ void MainWindow::on_executeButton_clicked() {
       Vector3D pos( xposSliderSpin->value( pos_unit ),
                     yposSliderSpin->value( pos_unit ),
                     zposSliderSpin->value( pos_unit ) );
-
-      Vector2I angpos = machine_.angularOffset( ANGULAR_VERTICAL,   vOrSliderSpin->value("") ) +
-                        machine_.angularOffset( ANGULAR_HORIZONTAL, hOrSliderSpin->value("") );     
-      machine_.gotoPosition( pos, speedSliderSpin->value( spd_unit ), angpos );
+      gotoPosition( pos, Vector2D(hOrSliderSpin->value(""),vOrSliderSpin->value("")), speedSliderSpin->value( spd_unit ) );
     }
   }
   fflush( stdout );
@@ -433,20 +430,21 @@ void MainWindow::on_tabWidget_currentChanged( int index ) {
 
 //-----------------------------------------------------------------------------
 void MainWindow::on_initPosButton_clicked() {
-  Vector3D pos( trajparams_panel_->initPos() );
-  pos *= TO_PULSES;
-  Vector2I angpos = machine_.angularOffset( ANGULAR_VERTICAL,   trajparams_panel_->vangle() ) +
-                    machine_.angularOffset( ANGULAR_HORIZONTAL, trajparams_panel_->hangle() );
-  machine_.gotoPosition(pos, 650, angpos);
+  TransformationWidget *tw = activeTransformWidget();
+  gotoPosition( tw->initPos(), tw->initTorch(), 650 );
 }
 
 //-----------------------------------------------------------------------------
 void MainWindow::on_finalPosButton_clicked() {
-  Vector3D pos( trajparams_panel_->finalPos() );
-  pos *= TO_PULSES;
-  Vector2I angpos = machine_.angularOffset( ANGULAR_VERTICAL,   trajparams_panel_->vangle() ) +
-                    machine_.angularOffset( ANGULAR_HORIZONTAL, trajparams_panel_->hangle() );
-  machine_.gotoPosition(pos, 650, angpos);
+  TransformationWidget *tw = activeTransformWidget();
+  gotoPosition( tw->finalPos(), tw->finalTorch(), 650 );
+}
+
+//-----------------------------------------------------------------------------
+void MainWindow::gotoPosition( const Vector3I &pos, const Vector2D &torch, uint32_t spd ) {
+  Vector2I angpos = machine_.angularOffset( ANGULAR_VERTICAL,   torch.y() ) +
+                    machine_.angularOffset( ANGULAR_HORIZONTAL, torch.x() );
+  machine_.gotoPosition(pos, spd, angpos);
 }
 
 //-----------------------------------------------------------------------------

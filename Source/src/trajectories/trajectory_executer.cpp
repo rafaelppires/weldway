@@ -18,21 +18,20 @@ void TrajectoryExecuter::operator()() {
   Vector3D last_pos(0,0,0), delta(0,0,0);
   uint16_t interval;
 
-  last_pos = gotoInitial();
-
   high_resolution_clock::time_point now, start;
-
   Vector3D cur_point;
   Vector2D torch;
   Vector2I cur_torch(0,0), delta_torch(0,0), last_torch(0,0);
   SincPair sinc;
   double cur_spd, progress;
+
+  last_pos = gotoInitial( last_torch );
   comm_->startTorch();
   waitFor( 2000 );
   controls_torch_ = trajectory_->controlsTorch();
   while( trajectory_->getPoint(cur_point, cur_spd, torch, sinc, progress) ) {
-    cur_torch = comm_->angularPulsesOffset(ANGULAR_VERTICAL, torch.x()) +
-                comm_->angularPulsesOffset(ANGULAR_HORIZONTAL, torch.y());
+    cur_torch = comm_->angularPulsesOffset(ANGULAR_VERTICAL, torch.y()) +
+                comm_->angularPulsesOffset(ANGULAR_HORIZONTAL, torch.x());
 
     start = high_resolution_clock::now();
     delta = cur_point - last_pos;
@@ -89,8 +88,9 @@ void TrajectoryExecuter::deliverSpeedsAndPositions( const Vector3I &delta, const
   if( dz && sz && sz != last_spd_.z() ) spdcmmds[ Z_AXIS ] = sz;
   if( controls_torch_ ) {
     uint16_t sa = spd_torch.x(), sb = spd_torch.y();
-    if( delta_torch.x() && sa && sa != last_torch_spd_.x() ) spdcmmds[ A_AXIS ] = sa;
-    if( delta_torch.y() && sb && sb != last_torch_spd_.y() ) spdcmmds[ B_AXIS ] = sb;
+    if( delta_torch.x() && sa && sa != last_torch_spd_.x() ) spdcmmds[ A_AXIS ] = 100;//sa;
+    if( delta_torch.y() && sb && sb != last_torch_spd_.y() ) spdcmmds[ B_AXIS ] = 100;//sb;
+    //std::cout << " sa " << sa << " sb " << sb << "\n";
   }
 
   current_pos_ += delta;
@@ -121,13 +121,20 @@ void TrajectoryExecuter::waitFor( uint32_t ms ) {
 }
 
 //-----------------------------------------------------------------------------
-Vector3D TrajectoryExecuter::gotoInitial() {
+Vector3D TrajectoryExecuter::gotoInitial(Vector2I &last_torch) {
   Vector3D ret = trajectory_->initialOffset();
   uint16_t interv;
   trajectory_init_ += ret;
   Vector3I delta = trajectory_init_ - current_pos_;
-  Vector2I dummy1(0,0); Vector2US dummy2(0,0);
-  deliverSpeedsAndPositions( delta, getSpeedsAndInterval( delta, interv, 650, dummy1, dummy2 ), dummy1, dummy2 );
+  Vector2I first_torch = comm_->angularPulsesOffset(ANGULAR_VERTICAL, torch_init_.y()) +
+                         comm_->angularPulsesOffset(ANGULAR_HORIZONTAL, torch_init_.x());
+  Vector2I torch_delta =  first_torch - current_torch_; Vector2US torch_spd(100,100);
+  Vector3US spds = getSpeedsAndInterval( delta, interv, 650, torch_delta, torch_spd );
+
+  bool tcontrol = controls_torch_; controls_torch_ = true;
+  deliverSpeedsAndPositions( delta, spds, torch_delta, torch_spd );
+  controls_torch_ = tcontrol;
+
   int status = -1;
   while( status ) {
     status = 0;
@@ -139,6 +146,7 @@ Vector3D TrajectoryExecuter::gotoInitial() {
     if( status )
     boost::this_thread::sleep_for( boost::chrono::milliseconds( 100 ) );
   }
+  last_torch = first_torch;
   return ret;
 }
 
@@ -161,8 +169,8 @@ Vector3US TrajectoryExecuter::getSpeedsAndInterval(const Vector3D &delta, uint16
   ret.z() = fixSpeed( abs(vr.z()), acceleration_.z(), interval/1000. );
 
   if( controls_torch_ ) {
-    spd_torch.x()  = (delta_torch.x()*25.) / (6.*interval); // rpm
-    spd_torch.y()  = (delta_torch.y()*25.) / (6.*interval); // rpm
+    spd_torch.x()  = abs((delta_torch.x()*25.) / (6.*interval)); // rpm
+    spd_torch.y()  = abs((delta_torch.y()*25.) / (6.*interval)); // rpm
   }
 
   return ret;
@@ -174,8 +182,9 @@ uint16_t TrajectoryExecuter::fixSpeed( double v, double a, double t ) {
 }
 
 //-----------------------------------------------------------------------------
-void TrajectoryExecuter::setLimits(const Vector3I &init ) {
+void TrajectoryExecuter::setLimits(const Vector3I &init, const Vector2D &torch ) {
   trajectory_init_ = init;
+  torch_init_ = torch;
 }
 
 //-----------------------------------------------------------------------------

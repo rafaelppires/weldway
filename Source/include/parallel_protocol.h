@@ -18,7 +18,7 @@
 #define SPIREAD_DATA_MSK  0x8000  // SPI Read data pin mask
 
 #define TORCH_ENABLE_PIN  14
-#define SOURCE_SINC_PIN   13 //???
+#define SOURCE_SINC_PIN   1
 
 struct RetRawCmmd {
   uint8_t  stat;

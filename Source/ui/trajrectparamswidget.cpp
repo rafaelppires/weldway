@@ -28,6 +28,10 @@ Vector3I TrajRectParamsWidget::initPos() {
                    yconv_->convertFromTo( yv, cur_unit, unit ),
                    zconv_->convertFromTo( zv, cur_unit, unit ) );
 }
+//-----------------------------------------------------------------------------
+Vector2D TrajRectParamsWidget::initTorch() {
+  return Vector2D( ui->hAngleSpinBoxx->value(), ui->vAngleSpinBoxx->value() );
+}
 
 //-----------------------------------------------------------------------------
 Vector3I TrajRectParamsWidget::finalPos() {

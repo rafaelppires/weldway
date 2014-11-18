@@ -59,6 +59,7 @@ private:
   void emergencyUpdate( bool );
   void render(PositionVector &v);
   void oscillationsSetup();
+  void gotoPosition( const Vector3I &pos, const Vector2D &torch, uint32_t spd );
   OscillationWidget* activeOscillationWidget();
   TransformationWidget* activeTransformWidget();
 

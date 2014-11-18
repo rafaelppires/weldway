@@ -16,7 +16,9 @@ public:
   explicit TrajRectParamsWidget(MasterCommunicator &, UnitConvPtr xconv, UnitConvPtr yconv, UnitConvPtr zconv, QWidget *parent=0);
   ~TrajRectParamsWidget();
   virtual Vector3I initPos();
-  Vector3I finalPos();
+  virtual Vector2D initTorch();
+  virtual Vector3I finalPos();
+  virtual Vector2D finalTorch() { return initTorch(); }
   virtual TrajectoryTransformPtr transformation();
 
   double xangle();

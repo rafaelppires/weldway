@@ -229,7 +229,6 @@ void HomingSequencer::operator()() {
   int status = -1;
   while( status ) {
     status = protocol_.getStatus( StatusBits, A_AXIS ) & STAT_HOMING;
-    //status = 0;
     boost::this_thread::sleep_for( boost::chrono::milliseconds( 500 ) );
   }
   protocol_.startHoming( B_AXIS );
@@ -237,17 +236,9 @@ void HomingSequencer::operator()() {
   status = -1;
   while( status ) {
     status = protocol_.getStatus( StatusBits, B_AXIS ) & STAT_HOMING;
-    //status = 0;
     boost::this_thread::sleep_for( boost::chrono::milliseconds( 500 ) );
   }
-  /*
-  while( status ) {
-    status = 0;
-    for( uint8_t i = 1; i < 8; i<<=1 ) {
-      if( protocol_.getStatus( StatusBits, i) & STAT_HOMING ) { status = -1; break; }
-    }
-    boost::this_thread::sleep_for( boost::chrono::milliseconds( 500 ) );
-  }*/
+
   protocol_.homingFinished();
 }
 
@@ -284,6 +275,7 @@ int32_t ParallelProtocol::checkAxisLimits( ConcurrentCmmd32::const_reference cmm
 }
 
 //-----------------------------------------------------------------------------
+std::ofstream cmdlog("cmdlog.dat");
 void ParallelProtocol::sendPosCmmds( const ConcurrentCmmd32 &cmmds ) {
   if( !homingDone() ) return;
   ConcurrentCmmd64 pos_cmmds;
@@ -292,13 +284,16 @@ void ParallelProtocol::sendPosCmmds( const ConcurrentCmmd32 &cmmds ) {
     int32_t safecmmd = checkAxisLimits( *it );
     pos_cmmds[ it->first ] = spi_.graniteAbsTarget( safecmmd );
     lastcmmd_pos_[it->first] = safecmmd;
+    if( it->first == A_AXIS || it->first == B_AXIS ) cmdlog << "(" << int32_t(it->first) << ")[" << int32_t(safecmmd) << "] ";
   }
 
   uint64_t nope = spi_.nope();
   for( int i = 1; i < AXIS_ALL; i <<= 1) {
     if( pos_cmmds.find(i) == pos_cmmds.end() )
       pos_cmmds[i] = (nope << 32) | nope;
+    cmdlog << int32_t(pos_cmmds[i]) << " ";
   }
+  cmdlog << "\n";
 
   RetAxis rret = sendRawCommand64( pos_cmmds );
 
@@ -349,13 +344,17 @@ void ParallelProtocol::sendSpdCmmds(const ConcurrentCmmd32 &cmmds ) {
 
   for(; it != end; ++it ) {
     cmmd[ it->first ] = spi_.graniteSetParam( VelocityLimit, abs(it->second) );
+    if( it->first == A_AXIS || it->first == B_AXIS ) cmdlog << "(" << int32_t(it->first) << ")[" << int32_t(it->second) << "] ";
   }
 
   uint64_t nope = spi_.nope();
+  cmdlog << "SSSS ";
   for( int i = 1; i < AXIS_ALL; i <<= 1 ) {
     if( cmmd.find(i) == cmmd.end() )
       cmmd[i] = (nope << 32) | nope;
+    cmdlog << int32_t(cmmd[i]) << " ";
   }
+  cmdlog << "\n";
 
   sendRawCommand64( cmmd );
 }

@@ -38,7 +38,7 @@ public:
   // Setup
   void setupParallelPort( uint16_t addr );
   void setupDebug();
-  void setLimits(const Vector3I &init);
+  void setLimits(const Vector3I &init, const Vector2D &torch);
   bool setMaxSpeed(uint16_t speed_rpm, uint8_t axis);
   void setProgressCallback( boost::function<void(double)> cb );
   void setEmergencyCallback( EmergencyCallbackType );
@@ -53,6 +53,7 @@ private:
   TrajectoryExecuter *trajectory_executer_;
   boost::shared_ptr<boost::thread> thread_executer_;
   Vector3I trajectory_init_;
+  Vector2D torch_init_;
   double overx_angoff_;
   boost::function<void(double)> progress_callback_;
   EmergencyCallbackType emergency_callback_;

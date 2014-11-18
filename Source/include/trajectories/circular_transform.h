@@ -7,7 +7,7 @@
 
 class CircularTransform : public TrajectoryTransform {
 public:
-  CircularTransform(const Vector3D &center, const Vector3D &beginning, double xangle, double angle_range, const Vector2D &torch);
+  CircularTransform(const Vector3D &center, const Vector3D &beginning, double xangle, double angle_range, const Vector2D &torch, double offset );
   virtual Vector3D transform(const Vector3D &v);
   virtual Vector3D revert(const Vector3D &v);
   virtual double length();
@@ -18,8 +18,9 @@ private:
   Circular circular_;
   double r_, arange_, a0_;
   MatrixD rotation_;
-  Vector3D torch_dir_;
+  Vector3D torch_dir_, tip_init_;
   std::queue<Vector2D> torch_;
+  double offset_;
 };
 
 #endif // CIRCULAR_TRANSFORM_H

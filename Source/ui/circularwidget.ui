@@ -14,6 +14,37 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
+   <item row="2" column="0" colspan="2">
+    <layout class="QGridLayout" name="gridLayout_27">
+     <item row="0" column="1">
+      <widget class="QDoubleSpinBox" name="vAngleSpinBoxx">
+       <property name="minimum">
+        <double>-90.000000000000000</double>
+       </property>
+       <property name="maximum">
+        <double>90.000000000000000</double>
+       </property>
+       <property name="value">
+        <double>6.000000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2">
+      <widget class="QLabel" name="label_50">
+       <property name="text">
+        <string>º</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_49">
+       <property name="text">
+        <string>Orientação vertical da tocha:</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
    <item row="0" column="0">
     <widget class="QPushButton" name="markInitPositionButton">
      <property name="minimumSize">
@@ -55,7 +86,7 @@
         <double>850.000000000000000</double>
        </property>
        <property name="value">
-        <double>200.000000000000000</double>
+        <double>5.000000000000000</double>
        </property>
       </widget>
      </item>
@@ -77,7 +108,11 @@
       </widget>
      </item>
      <item row="2" column="1">
-      <widget class="QDoubleSpinBox" name="zinitSpinBoxx"/>
+      <widget class="QDoubleSpinBox" name="zinitSpinBoxx">
+       <property name="value">
+        <double>6.000000000000000</double>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
@@ -98,6 +133,9 @@
        <property name="maximum">
         <double>90.000000000000000</double>
        </property>
+       <property name="value">
+        <double>-25.000000000000000</double>
+       </property>
       </widget>
      </item>
      <item row="0" column="0">
@@ -109,36 +147,8 @@
      </item>
     </layout>
    </item>
-   <item row="2" column="0" colspan="2">
-    <layout class="QGridLayout" name="gridLayout_27">
-     <item row="0" column="1">
-      <widget class="QDoubleSpinBox" name="vAngleSpinBoxx">
-       <property name="minimum">
-        <double>-90.000000000000000</double>
-       </property>
-       <property name="maximum">
-        <double>90.000000000000000</double>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="2">
-      <widget class="QLabel" name="label_50">
-       <property name="text">
-        <string>º</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="label_49">
-       <property name="text">
-        <string>Orientação vertical da tocha:</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
    <item row="3" column="0">
-    <widget class="QPushButton" name="markFinalPositionButton">
+    <widget class="QPushButton" name="markCentralPositionButton">
      <property name="minimumSize">
       <size>
        <width>0</width>
@@ -165,7 +175,7 @@
         <double>850.000000000000000</double>
        </property>
        <property name="value">
-        <double>500.000000000000000</double>
+        <double>55.000000000000000</double>
        </property>
       </widget>
      </item>
@@ -194,7 +204,11 @@
       </widget>
      </item>
      <item row="2" column="1">
-      <widget class="QDoubleSpinBox" name="zcenterSpinBox"/>
+      <widget class="QDoubleSpinBox" name="zcenterSpinBox">
+       <property name="value">
+        <double>6.000000000000000</double>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
@@ -271,7 +285,7 @@
    <item row="6" column="0">
     <widget class="QLabel" name="label_39">
      <property name="text">
-      <string>Ângulo total da circunferência::</string>
+      <string>Ângulo total da circunferência:</string>
      </property>
     </widget>
    </item>
@@ -292,19 +306,40 @@
        <property name="maximum">
         <double>720.000000000000000</double>
        </property>
+       <property name="value">
+        <double>360.000000000000000</double>
+       </property>
       </widget>
      </item>
     </layout>
+   </item>
+   <item row="7" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Distância entre suporte
+e ponta da tocha:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="1">
+    <widget class="QDoubleSpinBox" name="supportTipDistSpinBox">
+     <property name="maximum">
+      <double>300.000000000000000</double>
+     </property>
+     <property name="value">
+      <double>270.000000000000000</double>
+     </property>
+    </widget>
    </item>
   </layout>
   <zorder>markInitPositionButton</zorder>
   <zorder>label_35</zorder>
   <zorder>label_29</zorder>
-  <zorder>markFinalPositionButton</zorder>
+  <zorder>markCentralPositionButton</zorder>
   <zorder>initFinalPosUnitComboBox</zorder>
   <zorder>label_39</zorder>
-  <zorder>layoutWidget</zorder>
-  <zorder>rangeSpinBox</zorder>
+  <zorder>label</zorder>
+  <zorder>supportTipDistSpinBox</zorder>
  </widget>
  <resources/>
  <connections/>

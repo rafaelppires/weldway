@@ -17,7 +17,15 @@ public:
   ~CircularWidget();
   virtual TrajectoryTransformPtr transformation();
   virtual Vector3I initPos();
+  virtual Vector2D initTorch();
+  virtual Vector3I finalPos();
+  virtual Vector2D finalTorch();
   Vector3I centerPos();
+
+private slots:
+  void on_markInitPositionButton_clicked();
+
+  void on_markCentralPositionButton_clicked();
 
 private:
   Ui::CircularWidget *ui;
