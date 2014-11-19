@@ -88,8 +88,8 @@ void TrajectoryExecuter::deliverSpeedsAndPositions( const Vector3I &delta, const
   if( dz && sz && sz != last_spd_.z() ) spdcmmds[ Z_AXIS ] = sz;
   if( controls_torch_ ) {
     uint16_t sa = spd_torch.x(), sb = spd_torch.y();
-    if( delta_torch.x() && sa && sa != last_torch_spd_.x() ) spdcmmds[ A_AXIS ] = 100;//sa;
-    if( delta_torch.y() && sb && sb != last_torch_spd_.y() ) spdcmmds[ B_AXIS ] = 100;//sb;
+    if( delta_torch.x() && sa && sa != last_torch_spd_.x() ) spdcmmds[ A_AXIS ] = sa;
+    if( delta_torch.y() && sb && sb != last_torch_spd_.y() ) spdcmmds[ B_AXIS ] = sb;
     //std::cout << " sa " << sa << " sb " << sb << "\n";
   }
 
@@ -169,8 +169,9 @@ Vector3US TrajectoryExecuter::getSpeedsAndInterval(const Vector3D &delta, uint16
   ret.z() = fixSpeed( abs(vr.z()), acceleration_.z(), interval/1000. );
 
   if( controls_torch_ ) {
-    spd_torch.x()  = abs((delta_torch.x()*25.) / (6.*interval)); // rpm
-    spd_torch.y()  = abs((delta_torch.y()*25.) / (6.*interval)); // rpm
+    Vector2D dt(delta_torch.x(),delta_torch.y()); dt /= 400*(interval/1000.);
+    spd_torch.x()  = 60*adjustedSpeed(fabs(dt.x()),650,interval/1000.); // rpm
+    spd_torch.y()  = 60*adjustedSpeed(fabs(dt.y()),650,interval/1000.); // rpm
   }
 
   return ret;

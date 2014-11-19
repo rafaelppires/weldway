@@ -41,18 +41,18 @@ Vector3D CircularTransform::transform(const Vector3D &v) {
   //std::cout << "Angles: v: " << rad2deg(vangle) << " h: " << rad2deg(hangle) << " angle: " << rad2deg(angle) << "\n";
   torch_.push( Vector2D(hangle,vangle) );
 
-  std::cout << "Angle: " << rad2deg(angle) << " tip_init_: " << tip_init_ << "\n";
+  //std::cout << "Angle: " << rad2deg(angle) << " tip_init_: " << tip_init_ << "\n";
 
   MatrixD currot = overy * rotationMatrix3D(0,vangle);
   Vector3D tipnow = column2vec( currot * Vector3D(0,0,-270*40.).columnMatrix() ) +
                     column2vec( currot * Vector3D(0,76*40.,0).columnMatrix() ),
            offset = tip_init_ - tipnow;
 
-  std::cout << "Angle: " << rad2deg(angle) << " tip_init_: " << tip_init_ << " tipnow: " << tipnow << " offset: " << offset << "\n";
+  //std::cout << "Angle: " << rad2deg(angle) << " tip_init_: " << tip_init_ << " tipnow: " << tipnow << " offset: " << offset << "\n";
 
   Vector3D final = pv.front() + offset, tip = final+tipnow;
   circ << tip.x() << " " << tip.y() << " " << tip.z() << "\n";
-  std::cout << pv.front() << " <- current  should be -> " << final << "\n";
+  //std::cout << pv.front() << " <- current  should be -> " << final << "\n";
   //return pv.front();
   return final;
 }

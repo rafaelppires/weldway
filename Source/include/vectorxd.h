@@ -63,6 +63,13 @@ public:
   }
 
   template <typename T2>
+  Vector<N,T>& operator/=( T2 k ) {
+    for(unsigned int i = 0; i < N; ++i )
+      v[i] /= k;
+    return *this;
+  }
+
+  template <typename T2>
   Vector<N,T> operator+( const Vector<N,T2> &v2 ) const {
     Vector<N,T> ret;
     for(unsigned int i = 0; i < N; ++i )
