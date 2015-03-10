@@ -17,6 +17,7 @@ public:
   virtual int32_t getStatus( GraniteParams param, uint8_t axis );
   virtual void startTorch();
   virtual void stopTorch();
+  virtual void setSinc( uint8_t );
 
 private:
   std::ofstream posfile_;

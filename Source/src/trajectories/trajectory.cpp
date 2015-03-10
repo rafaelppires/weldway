@@ -35,9 +35,16 @@ void AbstractTrajectory::addR(const Vector3D &delta, double spdmm , const SincPa
   speeds_.push_back( spdmm * TO_RPM );
   sinc_.push_back( s );
 
-  //Eliminate collinear points when speeds of both segments are equal
+  /* Eliminate collinear points when speeds of both segments are equal and polarity
+   * signals are innocuous.
+   * Points must be collinear (null cross product) and there must be no direction
+   * inversion (negative dot product). "Switch back" trajectory is therefore safe.
+   **/
   size_t psz = positions_.size();
-  if( psz > 2 && speeds_.back() == speeds_[ speeds_.size()-2 ] ) {
+  if( psz > 2 && // there are at least 3 points
+      speeds_.back() == speeds_[ speeds_.size()-2 ] && // the two last speeds are the same
+      (s.first < 0 || s.first > 1. || (sinc_[ sinc_.size()-2 ].first >= 0 && sinc_[ sinc_.size()-2 ].first <= 1.0 &&
+                                       s.second == sinc_[ sinc_.size()-2 ].second ) ) ) { // there is no polarity change
     Vector3D A  = positions_.back(),
              B  = positions_[ psz-2 ],
              C  = positions_[ psz-3 ],
@@ -46,6 +53,7 @@ void AbstractTrajectory::addR(const Vector3D &delta, double spdmm , const SincPa
     if( BA.cross( BC ).length() < 1e-5 && BA.dot( BC ) < 0 ) {
       positions_.erase( positions_.begin()+psz-2 );
       speeds_.pop_back();
+      sinc_.pop_back();
     }
   }
 }

@@ -22,14 +22,17 @@ public:
 //-----------------------------------------------------------------------------
 class SwitchBackTrajectory : public AbstractTrajectory {
 public:
-  SwitchBackTrajectory(int32_t fwlen, int32_t weldspd, double ratio, TrajectoryTransformPtr tt  ) : AbstractTrajectory(tt) {
+  SwitchBackTrajectory(int32_t fwlen, int32_t weldspd, double ratio, uint8_t polarity, TrajectoryTransformPtr tt  ) : AbstractTrajectory(tt) {
     double total_length = tt->length();
     int period_count = 0.5 + 2. * total_length/fwlen;
     double spdmm = weldspd / TO_RPM;
-    Vector3D forward(fwlen,0,0), backward(-fwlen/2.,0,0);
+    Vector3D forward(fwlen/2,0,0), backward(-fwlen/2.,0,0);
+    double fwspd = (1+2*ratio)*spdmm/ratio,
+           bwspd = (1+2*ratio)*spdmm;
     for( int i = 0; i < period_count; ++i ) {
-      addR( forward, (1+2*ratio)*spdmm/ratio, SincPair(0.5,1) );
-      addR( backward, (1+2*ratio)*spdmm, SincPair(1,0) );
+      addR( forward,  fwspd, SincPair(0,(polarity & 0x4) >> 2 ) );
+      addR( forward,  fwspd, SincPair(0, polarity & 0x1) );
+      addR( backward, bwspd, SincPair(0,(polarity & 0x2) >> 1) );
     }
     rotate();
   }

@@ -1,3 +1,33 @@
 
-This project started in 2012 at Federal Institute for Education, Science and Technology of Santa Catarina, Florianopolis, Brazil.
+This project started in 2012 at Federal Institute for Education, Science and 
+Technology of Santa Catarina, Florianopolis, Brazil.
+It consists of a system for project and execution of trajectories in a 5 axis
+welding manipulator. Below follows the Abstract of a Master's Thesis on the subject,
+by Rafael Pereira Pires <rafaelpp.inf@gmail.com>
+
+Industrial robots and welding manipulators play an essential role to the 
+industry by automating, with quality, speed and repeatability, a manual slow 
+and unhealthy process. Such importance is reflected in the equipment diversity 
+offered by the manufacturers. These devices, however, still have high 
+acquisition and maintenance costs, besides some limitations in their 
+functionality. This dissertation proposes a computational system for welding 
+executions on a low cost Cartesian manipulator with mixed kinematic chain, 
+designed and built entirely in an academic environment. At the system’s heart 
+is the offering of a range of welding torch oscillations that is driven by a 
+mechanical arm, along with the possibility of path corrections while running, 
+and also changing the welding source parameters in sync with the oscillation. 
+The user can choose among trajectories without oscillation, with longitudinal 
+or transverse oscillations and combinations of both, besides being able of 
+creating custom oscillations. All of them can be arranged along an arbitrary 
+linear axis within the work area, and along a circular axis. During execution, 
+the operator can correct oscillation geometry parameters, path positioning and 
+running speed when realizing the occurrence of deviations caused by arc heat, 
+vibrations or joints preparation defects. In addition, it is possible to 
+determine different welding parameters according to the oscillation, thus 
+enabling the testing of approaches that seek better results in joining and 
+coating welds. The system design strategies, algorithms and mathematical models 
+have been confirmed empirically by conducting trajectory plots and welding 
+trials. The prototype proved to be suitable and able to perform welding 
+procedures either in industry, in the field, and in technological education 
+institutions, given its great flexibility.
 

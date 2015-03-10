@@ -51,8 +51,11 @@ AbsTrajectoryPtr LongitudinalWidget::trajectory(TrajectoryTransformPtr tt) {
        weldspd = sbWeldSpeedSliderSpin->value( spd_unit );
 
   if( tidx == 0 ) {
-	int32_t fwlen = fwLengthSliderSpin->value( pos_unit );
-    return AbsTrajectoryPtr( new SwitchBackTrajectory(fwlen, weldspd, spdratioSliderSpin->value(""), tt) );
+    int32_t fwlen = fwLengthSliderSpin->value( pos_unit );
+    uint8_t polarity = (ui->fstNegRadioButton->isChecked() ? 0x1 : 0) &
+                       (ui->SndNegRadioButton->isChecked() ? 0x2 : 0) &
+                       (ui->TrdNegRadioButton->isChecked() ? 0x4 : 0);
+    return AbsTrajectoryPtr( new SwitchBackTrajectory(fwlen, weldspd, spdratioSliderSpin->value(""), polarity, tt) );
   } else {
     return AbsTrajectoryPtr( new LinearTrajectory( weldspd, tt) );
   }

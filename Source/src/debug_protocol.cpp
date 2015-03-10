@@ -34,7 +34,15 @@ void DebugProtocol::sendPosCmmds( const ConcurrentCmmd32 &cmmds ) {
   posfile_ << lastcmmd_pos_[X_AXIS] << " " << lastcmmd_pos_[Y_AXIS] << " " << lastcmmd_pos_[Z_AXIS] << " " << lastcmmd_pos_[A_AXIS] << " " << lastcmmd_pos_[B_AXIS]  << "\n";
   posfile_.flush();
 }
-  
+
+//-----------------------------------------------------------------------------
+void DebugProtocol::setSinc( uint8_t v ) {
+  if (v)
+    posfile_ << "+\n";
+  else
+    posfile_ << "-\n";
+}
+
 //-----------------------------------------------------------------------------
 void DebugProtocol::sendSpdCmmds( const ConcurrentCmmd32 & ) {
 
