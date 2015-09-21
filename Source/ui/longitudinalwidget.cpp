@@ -16,7 +16,8 @@ LongitudinalWidget::LongitudinalWidget(QWidget *parent) :
   bwLengthSliderSpin = new SliderSpin( this, ui->bwLengthSlider, ui->bwLengthSpinBox, ui->bwLengthUnitComboBox, UnitConvPtr(new PositionConv(2, 10)) );
   spdratioSliderSpin = new SliderSpin( this, ui->speedRatioSlider, ui->speedRatioSpinBox, NULL, UnitConvPtr(new UnitConv(0.1,2)) );
 
-  fwLengthSliderSpin->addMultiplier( bwLengthSliderSpin, 0.5 );
+  //fwLengthSliderSpin->addMultiplier( bwLengthSliderSpin, 0.5 );
+  bwLengthSliderSpin->addConstraint( fwLengthSliderSpin, SliderSpin::GREATER_THAN );
 
   connect(spdratioSliderSpin, SIGNAL(valueChanged()), this, SLOT(changeRatios()));
   spdratioSliderSpin->setValue(0.5);
@@ -35,10 +36,13 @@ LongitudinalWidget::~LongitudinalWidget() {
 
 //-----------------------------------------------------------------------------
 void LongitudinalWidget::changeRatios() {
-  double r = spdratioSliderSpin->value("");
+  double r = spdratioSliderSpin->value(""),
+        fw = fwLengthSliderSpin->value(""),
+        bw = bwLengthSliderSpin->value(""),
+      mult = (bw+fw*r)/(fw-bw);
 
-  sbWeldSpeedSliderSpin->addMultiplier( fwSpeedSliderSpin,(1+2*r)/r );
-  sbWeldSpeedSliderSpin->addMultiplier( bwSpeedSliderSpin, 1+2*r );
+  sbWeldSpeedSliderSpin->addMultiplier( fwSpeedSliderSpin, mult/r );
+  sbWeldSpeedSliderSpin->addMultiplier( bwSpeedSliderSpin, mult );
   fwSpeedSliderSpin->addMultiplier( bwSpeedSliderSpin, r );
 
   sbWeldSpeedSliderSpin->resetValue();
@@ -51,11 +55,12 @@ AbsTrajectoryPtr LongitudinalWidget::trajectory(TrajectoryTransformPtr tt) {
        weldspd = sbWeldSpeedSliderSpin->value( spd_unit );
 
   if( tidx == 0 ) {
-    int32_t fwlen = fwLengthSliderSpin->value( pos_unit );
+    int32_t fwlen = fwLengthSliderSpin->value( pos_unit ),
+            bwlen = bwLengthSliderSpin->value( pos_unit );
     uint8_t polarity = (ui->fstNegRadioButton->isChecked() ? 0x1 : 0) |
                        (ui->SndNegRadioButton->isChecked() ? 0x2 : 0) |
                        (ui->TrdNegRadioButton->isChecked() ? 0x4 : 0);
-    return AbsTrajectoryPtr( new SwitchBackTrajectory(fwlen, weldspd, spdratioSliderSpin->value(""), polarity, tt) );
+    return AbsTrajectoryPtr( new SwitchBackTrajectory(fwlen, bwlen, weldspd, spdratioSliderSpin->value(""), polarity, tt) );
   } else {
     return AbsTrajectoryPtr( new LinearTrajectory( weldspd, tt) );
   }

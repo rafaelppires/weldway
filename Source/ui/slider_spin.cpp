@@ -51,6 +51,24 @@ void SliderSpin::onSpinValueChanged() {
     it->first->setValue( it->second * fromCurrent( spinbox_->value() ) );
   }
 
+  ConstraintsMap::iterator jt = constraints_.begin(), jend = constraints_.end();
+  for(; jt != jend; ++jt ) {
+    switch( jt->second ) {
+    case GREATER_THAN:
+      if( jt->first->fromCurrent( jt->first->spinbox_->value() ) <= fromCurrent( spinbox_->value() ) )
+        jt->first->setValue( fromCurrent( spinbox_->value() ) + 0.1 );
+      break;
+    case LESS_THAN:
+      if( jt->first->fromCurrent( jt->first->spinbox_->value() ) >= fromCurrent( spinbox_->value() ) )
+        jt->first->setValue( fromCurrent( spinbox_->value() ) - 0.1 );
+      break;
+    case EQUAL_TO:
+      if( jt->first->fromCurrent( jt->first->spinbox_->value() ) != fromCurrent( spinbox_->value() ) )
+        jt->first->setValue( fromCurrent( spinbox_->value() ) );
+      break;
+    };
+  }
+
   emit valueChanged();
 }
 
@@ -97,6 +115,24 @@ void SliderSpin::addMultiplier( SliderSpin *ss, double m, bool goon  ) {
   multipliers_[ss] = m;
   if( goon )
     ss->addMultiplier( this, 1./m, false );
+}
+
+//-----------------------------------------------------------------------------
+void SliderSpin::addConstraint( SliderSpin *ss, Constraints c, bool goon  ) {
+  constraints_[ss] = c;
+
+  if( goon )
+    switch( c ) {
+    case GREATER_THAN:
+      ss->addConstraint( this, LESS_THAN, false );
+      break;
+    case LESS_THAN:
+      ss->addConstraint( this, GREATER_THAN, false );
+      break;
+    case EQUAL_TO:
+      ss->addConstraint( this, EQUAL_TO, false );
+      break;
+    };
 }
 
 //-----------------------------------------------------------------------------
